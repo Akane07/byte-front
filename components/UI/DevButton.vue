@@ -4,9 +4,15 @@
     </button>
 </template>
 
+<script setup lang="ts">
+const props = defineProps<{
+    active: boolean
+}>()
+</script>
 
 <style scoped lang="scss">
 @import '../../assets/styles/vars.scss';
+
 .dev-button {
     padding: 12px 28px;
     border: 1px solid #fff;
@@ -15,7 +21,8 @@
     background: $transparent-button;
     cursor: pointer;
 }
-.dev-button-active{
+
+.dev-button-active {
     padding: 12px 28px;
     border: none;
     border-radius: 5px;
@@ -24,11 +31,3 @@
     cursor: pointer;
 }
 </style>
-
-
-<script setup lang="ts">
-import { ref } from 'vue';
-const props = defineProps({
-    active: { type: Boolean, required: true }
-})
-</script>

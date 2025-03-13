@@ -7,6 +7,7 @@
 
 <style scoped lang="scss">
 @import '../../assets/styles/vars.scss';
+
 .dev-nav-button {
     padding: 12px 28px;
     border: none;

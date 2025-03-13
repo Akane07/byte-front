@@ -3,8 +3,8 @@
         <div class="river-left">
             <div class="icon-cont"></div>
             <div class="icon-cont">
-                <img src="../../assets/icons/clock.svg" alt=""  v-if="recovery">
-                <img src="../../assets/icons/money_brick.svg" alt=""  v-else>
+                <img src="../../assets/icons/clock.svg" alt="" v-if="recovery">
+                <img src="../../assets/icons/money_brick.svg" alt="" v-else>
             </div>
             <div class="icon-cont"></div>
             <div class="icon-cont"></div>
@@ -32,24 +32,25 @@
         </div>
     </div>
 </template>
-  
+
 <script setup lang="ts">
-const props = defineProps({
-    recovery: {type: Boolean}
-})
+const props = defineProps<{
+    recovery: boolean
+}>();
 </script>
-  
+
 <style scoped lang="scss">
-.icons-grid{
+.icons-grid {
     // position: absolute;
-    
+
     height: 100vh;
     width: 50%;
     display: flex;
     justify-content: center;
     gap: 30px;
 }
-.river-left{
+
+.river-left {
     width: 210px;
     position: relative;
     display: flex;
@@ -57,7 +58,8 @@ const props = defineProps({
     gap: 30px;
     top: -65px;
 }
-.river-center{
+
+.river-center {
     width: 210px;
     position: relative;
     display: flex;
@@ -65,7 +67,8 @@ const props = defineProps({
     gap: 30px;
     top: -175px;
 }
-.river-right{
+
+.river-right {
     width: 210px;
     position: relative;
     display: flex;
@@ -73,7 +76,8 @@ const props = defineProps({
     gap: 30px;
     top: -65px;
 }
-.icon-cont{
+
+.icon-cont {
     width: 100%;
     min-height: 239px;
     background: #18181C;
@@ -81,30 +85,33 @@ const props = defineProps({
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
 }
+
 @media (max-width: 1500px) {
-    .icons-grid{
+    .icons-grid {
         // width: 40%;
         margin-right: 26px;
     }
 }
+
 @media (max-width: 1250px) {
-    .icons-grid{
+    .icons-grid {
         width: 60%;
         margin-right: 26px;
     }
 }
+
 @media (max-width: 1350px) {
-    .icons-grid{
+    .icons-grid {
         // width: 30%;
         margin-right: 26px;
     }
 }
+
 @media (max-width: 1100px) {
-    .icons-grid{
+    .icons-grid {
         display: none;
     }
 }
 </style>
-  
