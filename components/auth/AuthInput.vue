@@ -1,6 +1,7 @@
 <template>
     <div class="input-wrapper">
-        <input :type="type" class="auth-input" :placeholder="placeholder" />
+        <input :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" :type="type"
+            class="auth-input" :placeholder="placeholder" />
         <span class="border border-left"></span>
         <span class="border border-top"></span>
         <span class="border border-bottom"></span>
@@ -11,7 +12,8 @@
 <script setup lang="ts">
 const props = defineProps<{
     type: string,
-    placeholder: string
+    placeholder: string,
+    modelValue: string
 }>();
 </script>
 
@@ -25,21 +27,21 @@ $animation-duration: 0.2s;
     position: relative;
     display: inline-block;
     width: 100%;
-}
 
-.auth-input {
-    position: relative;
-    cursor: text;
-    width: 100%;
-    z-index: 1;
-    padding: 12px 28px;
-    font-size: 14px;
-    letter-spacing: 0%;
-    border-radius: 5px;
-    background: $input-auth;
-    border: none;
-    outline: none;
-    color: $text-color-nav;
+    .auth-input {
+        position: relative;
+        cursor: text;
+        width: 100%;
+        z-index: 1;
+        padding: 12px 28px;
+        font-size: 14px;
+        letter-spacing: 0%;
+        border-radius: 5px;
+        background: $input-auth;
+        border: none;
+        outline: none;
+        color: $text-white;
+    }
 }
 
 .border {

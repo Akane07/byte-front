@@ -8,11 +8,11 @@
                 </span>
             </div>
             <div class="nav-menu">
-                <DevAuthInput placeholder="Полное Имя" type="text" />
-                <DevAuthInput placeholder="Ваша почта" type="text" />
-                <DevAuthInput placeholder="Пароль" type="password" />
-                <DevAuthInput placeholder="Подтвердите Пароль" type="password" />
-                <DevNavButton>Зарегистрироваться</DevNavButton>
+                <DevAuthInput v-model="registerData.name" placeholder="Полное Имя" type="text" />
+                <DevAuthInput v-model="registerData.email" placeholder="Ваша почта" type="text" />
+                <DevAuthInput v-model="registerData.password" placeholder="Пароль" type="password" />
+                <DevAuthInput v-model="registerData.confirmPassword" placeholder="Подтвердите Пароль" type="password" />
+                <DevNavButton @click="handleRegister">Зарегистрироваться</DevNavButton>
             </div>
             <div class="log-and-recovery">
                 <div class="google">
@@ -34,6 +34,20 @@
 import DevAuthInput from '~/components/auth/AuthInput.vue';
 import DevNavButton from '~/components/UI/DevNavButton.vue';
 import DevAuthBoard from '~/components/auth/AuthBoard.vue';
+import { register } from '~/api/auth-api';
+
+const registerData = reactive({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+});
+
+async function handleRegister() {
+    const res = await register(registerData);
+
+    console.log(res, 'res');
+}
 </script>
 
 <style scoped lang="scss">
