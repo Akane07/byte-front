@@ -1,12 +1,27 @@
 <template>
     <div class="home">
-        <DevNavMenu></DevNavMenu>
-        <NuxtLink class="login" to="/auth/login"></NuxtLink>
+        <UIDevNavMenu></UIDevNavMenu>
+        <div class="wrapper">
+            <div class="background">
+                <div v-for="i in 16" :key="i" class="line"></div>
+            </div>
+            <div class="circles">
+                <div class="circle"></div>
+                <IconsCircle class="circle"></IconsCircle>
+                <IconsCircle class="circle"></IconsCircle>
+                <IconsCircle class="circle"></IconsCircle>
+            </div>
+            <div class="content">
+                <h1>Хотите фармить миллионы? Или найти того, кто их заберёт?</h1>
+                <p>Вам на Freelance Byte...</p>
+                <UIDevNavButton>Перейти</UIDevNavButton>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import DevNavMenu from '~/components/UI/DevNavMenu.vue';
+
 </script>
 
 <style scoped lang="scss">
@@ -16,13 +31,99 @@ import DevNavMenu from '~/components/UI/DevNavMenu.vue';
     background-color: #000000;
     width: 100%;
     height: 100vh;
-}
+    position: relative;
 
-.login {
-    text-decoration: none;
-    color: $second-color;
-    background-color: #000000;
-    width: 100%;
-    height: 100vh;
+    .wrapper {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 60px;
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            color: #fff;
+            text-align: center;
+
+            h1 {
+                font-weight: 600;
+                font-size: clamp(40px, 8vw, 64px);
+                line-height: clamp(40px, 8vw, 80px);
+                max-width: 1100px;
+                width: 100%;
+                z-index: 1;
+            }
+
+            p {
+                font-size: 18px;
+                line-height: 28px;
+                color: #9E9E9E;
+                z-index: 3;
+            }
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+
+            .line {
+                width: 1px;
+                height: 100%;
+                background: linear-gradient(180deg, #404047 0%, rgba(64, 64, 71, 0) 65.45%);
+            }
+        }
+
+        .circles {
+            .circle:nth-child(1) {
+                background: radial-gradient(50% 50% at 50% 50%, #222228 0%, rgba(34, 34, 40, 0) 100%);
+                border-radius: 50%;
+                width: 500px;
+                height: 500px;
+                position: absolute;
+                top: 0px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .circle:nth-child(2) {
+                position: absolute;
+                top: 60px;
+                left: 45%;
+                transform: translateX(-50%);
+                z-index: 2;
+            }
+
+            .circle:nth-child(3) {
+                width: 150px;
+                height: 150px;
+                position: absolute;
+                top: 400px;
+                right: 15%;
+                transform: translateX(-50%);
+                z-index: 2;
+            }
+
+            .circle:nth-child(4) {
+                width: 200px;
+                height: 200px;
+                position: absolute;
+                top: 400px;
+                left: 15%;
+                transform: translateX(-50%);
+                z-index: 2;
+            }
+        }
+    }
 }
 </style>
