@@ -15,13 +15,24 @@
                 <h1>Хотите фармить миллионы? Или найти того, кто их заберёт?</h1>
                 <p>Вам на Freelance Byte...</p>
                 <UIDevNavButton>Перейти</UIDevNavButton>
+
+                <div class="canvas">
+                    <canvas id="canvas3d" width="1000" height="1000"></canvas>
+                    <div class="hide-block"></div>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { Application } from '@splinetool/runtime';
 
+onMounted(() => {
+    const canvas = document.getElementById('canvas3d') as HTMLCanvasElement;
+    const app = new Application(canvas);
+    app.load('https://prod.spline.design/ijwoY6i07SdqDJvF/scene.splinecode');
+})
 </script>
 
 <style scoped lang="scss">
@@ -38,7 +49,7 @@
         width: 100%;
         height: 100%;
         display: flex;
-        align-items: center;
+        // align-items: center;
         justify-content: center;
         padding: 0 60px;
 
@@ -124,6 +135,18 @@
                 transform: translateX(-50%);
                 z-index: 2;
             }
+        }
+    }
+
+    .canvas {
+        position: relative;
+        .hide-block {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 100px;
+            background: black;
         }
     }
 }

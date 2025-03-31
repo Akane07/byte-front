@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.10.1",
+    "@splinetool/runtime": "^1.9.82",
     "axios": "^1.8.3",
     "nuxt": "^3.16.0",
     "pinia": "^3.0.1",
