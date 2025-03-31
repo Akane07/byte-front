@@ -60,7 +60,7 @@ onMounted(() => {
             gap: 30px;
             color: #fff;
             text-align: center;
-            margin-top: 250px;
+            margin-top: 260px;
 
             h1 {
                 font-weight: 600;
