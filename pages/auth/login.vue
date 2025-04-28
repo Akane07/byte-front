@@ -8,9 +8,9 @@
                 </span>
             </div>
             <div class="nav-menu">
-                <DevAuthInput placeholder="Ваша почта" type="text" />
-                <DevAuthInput placeholder="Пароль" type="password" />
-                <DevNavButton>Войти</DevNavButton>
+                <DevAuthInput v-model="loginData.email" placeholder="Ваша почта" type="text" />
+                <DevAuthInput v-model="loginData.password" placeholder="Пароль" type="password" />
+                <DevNavButton @click="handleLogin">Войти</DevNavButton>
             </div>
             <div class="log-and-recovery">
                 <div class="google">
@@ -34,10 +34,31 @@
 import DevAuthInput from '~/components/auth/AuthInput.vue';
 import DevNavButton from '~/components/UI/DevNavButton.vue';
 import DevAuthBoard from '~/components/auth/AuthBoard.vue';
+import { login } from '~/api/auth-api';
+import { setToken } from '~/api';
+import { useUserStore } from '~/store/userStore';
 
 definePageMeta({
     middleware: ['auth'],
 });
+
+const userStore = useUserStore();
+
+const loginData = ref({
+    email: '',
+    password: '',
+});
+
+async function handleLogin() {
+    const res = await login(loginData.value);
+
+    if (res.access_token) {
+        localStorage.setItem('byte-accessToken', res.access_token);
+        setToken(res.access_token);
+        await userStore.checkAuth();
+        navigateTo("/orders");
+    }
+}
 </script>
 
 <style scoped lang="scss">

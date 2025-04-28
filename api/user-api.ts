@@ -13,16 +13,16 @@ export interface User {
     orders_count: number;
     reviews_count: number;
     speciality: string[];
-  }
+}
 
 export async function getUser() {
-    const response = await api.get<User>('/user/me');
+    try {
+        const response = await api.get<User>('/user/me');
 
-    if (response.status !== 200) {
         return response.data;
+    } catch (e: any) {
+        return e.response.data;
     }
-
-    return response.data;
 }
 
 export async function getUserById(id: string) {

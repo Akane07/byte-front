@@ -7,6 +7,12 @@ export const useUserStore = defineStore('user', () => {
 
     async function fetchUser() {
         const data = await getUser();
+
+        if (data.statusCode === 401) {
+            isAuth.value = false;
+            return;
+        }
+
         user.value = data;
     }
 
