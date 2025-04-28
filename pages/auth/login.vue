@@ -34,6 +34,10 @@
 import DevAuthInput from '~/components/auth/AuthInput.vue';
 import DevNavButton from '~/components/UI/DevNavButton.vue';
 import DevAuthBoard from '~/components/auth/AuthBoard.vue';
+
+definePageMeta({
+    middleware: ['auth'],
+});
 </script>
 
 <style scoped lang="scss">
@@ -77,12 +81,12 @@ import DevAuthBoard from '~/components/auth/AuthBoard.vue';
 }
 
 .menu-context {
-    color: $text-color-nav;
+    color: $text-color-secondary;
     display: inline-block;
 }
 
 .typed-text {
-    color: $text-color-nav;
+    color: $text-color-secondary;
     font-size: 18px;
 }
 
@@ -136,12 +140,12 @@ import DevAuthBoard from '~/components/auth/AuthBoard.vue';
 
 .log {
     font-size: 10px;
-    color: $text-color-nav;
+    color: $text-color-secondary;
     cursor: pointer;
 }
 
 .recovery-text {
-    color: $text-color-nav;
+    color: $text-color-secondary;
     font-size: 14px;
 }
 

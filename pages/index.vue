@@ -2,24 +2,16 @@
     <div class="home">
         <UIDevNavMenu></UIDevNavMenu>
         <div class="wrapper">
-            <div class="background">
-                <div v-for="i in 16" :key="i" class="line"></div>
-            </div>
-            <div class="circles">
-                <div class="circle"></div>
-                <IconsCircle class="circle"></IconsCircle>
-                <IconsCircle class="circle"></IconsCircle>
-                <IconsCircle class="circle"></IconsCircle>
-            </div>
+            <UIBackground></UIBackground>
             <div class="content">
                 <h1>Хотите фармить миллионы? Или найти того, кто их заберёт?</h1>
                 <p>Вам на Freelance Byte...</p>
-                <UIDevNavButton>Перейти</UIDevNavButton>
+                <UIDevNavButton @click="$router.push('/orders')" style="z-index: 100;">Перейти</UIDevNavButton>
 
-                <div class="canvas">
+                <!-- <div class="canvas">
                     <canvas id="canvas3d" width="1000" height="1000"></canvas>
                     <div class="hide-block"></div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -28,10 +20,14 @@
 <script setup lang="ts">
 import { Application } from '@splinetool/runtime';
 
+definePageMeta({
+    middleware: ['auth'],
+});
+
 onMounted(() => {
-    const canvas = document.getElementById('canvas3d') as HTMLCanvasElement;
-    const app = new Application(canvas);
-    app.load('https://prod.spline.design/ijwoY6i07SdqDJvF/scene.splinecode');
+    // const canvas = document.getElementById('canvas3d') as HTMLCanvasElement;
+    // const app = new Application(canvas);
+    // app.load('https://prod.spline.design/ijwoY6i07SdqDJvF/scene.splinecode');
 })
 </script>
 
@@ -49,9 +45,9 @@ onMounted(() => {
         width: 100%;
         height: 100%;
         display: flex;
-        // align-items: center;
         justify-content: center;
         padding: 0 60px;
+        top: 0;
 
         .content {
             display: flex;

@@ -20,6 +20,10 @@
 import DevAuthInput from '~/components/auth/AuthInput.vue';
 import DevNavButton from '~/components/UI/DevNavButton.vue';
 import DevAuthBoard from '~/components/auth/AuthBoard.vue';
+
+definePageMeta({
+    middleware: ['auth'],
+});
 </script>
 
 <style scoped lang="scss">
@@ -64,7 +68,7 @@ import DevAuthBoard from '~/components/auth/AuthBoard.vue';
 }
 
 .menu-context {
-    color: $text-color-nav;
+    color: $text-color-secondary;
     display: inline-block;
 }
 

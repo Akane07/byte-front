@@ -2,19 +2,23 @@
 $background-color: #000000;
 $main-color: #222228;
 $second-color: #29292F;
+$border-color: #313139;
 
 // Цвет текста
 $text-color-main: #F1ECFF;
-$text-color-nav: #9E9E9E;
+$text-color-secondary: #9E9E9E;
+$text-color-header: #C5C5C5;
 $text-white: #fff;
 
 // цвет кнопок
 $button-color-gradient: linear-gradient(92.51deg, #FF9898 0.48%, #8054FF 100%);
 $active-button-color: #8B60FA;
+$secondary-button-color: #9E9E9F;
 $transparent-button: transparent;
 
 // цвет инпутов
 $input-auth: #18181C; 
-
+$select-disabled: #313139;
+$select-enabled: #8355FA;
 
 // кароче тут нужно задать отдельные блоки типо текстовые переменные, переменные фона итд. и каждое название к сожалению должно быть понятным

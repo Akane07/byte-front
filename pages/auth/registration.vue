@@ -35,6 +35,11 @@ import DevAuthInput from '~/components/auth/AuthInput.vue';
 import DevNavButton from '~/components/UI/DevNavButton.vue';
 import DevAuthBoard from '~/components/auth/AuthBoard.vue';
 import { register } from '~/api/auth-api';
+import { setToken } from '~/api';
+
+definePageMeta({
+    middleware: ['auth'],
+});
 
 const registerData = reactive({
     name: '',
@@ -46,7 +51,10 @@ const registerData = reactive({
 async function handleRegister() {
     const res = await register(registerData);
 
-    console.log(res, 'res');
+    if (res.access_token) {
+        localStorage.setItem('byte-accessToken', res.access_token);
+        setToken(res.access_token);
+    }
 }
 </script>
 
@@ -91,7 +99,7 @@ async function handleRegister() {
 }
 
 .menu-context {
-    color: $text-color-nav;
+    color: $text-color-secondary;
     display: inline-block;
 }
 
@@ -101,7 +109,7 @@ async function handleRegister() {
 }
 
 .typed-text {
-    color: $text-color-nav;
+    color: $text-color-secondary;
     font-size: 18px;
 }
 
@@ -152,7 +160,7 @@ async function handleRegister() {
 
 .log {
     font-size: 10px;
-    color: $text-color-nav;
+    color: $text-color-secondary;
     cursor: pointer;
 }
 
