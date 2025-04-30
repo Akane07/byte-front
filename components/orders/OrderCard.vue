@@ -1,25 +1,34 @@
 <template>
-    <div class="order_card">
+    <div class="order_card" @click="$emit('showOrder', order)">
         <div class="order_info">
             <div class="text_info">
-                <p>Дизайн/ верстка сайта (адаптация универсального решения)</p>
-                <span>Разрабатываем сайт города. Есть универсальное решение https://gos.redsign.ru/
-                    (https://redsign.ru/templates/corporate/redsign.government/) , которое нам полностью подходит по
-                    структуре и функционалу. Но смотрится слишком просто. Требуется сделать его более стильным,
-                    статусным, современным.</span>
+                <p>{{ order.title }}</p>
+                <span>{{ order.description }}</span>
             </div>
             <div class="stats_info">
-                <UIUserAvatar></UIUserAvatar>
-                <span class="border">Опубликовано 2 часа назад</span>
-                <span>Предложений 32</span>
+                <UIUserAvatar style="cursor: pointer;"></UIUserAvatar>
+                <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
+                <span>Предложений {{ order.response_count }}</span>
             </div>
         </div>
         <div class="order_actions">
-            <p>Договорная</p>
-            <UIDevButton :active="true">Откликнуться</UIDevButton>
+            <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
+            <UIDevButton :active="true" @click.stop="">Откликнуться</UIDevButton>
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+import type { Order } from '~/api/order-api';
+
+const props = defineProps<{
+    order: Order
+}>();
+
+defineEmits<{
+    (e: 'showOrder', order: Order): void
+}>();
+</script>
 
 <style lang="scss" scoped>
 @import '../../assets/styles/vars.scss';
@@ -32,6 +41,7 @@
     box-shadow: 1px 1px 0px 0px #00000029;
     display: flex;
     gap: 20px;
+    cursor: pointer;
 
     .order_actions {
         display: flex;
@@ -41,10 +51,12 @@
         gap: 16px;
         border-left: 1px solid $border-color;
         padding-left: 40px;
+        cursor: pointer;
 
         p {
             font-weight: 600;
             color: $active-button-color;
+            transition: color 0.3s ease-in-out;
         }
     }
 
@@ -52,6 +64,8 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
+        width: 100%;
+        cursor: pointer;
 
         .text_info {
             display: flex;
@@ -59,17 +73,21 @@
             gap: 8px;
             padding-bottom: 8px;
             border-bottom: 1px solid $border-color;
+            cursor: pointer;
 
             p {
                 color: $select-enabled;
                 font-weight: 600;
                 font-size: 18px;
+                transition: color 0.3s ease-in-out;
+                cursor: pointer;
             }
 
             span {
                 color: $text-color-main;
                 font-weight: 500;
                 font-size: 14px;
+                cursor: pointer;
             }
         }
 
@@ -79,12 +97,42 @@
             align-items: center;
             color: $secondary-button-color;
             font-size: 14px;
+            cursor: pointer;
 
-            span.border {
-                border-right: 1px solid $border-color;
-                padding-right: 12px;
+            span {
+                cursor: pointer;
+
+                &.border {
+                    border-right: 1px solid $border-color;
+                    padding-right: 12px;
+                }
             }
         }
+    }
+
+    &:hover {
+
+        .order_info {
+            .text_info {
+                p {
+                    color: white;
+                }
+
+                span {}
+            }
+
+            .stats_info {
+                span.border {}
+            }
+        }
+
+        .order_actions {
+
+            p {
+                color: white;
+            }
+        }
+
     }
 }
 </style>

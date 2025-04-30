@@ -39,19 +39,24 @@
                     </div>
                 </div>
                 <div class="orders_list">
-                    <OrdersOrderCard></OrdersOrderCard>
-                    <OrdersOrderCard></OrdersOrderCard>
-                    <OrdersOrderCard></OrdersOrderCard>
-                    <OrdersOrderCard></OrdersOrderCard>
-                    <OrdersOrderCard></OrdersOrderCard>
+                    <OrdersOrderCard v-for="order in orderStore.orders" :key="order.id" :order="order" @showOrder="showOrder"></OrdersOrderCard>
                 </div>
             </div>
         </div>
     </div>
+
+    <OrdersOrderHover :order="hoverOrder" @close-order="handleCloseOrder"></OrdersOrderHover>
 </template>
 
 <script setup lang="ts">
+import { type Order } from '~/api/order-api';
+import { useOrderStore } from '~/store/orderStore';
+import { useUserStore } from '~/store/userStore';
 
+const userStore = useUserStore();
+const orderStore = useOrderStore();
+
+const hoverOrder = ref<Order | null>(null);
 const filters = ref({
     design: false,
     it: false,
@@ -69,9 +74,21 @@ function savefilters() {
     localStorage.setItem("byte-filters", JSON.stringify(filters.value));
 }
 
-onMounted(() => {
+function showOrder(order: Order) {
+    hoverOrder.value = order;
+}
+
+function handleCloseOrder() {
+    hoverOrder.value = null;
+}
+
+onMounted(async () => {
+    await userStore.checkAuth();
+
     const lsFilters = localStorage.getItem("byte-filters");
     lsFilters && (filters.value = JSON.parse(lsFilters));
+
+    await orderStore.getAllOrders();
 })
 </script>
 

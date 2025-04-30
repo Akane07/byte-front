@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', () => {
 
     async function checkAuth() {
         const token = localStorage.getItem('byte-accessToken');
-        if (token) {
+        if (token && !isAuth.value) {
             setToken(token);
             isAuth.value = true;
             await fetchUser();
