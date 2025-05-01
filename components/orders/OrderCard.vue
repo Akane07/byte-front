@@ -1,9 +1,12 @@
 <template>
-    <div class="order_card" @click="$emit('showOrder', order)">
+    <div class="order_card" @click="$emit('showOrder', order)" :class="{ 'viewed': viewed }">
         <div class="order_info">
             <div class="text_info">
                 <p>{{ order.title }}</p>
-                <span>{{ order.description }}</span>
+                <span>{{ useSliceDescription(order.description) }}</span>
+            </div>
+            <div class="tags">
+                <span v-for="skill in order.skills" :key="skill">{{ skill }}</span>
             </div>
             <div class="stats_info">
                 <UIUserAvatar style="cursor: pointer;"></UIUserAvatar>
@@ -13,13 +16,14 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton :active="true" @click.stop="">Откликнуться</UIDevButton>
+            <UIDevButton :active="!viewed" @click.stop="">Откликнуться</UIDevButton>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import type { Order } from '~/api/order-api';
+import { useUserStore } from '~/store/userStore';
 
 const props = defineProps<{
     order: Order
@@ -28,6 +32,12 @@ const props = defineProps<{
 defineEmits<{
     (e: 'showOrder', order: Order): void
 }>();
+
+const userStore = useUserStore();
+
+const viewed = computed(() => {
+    return props.order.viewed_by.includes(userStore.user?.id || '');
+});
 </script>
 
 <style lang="scss" scoped>
@@ -36,7 +46,7 @@ defineEmits<{
 .order_card {
     width: 100%;
     padding: 16px 40px 16px 16px;
-    border-radius: 20px;
+    border-radius: 8px;
     background: $second-color;
     box-shadow: 1px 1px 0px 0px #00000029;
     display: flex;
@@ -96,7 +106,7 @@ defineEmits<{
             gap: 12px;
             align-items: center;
             color: $secondary-button-color;
-            font-size: 14px;
+            font-size: 12px;
             cursor: pointer;
 
             span {
@@ -108,10 +118,45 @@ defineEmits<{
                 }
             }
         }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 8px 0;
+
+            span {
+                background: $tag-secondary-color;
+                color: $text-color-secondary;
+                padding: 6px 12px;
+                border-radius: 6px;
+            }
+        }
     }
 
     &:hover {
+        .order_info {
+            .text_info {
+                p {
+                    color: white;
+                }
 
+                span {}
+            }
+
+            .stats_info {
+                span.border {}
+            }
+        }
+
+        .order_actions {
+            p {
+                color: white;
+            }
+        }
+    }
+
+    &.viewed {
         .order_info {
             .text_info {
                 p {
@@ -132,7 +177,6 @@ defineEmits<{
                 color: white;
             }
         }
-
     }
 }
 </style>

@@ -1,14 +1,15 @@
 import { api } from ".";
 
 export interface User {
+    id: string;
     email: string;
     name: string;
     description: string;
     avatar: string;
     is_verified: boolean;
     country: string | null;
-    last_seen: string | null;
-    created_at: Date;
+    last_seen: string;
+    created_at: string;
     rating: number;
     orders_count: number;
     reviews_count: number;

@@ -28,3 +28,7 @@ export async function getOrders() {
         return e.response.data;
     }
 }
+
+export async function markOrderViewed(orderId: string) {
+    const response = await api.post<Order[]>(`/order/${orderId}/viewed`);
+}

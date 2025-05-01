@@ -1,4 +1,4 @@
-import { getOrders, type Order } from "~/api/order-api";
+import { getOrders, markOrderViewed, type Order } from "~/api/order-api";
 
 export const useOrderStore = defineStore('order', () => {
     const orders = ref<Order[]>([]);
@@ -11,9 +11,14 @@ export const useOrderStore = defineStore('order', () => {
         }
     }
 
+    async function viewOrder(id: string) {
+        const res = await markOrderViewed(id);
+    }
+
     return { 
         orders,
 
-        getAllOrders
+        getAllOrders,
+        viewOrder
     };
 });

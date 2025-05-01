@@ -2,6 +2,7 @@ import axios from "axios";
 
 // export const baseURL = `http://37.252.22.147`;
 export const baseURL = `http://localhost:3001`;
+export const frontURL = `http://localhost:3000`;
 
 let api = axios.create({
     baseURL: baseURL + '/api/v1',

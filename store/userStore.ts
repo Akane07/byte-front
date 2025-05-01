@@ -1,5 +1,5 @@
 import { setToken } from "~/api";
-import { getUser, type User } from "~/api/user-api";
+import { getUser, getUserById, type User } from "~/api/user-api";
 
 export const useUserStore = defineStore('user', () => {
     const user = ref<User | null>(null);
@@ -31,12 +31,19 @@ export const useUserStore = defineStore('user', () => {
         localStorage.removeItem('byte-accessToken');
     }
 
+    async function getUserId(id: string) {
+        const res = await getUserById(id);
+
+        return res;
+    }
+
     return { 
         user,
         isAuth,
         
         fetchUser,
         checkAuth,
+        getUserId,
         logout
     };
 });
