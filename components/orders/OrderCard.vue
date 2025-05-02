@@ -16,7 +16,7 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton :active="!viewed" @click.stop="">Откликнуться</UIDevButton>
+            <UIDevButton :active="!viewed" @click.stop="handleOrderRedirect">Откликнуться</UIDevButton>
         </div>
     </div>
 </template>
@@ -34,6 +34,10 @@ defineEmits<{
 }>();
 
 const userStore = useUserStore();
+
+function handleOrderRedirect() {
+    navigateTo(`/orders/${props.order.id}`)
+}
 
 const viewed = computed(() => {
     return props.order.viewed_by.includes(userStore.user?.id || '');

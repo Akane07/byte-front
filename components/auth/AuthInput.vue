@@ -15,6 +15,10 @@ const props = defineProps<{
     placeholder: string,
     modelValue: string
 }>();
+
+defineEmits<{
+    (e: 'update:modelValue', value: boolean): () => void
+}>();
 </script>
 
 <style lang="scss" scoped>

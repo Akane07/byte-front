@@ -5,7 +5,7 @@
     <div class="wrapper">
         <div class="content orders_wrapper">
             <div class="filters">
-                <p>Найти задание/вакансию</p>
+                <p>Найти проект</p>
                 <div class="filters_block">
                     <UIDevSelect v-model="filters.design">Графический дизайн</UIDevSelect>
                     <UIDevSelect v-model="filters.it">IT-технологии и Разработка</UIDevSelect>
@@ -28,7 +28,7 @@
                         <p>Все предложения</p>
                     </div>
                     <div class="orders_buttons">
-                        <UIDevNavButton :stroke="true" :secondary="true">
+                        <UIDevNavButton :stroke="true" :secondary="true" @click="navigateTo('/orders/my')">
                             <IconsOrders style="transform: scale(1.3); margin-right: 8px;"></IconsOrders>
                             Мои заказы
                         </UIDevNavButton>

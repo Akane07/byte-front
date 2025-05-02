@@ -16,8 +16,15 @@ export interface Order {
     viewed_by: string[];
     is_active: boolean;
     created_at: string;
-  }
-  
+}
+
+export interface Response {
+    order_id: string;
+    user_id: string;
+    description: string;
+    created_at: string;
+}
+
 
 export async function getOrders() {
     try {
@@ -29,6 +36,46 @@ export async function getOrders() {
     }
 }
 
+export async function getOrderById(id: string) {
+    try {
+        const response = await api.get<Order>(`/order/${id}`);
+
+        return response.data;
+    } catch (e: any) {
+        return e.response.data;
+    }
+}
+
+export async function postResponse(id: string, description: string) {
+    const response = await api.post<Response>(`/order/${id}/response`, {
+        description,
+    });
+
+    return response.data;
+}
+
+export async function getResponse(id: string) {
+    const response = await api.get<Response>(`/order/${id}/response`);
+
+    return response.data;
+}
+
+export async function getResponses(id: string) {
+    const response = await api.get<Response[]>(`/order/${id}/responses`);
+
+    return response.data;
+}
+
 export async function markOrderViewed(orderId: string) {
-    const response = await api.post<Order[]>(`/order/${orderId}/viewed`);
+    await api.post<Order[]>(`/order/${orderId}/viewed`);
+}
+
+export async function getOrderByUserId(id: string) {
+    try {
+        const response = await api.get<Order[]>(`/order/user/${id}`);
+
+        return response.data;
+    } catch (e: any) {
+        return e.response.data;
+    }
 }

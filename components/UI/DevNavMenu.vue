@@ -18,23 +18,25 @@
             <div v-else class="nav-buttons">
                 <IconsChat class="pointer"></IconsChat>
                 <IconsNotifications class="pointer"></IconsNotifications>
-                <UIUserAvatar></UIUserAvatar>
+                <UIUserAvatar class="pointer" @click="showMenu = !showMenu"></UIUserAvatar>
                 <IconsArrow class="pointer arrow" @click="showMenu = !showMenu" :class="{ active: showMenu }">
                 </IconsArrow>
 
                 <div class="menu" v-if="showMenu">
                     <div class="menu-content">
-                        <NuxtLink>Мой профиль</NuxtLink>
-                        <NuxtLink>Личный кабинет</NuxtLink>
+                        <NuxtLink class="pointer" @click="navigateTo('/profile/my')">Мой профиль</NuxtLink>
+                        <NuxtLink class="pointer" @click="navigateTo('/profile/my/settings')">Настройки</NuxtLink>
+                        <div class="border"></div>
                     </div>
                     <div class="menu-content">
-                        <NuxtLink>Мои проекты/вакансии</NuxtLink>
-                        <NuxtLink>Мои услуги</NuxtLink>
-                        <NuxtLink>Портфолио</NuxtLink>
+                        <NuxtLink class="pointer" @click="navigateTo('/profile/my/projects')">Мои проекты</NuxtLink>
+                        <!-- <NuxtLink class="pointer">Мои услуги</NuxtLink> -->
+                        <NuxtLink class="pointer" @click="navigateTo('/profile/my/portfolio')">Портфолио</NuxtLink>
+                        <div class="border"></div>
                     </div>
                     <div class="menu-content">
-                        <NuxtLink>Обратная связь</NuxtLink>
-                        <NuxtLink>Выход</NuxtLink>
+                        <NuxtLink class="pointer">Обратная связь</NuxtLink>
+                        <NuxtLink class="pointer">Выход</NuxtLink>
                     </div>
                 </div>
             </div>
@@ -54,6 +56,8 @@ const showMenu = shallowRef(false);
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/styles/vars.scss';
+
 .nav-wrapper {
     width: 100%;
     height: 80px;
@@ -70,7 +74,7 @@ const showMenu = shallowRef(false);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 1;
+    z-index: 100000;
 }
 
 .link {
@@ -104,6 +108,7 @@ span {
     align-items: center;
     gap: 12px;
     user-select: none;
+    position: relative;
 
     .pointer {
         cursor: pointer;
@@ -120,7 +125,7 @@ span {
 
     .menu {
         width: 220px;
-        border-radius: 20px;
+        border-radius: 16px;
         position: absolute;
         right: -20px;
         top: 54px;
@@ -135,11 +140,20 @@ span {
         display: flex;
         flex-direction: column;
         gap: 40px;
+        z-index: 100000;
 
         .menu-content {
             display: flex;
             flex-direction: column;
             gap: 12px;
+
+            .border {
+                width: 100%;
+                height: 1px;
+                background: $border-color;
+                margin-bottom: -12px;
+                margin-top: 12px;
+            }
         }
     }
 }

@@ -45,7 +45,7 @@
             <div class="right_part" v-if="order">
                 <div class="price">
                     <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-                    <UIDevButton :active="true">Откликнуться</UIDevButton>
+                    <UIDevButton :active="true" @click="handleOrderRedirect">Откликнуться</UIDevButton>
                 </div>
                 <div class="about_client" v-if="user">
                     <p>О клиенте</p>
@@ -109,6 +109,10 @@ function copyLink() {
     }, 3000);
 }
 
+function handleOrderRedirect() {
+    navigateTo(`/orders/${props.order?.id}`)
+}
+
 watch(props, async () => {
     if (!props.order?.user_id) return;
     user.value = await userStore.getUserId(props.order?.user_id);
@@ -125,7 +129,7 @@ watch(props, async () => {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.0);
-    z-index: 10000;
+    z-index: 10000000000;
     overflow: hidden;
     transition: all 0.4s ease-in-out;
     visibility: hidden;

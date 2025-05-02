@@ -24,7 +24,7 @@ definePageMeta({
     middleware: ['auth'],
 });
 
-onMounted(() => {
+onMounted(async () => {
     // const canvas = document.getElementById('canvas3d') as HTMLCanvasElement;
     // const app = new Application(canvas);
     // app.load('https://prod.spline.design/ijwoY6i07SdqDJvF/scene.splinecode');
