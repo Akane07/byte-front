@@ -4,6 +4,8 @@ export interface User {
     id: string;
     email: string;
     name: string;
+    nickname: string;
+    phone: string;
     description: string;
     avatar: string;
     is_verified: boolean;
@@ -19,6 +21,16 @@ export interface User {
 export async function getUser() {
     try {
         const response = await api.get<User>('/user/me');
+
+        return response.data;
+    } catch (e: any) {
+        return e.response.data;
+    }
+}
+
+export async function postUser(updateData: Partial<User>) {
+    try {
+        const response = await api.post<User>('/user/me', updateData);
 
         return response.data;
     } catch (e: any) {

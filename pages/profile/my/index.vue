@@ -3,45 +3,37 @@
     <UIBackground></UIBackground>
 
     <div class="wrapper">
-        <div class="profile">
+        <div class="profile" v-if="userStore.user">
             <div class="main_info">
                 <div class="left_part">
                     <div class="avatar">
                         <UIProfileAvatar></UIProfileAvatar>
-                        <p>llpeach</p>
+                        <p>{{ userStore.user.nickname || 'без ника' }}</p>
                     </div>
                     <div class="stats">
                         <div class="stat">
                             <IconsMap></IconsMap>
-                            <span>Россия</span>
+                            <span>{{ userStore.user.country || 'страна не указана' }}</span>
                         </div>
                         <div class="stat">
                             <IconsClock></IconsClock>
-                            <span>На сайте с 8 марта 2025г.</span>
+                            <span>На сайте с {{ useUserCreated(userStore.user.created_at) }}</span>
                         </div>
                         <div class="stat">
                             <IconsSun></IconsSun>
-                            <span>Был в сети 20 минут назад</span>
+                            <span>Был в сети {{ useOrderCreated(userStore.user.last_seen) }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="border"></div>
                 <div class="middle_part">
-                    <p class="name">Степан</p>
-                    <p class="speciality">Fullstack разработчик, дизайнер</p>
-                    <span>Во фронтенде больше 5ти лет варюсь (с учетом самообучения). Могли бы связаться в тг для того,
-                        чтобы я мог узнать подробнее о проекте, а вы обо мне. Может ещё не нашли исполнителя, тогда я
-                        был бы рад взяться за дело. Времени сейчас много, могу уделить время проекту, как основному.
-                        Ссылка на гитхаб (он не супер широкий, потому что проекты все принадлежат в итоге компании и/или
-                        репозитории в скрытой организации) - https://github.com/LegionLiner.
-                        Основной мой стек - экосистема Vue + TS. Если интересны сухие буковки, то вот мой полный стек
-                        знаний:
-                        JavaScript, TypeScript, Vue.js, Vue Router, Pinia (Vuex), Vuetify, React.js, Zustand, twig.js,
-                        jQuery, HTML, CSS, SASS, SCSS, Tailwind, Nuxt.js, Next.js, Node.js, Vite.js, Vitest.</span>
+                    <p class="name">{{ userStore.user.name }}</p>
+                    <p class="speciality">{{ userStore.user.speciality.join(', ') }}</p>
+                    <span>{{ userStore.user.description || 'Нет описания' }}</span>
                 </div>
                 <div class="border"></div>
                 <div class="right_part">
-                    <UIDevButton :active="true">
+                    <UIDevButton :active="true" @click="navigateTo('/profile/my/settings')">
                         <IconsSettings></IconsSettings>
                         Настройки профиля
                     </UIDevButton>
@@ -49,13 +41,13 @@
                         <div class="average">
                             <div class="star">
                                 <img src="../../../assets/images/star.png" alt="star" width="20px" height="20px">
-                                4.5
+                                {{ userStore.user.rating }}
                             </div>
                             <p>Оценка исполнителя</p>
                         </div>
                         <div class="stats">
                             <div class="stat">
-                                <span>123</span>
+                                <span>{{ userStore.user.orders_count }}</span>
                                 <p>Заказов выполнено</p>
                             </div>
                             <div class="stat">
@@ -63,12 +55,8 @@
                                 <p>Успешных заказов</p>
                             </div>
                             <div class="stat">
-                                <span>35</span>
+                                <span>{{ userStore.user.reviews_count }}</span>
                                 <p>Получено отзывов</p>
-                            </div>
-                            <div class="stat">
-                                <span>123</span>
-                                <p>Заказов выполнено</p>
                             </div>
                         </div>
                     </div>
@@ -94,6 +82,12 @@
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+import { useUserStore } from '~/store/userStore';
+
+const userStore = useUserStore();
+</script>
 
 <style lang="scss" scoped>
 @import '../../../assets/styles/vars.scss';
@@ -135,7 +129,7 @@
                 display: flex;
                 flex-direction: column;
                 gap: 16px;
-                min-width: 220px;
+                min-width: 230px;
                 padding-bottom: 18px;
 
                 .avatar {
@@ -164,6 +158,7 @@
                 flex-direction: column;
                 gap: 12px;
                 padding-bottom: 18px;
+                width: 100%;
 
                 .name {
                     font-weight: 600;

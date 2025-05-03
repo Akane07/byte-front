@@ -19,6 +19,7 @@ button {
     display: flex;
     gap: 8px;
     align-items: center;
+    justify-content: center;
     white-space: nowrap;
 }
 

@@ -16,8 +16,8 @@
                 </NuxtLink>
             </div>
             <div v-else class="nav-buttons">
+                <IconsHome class="pointer" @click="navigateTo('/orders')"></IconsHome>
                 <IconsChat class="pointer"></IconsChat>
-                <IconsNotifications class="pointer"></IconsNotifications>
                 <UIUserAvatar class="pointer" @click="showMenu = !showMenu"></UIUserAvatar>
                 <IconsArrow class="pointer arrow" @click="showMenu = !showMenu" :class="{ active: showMenu }">
                 </IconsArrow>
@@ -29,7 +29,7 @@
                         <div class="border"></div>
                     </div>
                     <div class="menu-content">
-                        <NuxtLink class="pointer" @click="navigateTo('/profile/my/projects')">Мои проекты</NuxtLink>
+                        <NuxtLink class="pointer" @click="navigateTo('/orders/my')">Мои заказы</NuxtLink>
                         <!-- <NuxtLink class="pointer">Мои услуги</NuxtLink> -->
                         <NuxtLink class="pointer" @click="navigateTo('/profile/my/portfolio')">Портфолио</NuxtLink>
                         <div class="border"></div>

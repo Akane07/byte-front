@@ -39,7 +39,8 @@
                     </div>
                 </div>
                 <div class="orders_list">
-                    <OrdersOrderCard v-for="order in orderStore.orders" :key="order.id" :order="order" @showOrder="showOrder"></OrdersOrderCard>
+                    <OrdersOrderCard v-for="order in orderStore.orders" :key="order.id" :order="order"
+                        @showOrder="showOrder"></OrdersOrderCard>
                 </div>
             </div>
         </div>
@@ -52,6 +53,8 @@
 import { type Order } from '~/api/order-api';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
+
+const route = useRoute();
 
 const userStore = useUserStore();
 const orderStore = useOrderStore();

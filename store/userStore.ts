@@ -1,5 +1,5 @@
 import { setToken } from "~/api";
-import { getUser, getUserById, type User } from "~/api/user-api";
+import { getUser, getUserById, postUser, type User } from "~/api/user-api";
 
 export const useUserStore = defineStore('user', () => {
     const user = ref<User | null>(null);
@@ -37,6 +37,12 @@ export const useUserStore = defineStore('user', () => {
         return res;
     }
 
+    async function editMe(updateData: Partial<User>) {
+        const res = await postUser(updateData);
+
+        user.value = res;
+    }
+
     return { 
         user,
         isAuth,
@@ -44,6 +50,7 @@ export const useUserStore = defineStore('user', () => {
         fetchUser,
         checkAuth,
         getUserId,
-        logout
+        logout,
+        editMe,
     };
 });
