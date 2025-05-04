@@ -12,7 +12,7 @@
                 <div class="main_info">
                     <p>{{ order?.title }}</p>
                     <div class="stats_info">
-                        <UIUserAvatar></UIUserAvatar>
+                        <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"></UIUserAvatar>
                         <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений {{ order.response_count }}</span>
                     </div>
@@ -45,6 +45,7 @@
                         <span v-for="skill in order.skills" :key="skill">{{ skill }}</span>
                     </div>
                 </div>
+                <p>{{ useUserCreated(order.created_at) }}</p>
             </div>
             <div class="right_part">
                 <p>Ваше предложение</p>
@@ -83,8 +84,7 @@ onMounted(async () => {
     order.value = await orderStore.getOrder(route.params.id as string);
 
     const hasRes = await orderStore.getOrderResponse(route.params.id as string);
-    console.log(hasRes);
-    
+
     if (hasRes.description) {
         response.value = hasRes;
     }
@@ -183,7 +183,6 @@ onMounted(async () => {
                 display: flex;
                 flex-direction: column;
                 gap: 16px;
-                margin-bottom: 60px;
 
                 p {
                     font-weight: 500;
@@ -218,6 +217,13 @@ onMounted(async () => {
                     font-size: 18px;
                     color: $active-button-color;
                 }
+            }
+
+            &>p {
+                padding-top: 12px;
+                font-size: 12px;
+                color: $text-color-secondary;
+                margin-bottom: 60px;
             }
         }
 

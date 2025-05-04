@@ -8,7 +8,7 @@
                 <div class="main_info">
                     <p>{{ order?.title }}</p>
                     <div class="stats_info">
-                        <UIUserAvatar></UIUserAvatar>
+                        <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"></UIUserAvatar>
                         <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений {{ order.response_count }}</span>
                     </div>
@@ -41,6 +41,7 @@
                         <span v-for="skill in order.skills" :key="skill">{{ skill }}</span>
                     </div>
                 </div>
+                <p>{{ useUserCreated(order.created_at) }}</p>
             </div>
             <div class="right_part" v-if="order">
                 <div class="price">
@@ -253,6 +254,12 @@ watch(props, async () => {
                         border-radius: 6px;
                     }
                 }
+            }
+
+            & > p {
+                padding-top: 12px;
+                font-size: 12px;
+                color: $text-color-secondary;
             }
         }
 

@@ -1,7 +1,7 @@
 <template>
     <div class="nav-wrapper">
         <div class="nav">
-            <div class="byte">
+            <div class="byte" @click="navigateTo(`/orders`)">
                 <img src="../../public/logo.svg" alt="logo">
                 <span>FreelanceByte</span>
             </div>
