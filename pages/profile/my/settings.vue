@@ -12,7 +12,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="settings_form">
+                <div v-if="active === 'general'" class="settings_form">
                     <div class="block">
                         <p>Логин</p>
                         <UIDevInput v-model="general.nickname" type="text" placeholder="Отображаемый ник"></UIDevInput>
@@ -23,7 +23,27 @@
                     </div>
                     <div class="block">
                         <p>Почта</p>
-                        <UIDevInput v-model="general.email" type="text" placeholder="Почта, привязанная к аккануту" disabled></UIDevInput>
+                        <UIDevInput v-model="general.email" type="text" placeholder="Почта, привязанная к аккануту"
+                            disabled></UIDevInput>
+                    </div>
+                </div>
+                <div v-if="active === 'profile'" class="settings_form">
+                    <div class="block">
+                        <p>Имя</p>
+                        <UIDevInput v-model="profile.name" type="text" placeholder="Ваше имя"></UIDevInput>
+                    </div>
+                    <div class="block">
+                        <p>Ваша специальность</p>
+                        <UIDevInput v-model="profile.speciality" type="text" placeholder="Вы по специальности">
+                        </UIDevInput>
+                    </div>
+                    <div class="block">
+                        <p>Описание профиля</p>
+                        <UIDevTextarea v-model="profile.description" placeholder="Написание привлекательного описания может повысить шансы найти заказ"></UIDevTextarea>
+                    </div>
+                    <div class="block">
+                        <p>Страна</p>
+                        <UIDevSelect :list="countries" :selected="profile.country" @select="handleSelect"></UIDevSelect>
                     </div>
                 </div>
                 <div class="buttons">
@@ -36,11 +56,13 @@
 </template>
 
 <script setup lang="ts">
+import { getCountries } from '~/api/user-api';
 import { useUserStore } from '~/store/userStore';
 
 const userStore = useUserStore();
 
 const active = ref('general');
+const countries = ref<string[]>([]);
 
 const general = ref<any>({
     nickname: '',
@@ -48,10 +70,17 @@ const general = ref<any>({
     email: '',
 });
 
-const profile = ref({
+const profile = ref<any>({
     name: '',
-    speciality: [],
+    speciality: '',
+    skills: [],
+    description: '',
+    country: '',
 });
+
+function handleSelect(el: string) {
+    profile.value.country = el;
+}
 
 async function saveUser() {
     const updateData = {
@@ -68,10 +97,20 @@ onMounted(async () => {
     if (!userStore.user?.id) return;
 
     general.value = {
-        nickname: userStore.user.nickname,
-        phone: userStore.user.phone,
-        email: userStore.user.email
+        nickname: userStore.user.nickname || '',
+        phone: userStore.user.phone || '',
+        email: userStore.user.email || '',
     };
+
+    profile.value = {
+        name: userStore.user.name || '',
+        speciality: userStore.user.speciality || '',
+        skills: [...userStore.user.skills] ,
+        description: userStore.user.description || '',
+        country: userStore.user.country || null,
+    }
+
+    countries.value = await getCountries();
 })
 </script>
 
@@ -80,14 +119,14 @@ onMounted(async () => {
 
 .wrapper {
     width: 100%;
-    height: 100dvh;
+    min-height: 100dvh;
     background: $input-auth;
     position: absolute;
     top: 0;
     left: 0;
     display: flex;
     justify-content: center;
-    padding: 150px;
+    padding: 150px 150px 300px 150px;
 
     .settings_wrapper {
         max-width: 1400px;
@@ -95,7 +134,7 @@ onMounted(async () => {
 
         .settings {
             width: 100%;
-            max-width: 400px;
+            max-width: 500px;
             color: $text-color-main;
             display: flex;
             flex-direction: column;

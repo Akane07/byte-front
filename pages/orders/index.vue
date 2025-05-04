@@ -7,16 +7,16 @@
             <div class="filters">
                 <p>Найти проект</p>
                 <div class="filters_block">
-                    <UIDevSelect v-model="filters.design">Графический дизайн</UIDevSelect>
-                    <UIDevSelect v-model="filters.it">IT-технологии и Разработка</UIDevSelect>
-                    <UIDevSelect v-model="filters.web">Веб-разработка и дизайн</UIDevSelect>
-                    <UIDevSelect v-model="filters.media">Медиа и Моушен дизайн</UIDevSelect>
-                    <UIDevSelect v-model="filters.ad">Маркетинг и Реклама</UIDevSelect>
-                    <UIDevSelect v-model="filters.outsource">Аутсорсинг и Консалтинг</UIDevSelect>
-                    <UIDevSelect v-model="filters.promotion">Интернет продвижение</UIDevSelect>
-                    <UIDevSelect v-model="filters.engineering">Инженерия</UIDevSelect>
-                    <UIDevSelect v-model="filters.texts">Тексты и переводы</UIDevSelect>
-                    <UIDevSelect v-model="filters.other">Другое</UIDevSelect>
+                    <UIDevCheckbox v-model="filters.design">Графический дизайн</UIDevCheckbox>
+                    <UIDevCheckbox v-model="filters.it">IT-технологии и Разработка</UIDevCheckbox>
+                    <UIDevCheckbox v-model="filters.web">Веб-разработка и дизайн</UIDevCheckbox>
+                    <UIDevCheckbox v-model="filters.media">Медиа и Моушен дизайн</UIDevCheckbox>
+                    <UIDevCheckbox v-model="filters.ad">Маркетинг и Реклама</UIDevCheckbox>
+                    <UIDevCheckbox v-model="filters.outsource">Аутсорсинг и Консалтинг</UIDevCheckbox>
+                    <UIDevCheckbox v-model="filters.promotion">Интернет продвижение</UIDevCheckbox>
+                    <UIDevCheckbox v-model="filters.engineering">Инженерия</UIDevCheckbox>
+                    <UIDevCheckbox v-model="filters.texts">Тексты и переводы</UIDevCheckbox>
+                    <UIDevCheckbox v-model="filters.other">Другое</UIDevCheckbox>
                 </div>
                 <div class="buttons">
                     <UIDevNavButton class="save_button" @click="savefilters">Сохранить</UIDevNavButton>

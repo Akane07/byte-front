@@ -18,26 +18,26 @@
             <div v-else class="nav-buttons">
                 <IconsHome class="pointer" @click="navigateTo('/orders')"></IconsHome>
                 <IconsChat class="pointer"></IconsChat>
-                <UIUserAvatar class="pointer" @click="showMenu = !showMenu"></UIUserAvatar>
-                <IconsArrow class="pointer arrow" @click="showMenu = !showMenu" :class="{ active: showMenu }">
+                <UIUserAvatar class="pointer" @click.stop="showMenu = !showMenu"></UIUserAvatar>
+                <IconsArrow class="pointer arrow" @click.stop="showMenu = !showMenu" :class="{ active: showMenu }">
                 </IconsArrow>
 
-                <div class="menu" v-if="showMenu">
-                    <div class="menu-content">
-                        <NuxtLink class="pointer" @click="navigateTo('/profile/my')">Мой профиль</NuxtLink>
-                        <NuxtLink class="pointer" @click="navigateTo('/profile/my/settings')">Настройки</NuxtLink>
-                        <div class="border"></div>
-                    </div>
-                    <div class="menu-content">
-                        <NuxtLink class="pointer" @click="navigateTo('/orders/my')">Мои заказы</NuxtLink>
-                        <!-- <NuxtLink class="pointer">Мои услуги</NuxtLink> -->
-                        <NuxtLink class="pointer" @click="navigateTo('/profile/my/portfolio')">Портфолио</NuxtLink>
-                        <div class="border"></div>
-                    </div>
-                    <div class="menu-content">
-                        <NuxtLink class="pointer">Обратная связь</NuxtLink>
-                        <NuxtLink class="pointer">Выход</NuxtLink>
-                    </div>
+                <div ref="menuRef" class="menu" v-if="showMenu">
+                        <div class="menu-content">
+                            <NuxtLink class="pointer" @click="navigateTo('/profile/my')">Мой профиль</NuxtLink>
+                            <NuxtLink class="pointer" @click="navigateTo('/profile/my/settings')">Настройки</NuxtLink>
+                            <div class="border"></div>
+                        </div>
+                        <div class="menu-content">
+                            <NuxtLink class="pointer" @click="navigateTo('/orders/my')">Мои заказы</NuxtLink>
+                            <!-- <NuxtLink class="pointer">Мои услуги</NuxtLink> -->
+                            <NuxtLink class="pointer" @click="navigateTo('/profile/my/portfolio')">Портфолио</NuxtLink>
+                            <div class="border"></div>
+                        </div>
+                        <div class="menu-content">
+                            <NuxtLink class="pointer">Обратная связь</NuxtLink>
+                            <NuxtLink class="pointer">Выход</NuxtLink>
+                        </div>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 import DevNavButton from './DevNavButton.vue';
 import DevButton from './DevButton.vue';
 import { useUserStore } from '~/store/userStore';
@@ -53,6 +53,11 @@ import { useUserStore } from '~/store/userStore';
 const userStore = useUserStore();
 
 const showMenu = shallowRef(false);
+const menuRef = ref<HTMLElement | null>(null);
+
+useClickOutside(menuRef, () => {
+    showMenu.value = false;
+})
 </script>
 
 <style lang="scss" scoped>
@@ -104,6 +109,7 @@ span {
 }
 
 .nav-buttons {
+    width: 150px;
     display: flex;
     align-items: center;
     gap: 12px;

@@ -1,71 +1,155 @@
 <template>
-    <div class="select_wrapper" :class="{ 'selected': modelValue }" @click="$emit('update:modelValue', !modelValue)">
-        <div class="select">
-            <div class="checked"></div>
+    <div class="select_wrapper" ref="selectRef">
+        <div class="select_input" @click.stop="handleShowMenu">
+            <div class="output">
+                <input v-if="showMenu" v-model="input" type="text" ref="inputRef">
+                <p v-else>{{ selected }}</p>
+            </div>
+            <IconsArrow class="pointer arrow" :class="{ active: showMenu }"></IconsArrow>
         </div>
-        <span>
-            <slot></slot>
-        </span>
+        <div v-if="showMenu" class="select_menu" :class="{ 'reverse': reverse }">
+            <div v-for="el in filteredList" :key="el" class="element" :class="{ 'selected': selected === el }"
+                @click="$emit('select', el); showMenu = false;">
+                {{ el }}
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-    modelValue: boolean
+const props = defineProps<{
+    list: string[],
+    selected: string
 }>();
 
 defineEmits<{
-    (e: 'update:modelValue', value: boolean): () => void
+    (e: 'select', value: string): () => void
 }>();
+
+const selectRef = ref<HTMLDivElement | null>(null);
+const showMenu = shallowRef(false);
+const input = shallowRef('');
+const inputRef = ref<HTMLInputElement | null>(null);
+const reverse = shallowRef(false);
+
+const filteredList = computed(() => {
+    return props.list.filter((el) => el.toLowerCase().includes(input.value.toLowerCase()));
+});
+
+async function handleShowMenu() {
+    if (getDistance(selectRef.value as HTMLDivElement) < 260) {
+        reverse.value = true;
+    } else {
+        reverse.value = false;
+    }
+
+    showMenu.value = !showMenu.value;
+    await nextTick();
+    inputRef.value?.focus();
+}
+
+function getDistance(el: HTMLDivElement) {
+    const vpHeight = window.innerHeight || document.documentElement.clientHeight;
+    const rect = el.getBoundingClientRect();
+
+    return vpHeight - rect.bottom;
+}
+
+useClickOutside(selectRef, () => {
+    showMenu.value = false;
+    input.value = '';
+});
+
+onMounted(() => {
+    setInterval(() => {
+
+        if (selectRef.value === null) return;
+
+        console.log(getDistance(selectRef.value), 'getDistance(selectRef.value)');
+
+    }, 2000);
+})
 </script>
 
 <style lang="scss" scoped>
 @import '../../assets/styles/vars.scss';
 
 .select_wrapper {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    cursor: pointer;
+    padding: 12px;
+    border-radius: 6px;
+    background: $tag-color;
+    position: relative;
     user-select: none;
+    cursor: pointer;
 
-    .select {
-        background: $select-disabled;
-        border-radius: 5px;
-        width: 24px;
-        height: 24px;
-        min-width: 24px;
-        min-height: 24px;
-        cursor: pointer;
+    .select_input {
         display: flex;
+        width: 100%;
+        height: 19px;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
+        cursor: pointer;
 
-        .checked {
-            width: 18px;
-            height: 18px;
-            border-radius: 2px;
-            background: $select-enabled;
-            display: none;
+        .output {
             cursor: pointer;
+        }
+
+        input {
+            width: 350px;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: $text-color-main;
         }
     }
 
-    span {
+    .select_menu {
+        width: 100%;
+        position: absolute;
+        top: 50px;
+        left: 0;
+        background: $tag-color;
+        border-radius: 6px;
+        box-shadow: 0px 6px 15px 0px #FFFFFF1A;
+        max-height: 250px;
+        overflow-y: scroll;
         cursor: pointer;
-        color: $text-color-secondary;
-        font-size: 16px;
-    }
 
-    &.selected {
-        .select {
-            .checked {
-                display: block;
+        .element {
+            padding: 12px 16px;
+            color: $text-placeholder;
+            background: $tag-color;
+
+            &:hover {
+                color: white;
+                background: $select-hover;
             }
         }
 
-        span {
-            color: white;
+        &.reverse {
+            top: -260px;
+        }
+
+        /* width */
+        &::-webkit-scrollbar {
+            width: 6px;
+            border-radius: 6px;
+        }
+
+        /* Track */
+        &::-webkit-scrollbar-track {
+            background: #2E2E2E;
+        }
+
+        /* Handle */
+        &::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+        /* Handle on hover */
+        &::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     }
 }

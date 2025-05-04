@@ -28,7 +28,7 @@
                 <div class="border"></div>
                 <div class="middle_part">
                     <p class="name">{{ userStore.user.name }}</p>
-                    <p class="speciality">{{ userStore.user.speciality.join(', ') }}</p>
+                    <p class="speciality">{{ userStore.user.speciality }}</p>
                     <span>{{ userStore.user.description || 'Нет описания' }}</span>
                 </div>
                 <div class="border"></div>

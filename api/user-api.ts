@@ -15,7 +15,8 @@ export interface User {
     rating: number;
     orders_count: number;
     reviews_count: number;
-    speciality: string[];
+    speciality: string;
+    skills: string[];
 }
 
 export async function getUser() {
