@@ -1,8 +1,16 @@
 <template>
     <div class="img_wrapper">
-        <img src="https://placehold.co/170x170" alt="avatar">
+        <!-- {{ src }} -->
+        <img v-if="src?.includes('/uploads/avatars/')" :src="src" alt="avatar">
+        <img v-else src="https://placehold.co/170x170" alt="avatar">
     </div>
 </template>
+
+<script setup lang="ts">
+defineProps<{
+    src?: string
+}>();
+</script>
 
 <style scoped lang="scss">
 .img_wrapper {
@@ -14,6 +22,9 @@
 
     img {
         border-radius: 6px;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
     }
 }
 </style>

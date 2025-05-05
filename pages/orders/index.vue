@@ -42,6 +42,9 @@
                     <OrdersOrderCard v-for="order in orderStore.orders" :key="order.id" :order="order"
                         @showOrder="showOrder"></OrdersOrderCard>
                 </div>
+                <div class="pagionation">
+                    <UIDevPagionation></UIDevPagionation>
+                </div>
             </div>
         </div>
     </div>
@@ -186,6 +189,12 @@ onMounted(async () => {
             gap: 16px;
             // overflow-y: scroll;
             // max-height: 600px;
+        }
+
+        .pagionation {
+            display: flex;
+            justify-content: center;
+            margin-top: 32px;
         }
     }
 }

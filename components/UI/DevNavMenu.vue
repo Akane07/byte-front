@@ -18,7 +18,7 @@
             <div v-else class="nav-buttons">
                 <IconsHome class="pointer" @click="navigateTo('/orders')"></IconsHome>
                 <IconsChat class="pointer"></IconsChat>
-                <UIUserAvatar class="pointer" @click.stop="showMenu = !showMenu"></UIUserAvatar>
+                <UIUserAvatar class="pointer" @click.stop="showMenu = !showMenu" :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                 <IconsArrow class="pointer arrow" @click.stop="showMenu = !showMenu" :class="{ active: showMenu }">
                 </IconsArrow>
 
@@ -49,6 +49,7 @@
 import DevNavButton from './DevNavButton.vue';
 import DevButton from './DevButton.vue';
 import { useUserStore } from '~/store/userStore';
+import { baseURL } from '~/api';
 
 const userStore = useUserStore();
 

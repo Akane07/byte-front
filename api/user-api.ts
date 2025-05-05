@@ -50,7 +50,7 @@ export async function getUserById(id: string) {
 }
 
 export async function changePassword(password: string, newPassword: string) {
-    const response = await api.put<{ access_token: string }>('/user/password', {
+    const response = await api.post<{ access_token: string }>('/user/change-password', {
         password,
         newPassword
     });
@@ -70,4 +70,10 @@ export async function getCountries() {
     }
 
     return response.data;
+}
+
+export async function setAvatar(data: FormData): Promise<{ avatarUrl: string }> {
+    const res = await api.post("/user/set_avatar", data);
+
+    return res.data;
 }

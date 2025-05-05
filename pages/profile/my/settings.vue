@@ -26,11 +26,25 @@
                         <UIDevInput v-model="general.email" type="text" placeholder="Почта, привязанная к аккануту"
                             disabled></UIDevInput>
                     </div>
+                    <div class="block pass">
+                        <p>Пароль</p>
+                        <UIDevInput v-model="pass.password" type="password" placeholder="Новый пароль"></UIDevInput>
+                        <UIDevInput v-model="pass.newPassword" type="password" placeholder="Новый пароль ещё раз"></UIDevInput>
+                    </div>
                 </div>
                 <div v-if="active === 'profile'" class="settings_form">
                     <div class="block">
                         <p>Имя</p>
                         <UIDevInput v-model="profile.name" type="text" placeholder="Ваше имя"></UIDevInput>
+                    </div>
+                    <div class="block">
+                        <p>Аватар</p>
+                        <div class="photo_wrapper">
+                            <img v-if="userStore.user?.avatar" :src="baseURL + userStore.user.avatar" alt="avatar">
+                            <p v-else>Нажмите, чтобы загрузить фото</p>
+                            <input style="cursor: pointer;" type="file" accept="image/*"
+                                @change="uploadPhoto($event.target.files[0])">
+                        </div>
                     </div>
                     <div class="block">
                         <p>Ваша специальность</p>
@@ -39,7 +53,9 @@
                     </div>
                     <div class="block">
                         <p>Описание профиля</p>
-                        <UIDevTextarea v-model="profile.description" placeholder="Написание привлекательного описания может повысить шансы найти заказ"></UIDevTextarea>
+                        <UIDevTextarea v-model="profile.description"
+                            placeholder="Написание привлекательного описания может повысить шансы найти заказ">
+                        </UIDevTextarea>
                     </div>
                     <div class="block">
                         <p>Страна</p>
@@ -56,7 +72,8 @@
 </template>
 
 <script setup lang="ts">
-import { getCountries } from '~/api/user-api';
+import { baseURL } from '~/api';
+import { getCountries, setAvatar } from '~/api/user-api';
 import { useUserStore } from '~/store/userStore';
 
 const userStore = useUserStore();
@@ -78,6 +95,13 @@ const profile = ref<any>({
     country: '',
 });
 
+const pass = ref({
+    password: '',
+    newPassword: ''
+});
+
+const photo = ref<File | null>(null);
+
 function handleSelect(el: string) {
     profile.value.country = el;
 }
@@ -90,6 +114,31 @@ async function saveUser() {
     delete updateData.email;
 
     await userStore.editMe(updateData);
+
+    console.log(pass.value, 'pass.value');
+    
+
+    if ((pass.value.password === pass.value.newPassword) && pass.value.password) {
+        await userStore.newPassword(pass.value.password, pass.value.newPassword)
+    }
+
+}
+
+async function uploadPhoto(img: File) {
+    if (!userStore.user) return;
+    photo.value = img;
+
+    if (photo.value) {
+        const form = new FormData();
+        form.append('avatar', img);
+        try {
+            const res = await setAvatar(form);
+
+            userStore.user.avatar = res.avatarUrl;
+        } catch (error) {
+            // photoError.value = true;
+        }
+    }
 }
 
 onMounted(async () => {
@@ -105,7 +154,7 @@ onMounted(async () => {
     profile.value = {
         name: userStore.user.name || '',
         speciality: userStore.user.speciality || '',
-        skills: [...userStore.user.skills] ,
+        skills: [...userStore.user.skills],
         description: userStore.user.description || '',
         country: userStore.user.country || null,
     }
@@ -182,8 +231,46 @@ onMounted(async () => {
                     flex-direction: column;
                     gap: 12px;
 
-                    p {
+                    &>p {
                         color: white;
+                    }
+
+                    .photo_wrapper {
+                        width: 254px;
+                        height: 184px;
+                        border-radius: 6px;
+                        border: 2px solid $select-enabled;
+                        background: $tag-color;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 14px;
+                        color: $text-placeholder;
+                        cursor: pointer;
+                        position: relative;
+
+                        img {
+                            border-radius: 5px;
+                            object-fit: cover;
+                            width: 100%;
+                            height: 100%;
+                        }
+
+                        input {
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            opacity: 0;
+                        }
+                    }
+
+                    &.pass {
+                        display: grid;
+                        grid-template-columns: calc(50% - 6px) calc(50% - 6px);
+
+                        p {
+                            grid-column: 1 / span 2;
+                        }
                     }
                 }
             }

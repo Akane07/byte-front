@@ -7,7 +7,7 @@
             <div class="main_info">
                 <div class="left_part">
                     <div class="avatar">
-                        <UIProfileAvatar></UIProfileAvatar>
+                        <UIProfileAvatar :src="baseURL + user?.avatar"></UIProfileAvatar>
                         <p>{{ user.nickname || 'без ника' }}</p>
                     </div>
                     <div class="stats">
@@ -83,6 +83,7 @@
 </template>
 
 <script setup lang="ts">
+import { baseURL } from '~/api';
 import type { User } from '~/api/user-api';
 import { useUserStore } from '~/store/userStore';
 

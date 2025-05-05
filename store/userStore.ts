@@ -1,5 +1,5 @@
 import { setToken } from "~/api";
-import { getUser, getUserById, postUser, type User } from "~/api/user-api";
+import { changePassword, getUser, getUserById, postUser, type User } from "~/api/user-api";
 
 export const useUserStore = defineStore('user', () => {
     const user = ref<User | null>(null);
@@ -43,6 +43,18 @@ export const useUserStore = defineStore('user', () => {
         user.value = res;
     }
 
+    async function newPassword(password: string, newPassword: string): Promise<boolean> {
+        const res = await changePassword(password, newPassword);
+
+        if (res.access_token) {
+            localStorage.setItem('byte-accessToken', res.access_token);
+            setToken(res.access_token);
+            return true;
+        }
+
+        return false;
+    }
+
     return { 
         user,
         isAuth,
@@ -52,5 +64,6 @@ export const useUserStore = defineStore('user', () => {
         getUserId,
         logout,
         editMe,
+        newPassword,
     };
 });
