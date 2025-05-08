@@ -19,7 +19,8 @@
                     </div>
                     <div class="block">
                         <p>Телефон</p>
-                        <UIDevInput v-model="general.phone" type="text" placeholder="Номер телефона" maxlength="14"></UIDevInput>
+                        <UIDevInput v-model="general.phone" type="text" placeholder="Номер телефона" maxlength="14">
+                        </UIDevInput>
                     </div>
                     <div class="block">
                         <p>Почта</p>
@@ -29,7 +30,8 @@
                     <div class="block pass">
                         <p>Пароль</p>
                         <UIDevInput v-model="pass.password" type="password" placeholder="Новый пароль"></UIDevInput>
-                        <UIDevInput v-model="pass.newPassword" type="password" placeholder="Новый пароль ещё раз"></UIDevInput>
+                        <UIDevInput v-model="pass.newPassword" type="password" placeholder="Новый пароль ещё раз">
+                        </UIDevInput>
                     </div>
                 </div>
                 <div v-if="active === 'profile'" class="settings_form">
@@ -48,7 +50,8 @@
                     </div>
                     <div class="block">
                         <p>Ваша специальность</p>
-                        <UIDevInput v-model="profile.speciality" type="text" placeholder="Вы по специальности" maxlength="40">
+                        <UIDevInput v-model="profile.speciality" type="text" placeholder="Вы по специальности"
+                            maxlength="40">
                         </UIDevInput>
                     </div>
                     <div class="block">
@@ -56,6 +59,10 @@
                         <UIDevTextarea v-model="profile.description" maxlength="1000"
                             placeholder="Написание привлекательного описания может повысить шансы найти заказ">
                         </UIDevTextarea>
+                    </div>
+                    <div class="block">
+                        <p>Навыки</p>
+                        <ProfileSkills :skills="profile.skills" @save="saveUser" @delete="deleteSkill"></ProfileSkills>
                     </div>
                     <div class="block">
                         <p>Страна</p>
@@ -106,19 +113,44 @@ function handleSelect(el: string) {
     profile.value.country = el;
 }
 
-async function saveUser() {
+async function deleteSkill(index: number) {
+    console.log(index, 'index');
+
+    profile.value.skills.splice(index, 1);
+    await saveUser(profile.value.skills);
+}
+
+async function saveUser(skills?: string[]) {
+    if (!userStore.user) return;
+    
     const updateData = {
         ...general.value,
         ...profile.value
     };
     delete updateData.email;
 
-    await userStore.editMe(updateData);  
+    await userStore.editMe({
+        ...updateData,
+        skills: skills || updateData.skills
+    });
 
     if ((pass.value.password === pass.value.newPassword) && pass.value.password) {
         await userStore.newPassword(pass.value.password, pass.value.newPassword)
     }
 
+    general.value = {
+        nickname: userStore.user.nickname || '',
+        phone: userStore.user.phone || '',
+        email: userStore.user.email || '',
+    };
+
+    profile.value = {
+        name: userStore.user.name || '',
+        speciality: userStore.user.speciality || '',
+        skills: [...userStore.user.skills],
+        description: userStore.user.description || '',
+        country: userStore.user.country || null,
+    }
 }
 
 async function uploadPhoto(img: File) {

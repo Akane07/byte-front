@@ -30,6 +30,11 @@
                     <p class="name">{{ userStore.user.name }}</p>
                     <p class="speciality">{{ userStore.user.speciality }}</p>
                     <span>{{ userStore.user.description || 'Нет описания' }}</span>
+                    <div class="skills">
+                        <div class="skill" v-for="skill in userStore.user.skills" :key="skill">
+                            {{ skill }}
+                        </div>
+                    </div>
                 </div>
                 <div class="border"></div>
                 <div class="right_part">
@@ -65,13 +70,15 @@
             <div class="portfolio">
                 <div class="header">
                     <p>Портфолио</p>
-                    <UIDevButton :active="false" style="border-color: #8355FA; color: #8355FA;" @click="navigateTo('/profile/new-project')">
+                    <UIDevButton :active="false" style="border-color: #8355FA; color: #8355FA;"
+                        @click="navigateTo('/profile/new-project')">
                         <IconsPlus color="#8355FA" style="transform: scale(1.2);"></IconsPlus>
                         Добавить проект в портфолио
                     </UIDevButton>
                 </div>
                 <div class="portfolio_blocks" v-if="portfolioStore.portfolio.length">
-                    <ProfilePortfolio v-for="portfolio in portfolioStore.portfolio" :key="portfolio" :portfolio="portfolio"></ProfilePortfolio>
+                    <ProfilePortfolio v-for="portfolio in portfolioStore.portfolio" :key="portfolio"
+                        :portfolio="portfolio"></ProfilePortfolio>
                 </div>
             </div>
             <div class="feedbacks">
@@ -185,6 +192,25 @@ onMounted(async () => {
                     font-size: 14px;
                     color: $text-color-secondary;
                 }
+
+                .skills {
+                    padding-top: 12px;
+                    margin-top: auto;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+
+                    .skill {
+                        border-radius: 6px;
+                        padding: 6px 14px;
+                        background: $tag-color;
+                        font-size: 14px;
+                        color: $text-placeholder;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+                }
             }
 
             .right_part {
@@ -238,7 +264,8 @@ onMounted(async () => {
             }
         }
 
-        .portfolio, .feedbacks {
+        .portfolio,
+        .feedbacks {
             display: flex;
             flex-direction: column;
             gap: 40px;

@@ -59,16 +59,6 @@ useClickOutside(selectRef, () => {
     showMenu.value = false;
     input.value = '';
 });
-
-onMounted(() => {
-    setInterval(() => {
-
-        if (selectRef.value === null) return;
-
-        console.log(getDistance(selectRef.value), 'getDistance(selectRef.value)');
-
-    }, 2000);
-})
 </script>
 
 <style lang="scss" scoped>
