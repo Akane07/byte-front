@@ -65,13 +65,13 @@
             <div class="portfolio">
                 <div class="header">
                     <p>Портфолио</p>
-                    <UIDevButton :active="false" style="border-color: #8355FA; color: #8355FA;">
+                    <UIDevButton :active="false" style="border-color: #8355FA; color: #8355FA;" @click="navigateTo('/profile/new-project')">
                         <IconsPlus color="#8355FA" style="transform: scale(1.2);"></IconsPlus>
                         Добавить проект в портфолио
                     </UIDevButton>
                 </div>
-                <div class="portfolio_blocks">
-                    <ProfilePortfolio v-for="n in 8" :key="n"></ProfilePortfolio>
+                <div class="portfolio_blocks" v-if="portfolioStore.portfolio.length">
+                    <ProfilePortfolio v-for="portfolio in portfolioStore.portfolio" :key="portfolio" :portfolio="portfolio"></ProfilePortfolio>
                 </div>
             </div>
             <div class="feedbacks">
@@ -85,9 +85,17 @@
 
 <script setup lang="ts">
 import { baseURL } from '~/api';
+import { usePortfolioStore } from '~/store/portfolioStore';
 import { useUserStore } from '~/store/userStore';
 
 const userStore = useUserStore();
+const portfolioStore = usePortfolioStore();
+
+onMounted(async () => {
+    await userStore.checkAuth();
+
+    await portfolioStore.getMyPortfolio();
+})
 </script>
 
 <style lang="scss" scoped>

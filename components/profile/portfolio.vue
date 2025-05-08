@@ -1,9 +1,9 @@
 <template>
     <div class="work">
-        <img src="https://placehold.co/250x180" alt="">
-        <div class="hover">
+        <img :src="baseURL + portfolio.images[0]" alt="photo">
+        <div class="hover" @click.stop="navigateTo(`/profile/portfolio/${portfolio.id}`)">
             <div class="buttons">
-                <div class="button">
+                <div class="button" @click.stop="handleDelete">
                     <IconsTrash style="transform: scale(1.3);"></IconsTrash>
                 </div>
                 <div class="button">
@@ -11,13 +11,29 @@
                 </div>
             </div>
             <div class="description">
-                <p>Название проекта</p>
-                <span>Тема проекта</span>
+                <p>{{ portfolio.title }}</p>
+                <span>{{ portfolio.role }}</span>
             </div>
             <div class="gradient"></div>
         </div>
     </div>
 </template>
+
+<script setup lang="ts">
+import { baseURL } from '~/api';
+import { type Portfolio } from "~/api/portfolio-api";
+import { usePortfolioStore } from '~/store/portfolioStore';
+
+const props = defineProps<{
+    portfolio: Portfolio
+}>();
+
+const portfolioStore = usePortfolioStore();
+
+async function handleDelete() {
+    await portfolioStore.deletePortfolio(props.portfolio.id);
+}
+</script>
 
 <style scoped lang="scss">
 @import '../../assets/styles/vars.scss';
@@ -31,6 +47,12 @@
     overflow: hidden;
     position: relative;
     cursor: pointer;
+
+    img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
 
     .hover {
         position: absolute;
@@ -64,6 +86,7 @@
             position: absolute;
             bottom: 10px;
             left: 16px;
+
             p {
                 font-weight: 500;
                 font-size: 14px;

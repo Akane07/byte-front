@@ -19,7 +19,7 @@
                     </div>
                     <div class="block">
                         <p>Телефон</p>
-                        <UIDevInput v-model="general.phone" type="text" placeholder="Номер телефона"></UIDevInput>
+                        <UIDevInput v-model="general.phone" type="text" placeholder="Номер телефона" maxlength="14"></UIDevInput>
                     </div>
                     <div class="block">
                         <p>Почта</p>
@@ -48,12 +48,12 @@
                     </div>
                     <div class="block">
                         <p>Ваша специальность</p>
-                        <UIDevInput v-model="profile.speciality" type="text" placeholder="Вы по специальности">
+                        <UIDevInput v-model="profile.speciality" type="text" placeholder="Вы по специальности" maxlength="40">
                         </UIDevInput>
                     </div>
                     <div class="block">
                         <p>Описание профиля</p>
-                        <UIDevTextarea v-model="profile.description"
+                        <UIDevTextarea v-model="profile.description" maxlength="1000"
                             placeholder="Написание привлекательного описания может повысить шансы найти заказ">
                         </UIDevTextarea>
                     </div>
@@ -113,10 +113,7 @@ async function saveUser() {
     };
     delete updateData.email;
 
-    await userStore.editMe(updateData);
-
-    console.log(pass.value, 'pass.value');
-    
+    await userStore.editMe(updateData);  
 
     if ((pass.value.password === pass.value.newPassword) && pass.value.password) {
         await userStore.newPassword(pass.value.password, pass.value.newPassword)

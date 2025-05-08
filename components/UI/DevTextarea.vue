@@ -1,15 +1,16 @@
 <template>
     <div style="position:relative; overflow:hidden;">
         <textarea ref="textareaRef" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"
-            :placeholder="placeholder" style="min-height:40px; height:auto; overflow:hidden; resize:none;"></textarea>
+            :placeholder="placeholder" style="min-height:40px; height:auto; overflow:hidden; resize:none;" :maxlength="maxlength || 200"></textarea>
         <div ref="mirrorRef" style="white-space:pre-wrap; visibility:hidden; position:absolute; z-index:-1;"></div>
     </div>
 </template>
 
 <script lang="ts" setup>
 defineProps<{
-    modelValue: string,
-    placeholder?: string,
+    modelValue: string;
+    placeholder?: string;
+    maxlength?: string;
 }>();
 
 defineEmits<{

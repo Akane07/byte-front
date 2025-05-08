@@ -1,16 +1,30 @@
 <template>
     <div class="input">
-        <input :type="type" :placeholder="placeholder" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" :disabled="disabled">
+        <input ref="inputRef" :type="type" :placeholder="placeholder" :value="modelValue"
+            @input="$emit('update:modelValue', $event.target.value)" :disabled="disabled" autocomplete="off"
+            :maxlength="maxlength || 30">
     </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
     placeholder: string;
     modelValue: any;
     type: 'text' | 'password';
     disabled?: boolean;
+    maxlength?: string;
 }>();
+
+const inputRef = ref<HTMLInputElement | null>(null);
+
+// onMounted(() => {
+//     inputRef.value?.addEventListener('input', function () {
+//         if (!props.maxlength) return;
+//         if (this.value.length > Number(props.maxlength)) {
+//             this.value = this.value.substring(0, Number(props.maxlength));
+//         }
+//     });
+// });
 </script>
 
 <style lang="scss" scoped>
