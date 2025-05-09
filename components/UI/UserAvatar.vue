@@ -1,11 +1,12 @@
 <template>
-    <img v-if="src?.includes('/uploads/avatars/')" :src="src" alt="avatar">
-    <img v-else src="https://placehold.co/40x40" alt="avatar">
+    <img v-if="src?.includes('/uploads/avatars/')" :src="src" alt="avatar" :style="{ width: size, height: size }">
+    <img v-else src="https://placehold.co/40x40" alt="avatar" :style="{ width: size, height: size }">
 </template>
 
 <script setup lang="ts">
 defineProps<{
-    src?: string
+    src?: string;
+    size?: string;
 }>();
 </script>
 

@@ -9,7 +9,7 @@
                 <span v-for="skill in order.skills" :key="skill">{{ skill }}</span>
             </div>
             <div class="stats_info">
-                <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"></UIUserAvatar>
+                <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)" :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                 <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                 <span>Предложений {{ order.response_count }}</span>
             </div>
@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { baseURL } from '~/api';
 import type { Order } from '~/api/order-api';
 import { useUserStore } from '~/store/userStore';
 

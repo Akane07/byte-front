@@ -66,6 +66,10 @@ onMounted(() => {
             align-items: center;
             justify-content: space-between;
 
+            p {
+                color: white;
+            }
+
             .cross {
                 align-self: flex-end;
                 margin-left: 140px;

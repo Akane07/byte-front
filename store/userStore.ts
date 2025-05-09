@@ -4,6 +4,7 @@ import { changePassword, getUser, getUserById, postUser, type User } from "~/api
 export const useUserStore = defineStore('user', () => {
     const user = ref<User | null>(null);
     const isAuth = ref<boolean>(false);
+    const checked = ref(false);
 
     async function fetchUser() {
         const data = await getUser();
@@ -23,6 +24,7 @@ export const useUserStore = defineStore('user', () => {
             isAuth.value = true;
             await fetchUser();
         }
+        checked.value = true;
     }
 
     function logout() {
@@ -58,6 +60,7 @@ export const useUserStore = defineStore('user', () => {
     return { 
         user,
         isAuth,
+        checked,
         
         fetchUser,
         checkAuth,

@@ -77,7 +77,7 @@
                     </UIDevButton>
                 </div>
                 <div class="portfolio_blocks" v-if="portfolioStore.portfolio.length">
-                    <ProfilePortfolio v-for="portfolio in portfolioStore.portfolio" :key="portfolio"
+                    <ProfilePortfolio v-for="portfolio in portfolioStore.portfolio" :key="portfolio.id"
                         :portfolio="portfolio"></ProfilePortfolio>
                 </div>
             </div>

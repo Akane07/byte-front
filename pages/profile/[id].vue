@@ -64,13 +64,10 @@
             <div class="portfolio">
                 <div class="header">
                     <p>Портфолио</p>
-                    <UIDevButton :active="false" style="border-color: #8355FA; color: #8355FA;">
-                        <IconsPlus color="#8355FA" style="transform: scale(1.2);"></IconsPlus>
-                        Добавить проект в портфолио
-                    </UIDevButton>
                 </div>
                 <div class="portfolio_blocks">
-                    <ProfilePortfolio v-for="n in 8" :key="n"></ProfilePortfolio>
+                    <ProfilePortfolio v-for="portfolio in portfolios" :key="portfolio.id"
+                        :portfolio="portfolio" :other="true"></ProfilePortfolio>
                 </div>
             </div>
             <div class="feedbacks">
@@ -86,15 +83,21 @@
 import { baseURL } from '~/api';
 import type { User } from '~/api/user-api';
 import { useUserStore } from '~/store/userStore';
+import type { Portfolio } from '~/api/portfolio-api';
+import { usePortfolioStore } from '~/store/portfolioStore';
 
 const route = useRoute();
 const userStore = useUserStore();
+const portfolioStore = usePortfolioStore();
 
+const portfolios = ref<Portfolio[]>([]);
 const user = ref<User | null>(null);
 
 onMounted(async () => {
     const id = route.params.id as string;
     user.value = await userStore.getUserId(id);
+
+    portfolios.value = await portfolioStore.getPortfoliosById(id);
 });
 </script>
 

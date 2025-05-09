@@ -114,8 +114,6 @@ function handleSelect(el: string) {
 }
 
 async function deleteSkill(index: number) {
-    console.log(index, 'index');
-
     profile.value.skills.splice(index, 1);
     await saveUser(profile.value.skills);
 }

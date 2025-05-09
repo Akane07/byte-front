@@ -12,7 +12,7 @@
                 <div class="main_info">
                     <p>{{ order?.title }}</p>
                     <div class="stats_info">
-                        <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"></UIUserAvatar>
+                        <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)" :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                         <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений {{ order.response_count }}</span>
                     </div>
@@ -58,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { baseURL } from '~/api';
 import type { Order } from '~/api/order-api';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';

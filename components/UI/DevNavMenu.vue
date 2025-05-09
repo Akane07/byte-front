@@ -5,7 +5,7 @@
                 <img src="../../public/logo.svg" alt="logo">
                 <span>FreelanceByte</span>
             </div>
-            <div v-if="!userStore.isAuth" class="nav-buttons">
+            <div v-if="!userStore.isAuth && userStore.checked" class="nav-buttons">
                 <NuxtLink to="/auth/login">
                     <DevButton :active="false">
                         Войти
@@ -15,7 +15,7 @@
                     <DevNavButton>Регистрация</DevNavButton>
                 </NuxtLink>
             </div>
-            <div v-else class="nav-buttons">
+            <div v-else-if="userStore.checked" class="nav-buttons">
                 <IconsHome class="pointer" @click="navigateTo('/orders')"></IconsHome>
                 <IconsChat class="pointer"></IconsChat>
                 <UIUserAvatar class="pointer" @click.stop="showMenu = !showMenu" :src="baseURL + userStore.user?.avatar"></UIUserAvatar>

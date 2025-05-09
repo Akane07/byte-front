@@ -2,7 +2,7 @@
     <UIDevNavMenu></UIDevNavMenu>
     <div class="wrapper">
         <div class="head">
-            <h3>Добавьте новый проект в портфолио</h3>
+            <h3>Редактирование своего проекта</h3>
             <IconsCross class="cursor" @click="navigateTo('/profile/my')"></IconsCross>
         </div>
         <div class="portfolio">
@@ -29,7 +29,9 @@
             </div>
             <div class="right_part">
                 <div v-if="video" class="file">
-                    <video :src="video" controls style="max-width: 100%; height: auto;"></video>
+                    <video :src="baseURL + video" v-if="video.includes('/uploads/files/')" controls
+                        style="max-width: 100%; height: auto;"></video>
+                    <video :src="video" v-else controls style="max-width: 100%; height: auto;"></video>
                     <!-- <div class="hover">
                         <div class="buttons">
                             <div class="button" @click="deleteFile(index)">
@@ -45,7 +47,8 @@
                     </div> -->
                 </div>
                 <div v-for="(file, index) in photos" :key="file" class="file">
-                    <img :src="file" alt="photo">
+                    <img :src="baseURL + file" alt="photo" v-if="file.includes('/uploads/files/')">
+                    <img :src="file" alt="photo" v-else>
                     <div class="hover">
                         <div class="buttons">
                             <div class="button" @click="deleteFile(index)">
@@ -85,10 +88,15 @@
 </template>
 
 <script setup lang="ts">
-import { usePortfolioStore } from '../../store/portfolioStore';
+import { baseURL } from '~/api';
+import { usePortfolioStore } from '~/store/portfolioStore';
+import { useUserStore } from '~/store/userStore';
 
+const route = useRoute();
+const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
 
+const editMode = shallowRef(false);
 const portfolio = ref({
     title: '',
     description: '',
@@ -97,12 +105,12 @@ const portfolio = ref({
 });
 
 const files = ref<File[]>([]);
-const photos = ref([]);
+const photos = ref<string[]>([]);
 const video = ref<string | null>(null);
 const fileVideo = ref<File | null>(null);
 
 const isValid = computed(() => {
-    return portfolio.value.title.length && portfolio.value.description.length && portfolio.value.role.length && files.value.length;
+    return portfolio.value?.title?.length && portfolio.value?.description?.length && portfolio.value?.role?.length && photos.value?.length;
 });
 
 async function handleFile(file: File) {
@@ -112,10 +120,6 @@ async function handleFile(file: File) {
         files.value.push(file);
         const reader = new FileReader();
         reader.onload = (e) => {
-            // newImages.push(e.target.result);
-            // if (newImages.length === files.length) {
-            // photos.value = [...photos.value, ...newImages];
-            // }
             photos.value.push(e.target.result);
         };
         reader.readAsDataURL(file);
@@ -144,7 +148,7 @@ function deleteFile(index: number) {
 }
 
 async function uploadFiles() {
-    if (files.value.length === 0) return;
+    if (photos.value.length === 0) return;
 
     const formData = new FormData();
     if (fileVideo.value) {
@@ -155,6 +159,12 @@ async function uploadFiles() {
         formData.append("images", files.value[file]);
     }
 
+    for (let photo in photos.value) {
+        if (photos.value[photo].includes('/uploads/files/')) {
+            formData.append("photos[]", photos.value[photo]);
+        }
+    }
+
     formData.append("title", portfolio.value.title);
     formData.append("description", portfolio.value.description);
     formData.append("role", portfolio.value.role);
@@ -163,7 +173,17 @@ async function uploadFiles() {
         formData.append("skills", portfolio.value.skills[skill]);
     }
 
-    await portfolioStore.createPortfolio(formData);
+    console.log(
+        files, photos
+    );
+
+    // return;
+
+    if (editMode.value) {
+        await portfolioStore.editPortfolio(formData, route.params.id as string);
+    } else {
+        await portfolioStore.createPortfolio(formData);
+    }
 
     navigateTo('/profile/my');
 }
@@ -173,13 +193,30 @@ function deleteSkill(index: number) {
 }
 
 function saveSkills(skills: string[]) {
-    console.log(skills, 'skills');
     portfolio.value.skills = skills;
 }
+
+onMounted(async () => {
+    await userStore.checkAuth();
+    const id = route.params.id as string;
+
+    if (id) {
+        editMode.value = true;
+        const res = await portfolioStore.getPortfolio(id);
+
+        portfolio.value.title = res.title;
+        portfolio.value.description = res.description;
+        portfolio.value.role = res.role;
+        portfolio.value.skills = res.skills;
+
+        photos.value = res.images;
+        video.value = res.video;
+    }
+})
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+@import '../../../../assets/styles/vars.scss';
 
 .wrapper {
     width: 100%;

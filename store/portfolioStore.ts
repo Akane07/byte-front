@@ -1,4 +1,4 @@
-import { deletePortfolio as delPortfolio, getMyPortfolio as getMyPortfolios, getPortfolioById, postPortfolio, type Portfolio } from "~/api/portfolio-api";
+import { deletePortfolio as delPortfolio, getMyPortfolio as getMyPortfolios, getPortfolioById, getPortfolios, patchPortfolio, postPortfolio, type Portfolio } from "~/api/portfolio-api";
 
 export const usePortfolioStore = defineStore('portfolio', () => {
     const portfolio = ref<Portfolio[]>([]);
@@ -6,11 +6,23 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     async function getMyPortfolio() {
         const res = await getMyPortfolios();
 
-        portfolio.value = res;        
+        portfolio.value = res;
+    }
+
+    async function getPortfoliosById(user_id: string) {
+        const res = await getPortfolios(user_id);
+
+        return res;
     }
 
     async function createPortfolio(data: FormData) {
         const res = await postPortfolio(data);
+
+        return res;
+    }
+
+    async function editPortfolio(data: FormData, id: string) {
+        const res = await patchPortfolio(data, id);
 
         return res;
     }
@@ -29,12 +41,14 @@ export const usePortfolioStore = defineStore('portfolio', () => {
         return res;
     }
 
-    return { 
+    return {
         portfolio,
 
         getMyPortfolio,
         createPortfolio,
+        editPortfolio,
         deletePortfolio,
         getPortfolio,
+        getPortfoliosById,
     };
 });

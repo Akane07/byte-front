@@ -3,31 +3,74 @@
     <UIBackground></UIBackground>
 
     <div class="wrapper">
-        <div class="portfolio" v-if="portfolio">
+        <div class="portfolio" v-if="portfolio && user && userStore.user">
             <div class="images">
-                <video v-if="portfolio.video" :src="baseURL + portfolio.video" controls style="max-width: 100%; height: auto;"></video>
+                <video v-if="portfolio.video" :src="baseURL + portfolio.video" controls
+                    style="max-width: 100%; height: auto;"></video>
                 <img class="image" v-for="image in portfolio.images" :key="image" :src="baseURL + image" alt="">
             </div>
             <div class="info">
-                <div class="like_button">
+                <div v-if="!portfolio.liked_by.includes(userStore.user.id)" class="like_button" @click="ratePortfolio">
                     <IconsLike></IconsLike>
+                </div>
+                <div v-if="portfolio.liked_by.includes(userStore.user.id)" class="like_button liked" @click="ratePortfolio">
+                    <div class="like_wrapper">
+                        <IconsLike></IconsLike>
+                    </div>
                 </div>
                 <div class="main_info">
                     <p>{{ portfolio.title }}</p>
                     <div class="stats">
                         <div class="stat">
                             <IconsEye></IconsEye>
-                            <span>16</span>
+                            <span>{{ portfolio.viewed_by }}</span>
                         </div>
                         <div class="stat">
                             <IconsSmallLike></IconsSmallLike>
-                            <span>16</span>
+                            <span>{{ portfolio.liked_by.length }}</span>
                         </div>
                     </div>
-                    <span>Опубликовано: {{ useOrderCreated(portfolio.created_at) }}</span>
+                    <span>Опубликовано: {{ useUserCreated(portfolio.created_at) }}</span>
                 </div>
                 <div class="description">
                     <p>{{ portfolio.description }}</p>
+                </div>
+            </div>
+            <div class="footer">
+                <div class="user">
+                    <UIUserAvatar size="56px" :src="baseURL + user?.avatar"></UIUserAvatar>
+                    <div class="name">
+                        <p>{{ user?.nickname || 'Без имени' }}</p>
+                        <UIDevButton v-if="user?.id === userStore.user?.id" :active="true"
+                            @click.stop="navigateTo(`/profile/portfolio/edit/${portfolio.id}`)">
+                            <IconsPencil></IconsPencil>
+                            Редактировать проект
+                        </UIDevButton>
+                        <UIDevButton v-if="user?.id !== userStore.user?.id" :active="true"
+                            @click="navigateTo(`/profile/${user?.id}`)">
+                            Перейти в профиль
+                        </UIDevButton>
+                    </div>
+                </div>
+                <div class="other_portfolio" v-if="portfolios">
+                    <ProfilePortfolio v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id" :other="userStore.user.id !== user.id">
+                    </ProfilePortfolio>
+                </div>
+                <div class="bottom_info">
+                    <div class="block">
+                        <p>Роль</p>
+                        <div class="value">
+                            {{ portfolio.role }}
+                        </div>
+                    </div>
+                    <div class="block" v-if="portfolio.skills?.length">
+                        <p>Навыки</p>
+                        <div class="value_skill">
+                            <div v-for="skill in portfolio.skills" :key="skill" class="value skill">
+                                {{ skill }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,7 +79,8 @@
 
 <script setup lang="ts">
 import { baseURL } from '~/api';
-import { type Portfolio } from "~/api/portfolio-api";
+import { likePortfolio, viewPortfolio, type Portfolio } from "~/api/portfolio-api";
+import type { User } from '~/api/user-api';
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
 
@@ -45,12 +89,36 @@ const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
 
 const portfolio = ref<Portfolio>();
+const portfolios = ref<Portfolio[]>();
+const user = ref<User | null>(null);
+
+async function ratePortfolio() {
+    if (!userStore.user) return;
+
+    const isLike = portfolio.value?.liked_by.includes(userStore.user.id);
+
+    portfolio.value = await likePortfolio(route.params.id as string, !isLike);
+}
 
 onMounted(async () => {
     await userStore.checkAuth();
-    const id = route.params.id as string;
+    if (!userStore.user) return;
 
+    const id = route.params.id as string;
     portfolio.value = await portfolioStore.getPortfolio(id);
+
+    if (!portfolio.value) return;
+
+    if (portfolio.value.user_id === userStore.user.id) {
+        user.value = userStore.user;
+        await portfolioStore.getMyPortfolio();
+        portfolios.value = portfolioStore.portfolio;
+    } else {
+        user.value = await userStore.getUserId(portfolio.value.user_id);
+        portfolios.value = await portfolioStore.getPortfoliosById(portfolio.value.user_id);
+    }
+
+    await viewPortfolio(id);
 });
 </script>
 
@@ -78,13 +146,14 @@ onMounted(async () => {
         margin-top: 40px;
         background: $main-color;
         border-radius: 20px;
-        padding: 64px 42px;
+        padding: 64px 0 0 0;
 
         .images {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 64px;
+            padding: 0 42px;
 
             .image {
                 width: 100%;
@@ -97,7 +166,7 @@ onMounted(async () => {
             video {
                 width: 100%;
                 border-radius: 6px;
-                max-height: 500px; 
+                max-height: 500px;
             }
         }
 
@@ -107,6 +176,7 @@ onMounted(async () => {
             align-items: center;
             gap: 32px;
             max-width: 600px;
+            padding: 0 42px;
 
             .like_button {
                 border-radius: 100%;
@@ -116,6 +186,26 @@ onMounted(async () => {
                 align-items: center;
                 justify-content: center;
                 background: $active-button-color;
+                cursor: pointer;
+                padding: 2px;
+
+                svg {
+                    cursor: pointer;
+                }
+
+                &.liked {
+                    background: $button-color-gradient;
+
+                    .like_wrapper {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: $input-auth;
+                        border-radius: 100%;
+                    }
+                }
             }
 
             .main_info {
@@ -123,7 +213,7 @@ onMounted(async () => {
                 flex-direction: column;
                 gap: 16px;
 
-                & > p {
+                &>p {
                     font-weight: 600;
                     font-size: 24px;
                 }
@@ -147,6 +237,78 @@ onMounted(async () => {
                 }
             }
 
+        }
+
+        .footer {
+            width: 100%;
+            background: $tag-color;
+            border-radius: 6px;
+            margin-bottom: 100px;
+            padding: 40px 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+
+            .user {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+
+                .name {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+
+                    p {
+                        color: white;
+                        font-weight: 600;
+                        font-size: 14px;
+                    }
+                }
+            }
+
+            .other_portfolio {
+                display: flex;
+                gap: 24px;
+            }
+
+            .bottom_info {
+                display: flex;
+                align-items: start;
+                justify-content: space-between;
+                gap: 64px;
+
+                .block {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    width: calc(50% - 32px);
+
+                    p {
+                        font-weight: 500;
+                        font-size: 14px;
+                    }
+
+                    .value_skill {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 12px;
+                    }
+
+                    .value {
+                        width: 100%;
+                        color: $text-color-secondary;
+                        font-size: 12px;
+                        padding: 12px 28px;
+                        border-radius: 6px;
+                        background: $input-auth;
+
+                        &.skill {
+                            width: fit-content;
+                        }
+                    }
+                }
+            }
         }
     }
 }

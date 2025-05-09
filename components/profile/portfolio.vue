@@ -2,11 +2,11 @@
     <div class="work">
         <img :src="baseURL + portfolio.images[0]" alt="photo">
         <div class="hover" @click.stop="navigateTo(`/profile/portfolio/${portfolio.id}`)">
-            <div class="buttons">
+            <div class="buttons" v-if="!other">
                 <div class="button" @click.stop="handleDelete">
                     <IconsTrash style="transform: scale(1.3);"></IconsTrash>
                 </div>
-                <div class="button">
+                <div class="button" @click.stop="navigateTo(`/profile/portfolio/edit/${portfolio.id}`)">
                     <IconsEditPen style="transform: scale(1.3);"></IconsEditPen>
                 </div>
             </div>
@@ -25,7 +25,8 @@ import { type Portfolio } from "~/api/portfolio-api";
 import { usePortfolioStore } from '~/store/portfolioStore';
 
 const props = defineProps<{
-    portfolio: Portfolio
+    portfolio: Portfolio,
+    other?: boolean
 }>();
 
 const portfolioStore = usePortfolioStore();

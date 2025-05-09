@@ -1,4 +1,3 @@
-import { UIDevModal, UIDevButton } from '../../.nuxt/components';
 <template>
     <div class="skills_wrapper">
         <div class="skills">
@@ -32,7 +31,7 @@ const props = defineProps<{
     skills: string[]
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
     (e: 'save', value: string[]): () => void,
     (e: 'delete', value: number): () => void
 }>();
