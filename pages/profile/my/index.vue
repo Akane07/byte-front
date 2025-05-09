@@ -64,6 +64,20 @@
                                 <p>Получено отзывов</p>
                             </div>
                         </div>
+                        <div class="links">
+                            <div v-if="userStore.user.telegram" class="link" @click="openLink(userStore.user.telegram)">
+                                <IconsTelegram></IconsTelegram>
+                                <p>Telegram</p>
+                            </div>
+                            <div v-if="userStore.user.git" class="link" @click="openLink(userStore.user.git)">
+                                <IconsGitHub></IconsGitHub>
+                                <p>Git</p>
+                            </div>
+                            <div v-if="userStore.user.behance" class="link" @click="openLink(userStore.user.behance)">
+                                <IconsBehance></IconsBehance>
+                                <p>Behance</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -97,6 +111,14 @@ import { useUserStore } from '~/store/userStore';
 
 const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
+
+function openLink(link: string) {
+    if (link.startsWith('http')) {
+        window.open(link, "_blank");
+    } else {
+        window.open(`https://${link}`, "_blank");
+    }
+}
 
 onMounted(async () => {
     await userStore.checkAuth();
@@ -257,6 +279,26 @@ onMounted(async () => {
                             span {
                                 color: $select-enabled;
                                 font-weight: 500;
+                            }
+                        }
+                    }
+
+                    .links {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 12px;
+
+                        .link {
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                            font-weight: 500;
+                            font-size: 14px;
+                            color: #BEBEC2;
+                            cursor: pointer;
+
+                            P {
+                                cursor: pointer;
                             }
                         }
                     }

@@ -18,26 +18,31 @@
             <div v-else-if="userStore.checked" class="nav-buttons">
                 <IconsHome class="pointer" @click="navigateTo('/orders')"></IconsHome>
                 <IconsChat class="pointer"></IconsChat>
-                <UIUserAvatar class="pointer" @click.stop="showMenu = !showMenu" :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
+                <UIUserAvatar class="pointer" @click.stop="showMenu = !showMenu"
+                    :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                 <IconsArrow class="pointer arrow" @click.stop="showMenu = !showMenu" :class="{ active: showMenu }">
                 </IconsArrow>
 
                 <div ref="menuRef" class="menu" v-if="showMenu">
+                    <div class="menu_wrapper">
                         <div class="menu-content">
-                            <NuxtLink class="pointer" @click="navigateTo('/profile/my')">Мой профиль</NuxtLink>
-                            <NuxtLink class="pointer" @click="navigateTo('/profile/my/settings')">Настройки</NuxtLink>
+                            <NuxtLink class="pointer link" @click="navigateTo('/profile/my')">Мой профиль</NuxtLink>
+                            <NuxtLink class="pointer link" @click="navigateTo('/profile/my/settings')">Настройки
+                            </NuxtLink>
                             <div class="border"></div>
                         </div>
                         <div class="menu-content">
-                            <NuxtLink class="pointer" @click="navigateTo('/orders/my')">Мои заказы</NuxtLink>
+                            <NuxtLink class="pointer link" @click="navigateTo('/orders/my')">Мои заказы</NuxtLink>
                             <!-- <NuxtLink class="pointer">Мои услуги</NuxtLink> -->
-                            <NuxtLink class="pointer" @click="navigateTo('/profile/my/portfolio')">Портфолио</NuxtLink>
+                            <NuxtLink class="pointer link" @click="navigateTo('/profile/my/portfolio')">Портфолио
+                            </NuxtLink>
                             <div class="border"></div>
                         </div>
                         <div class="menu-content">
-                            <NuxtLink class="pointer">Обратная связь</NuxtLink>
-                            <NuxtLink class="pointer">Выход</NuxtLink>
+                            <NuxtLink class="pointer link">Обратная связь</NuxtLink>
+                            <NuxtLink class="pointer link">Выход</NuxtLink>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -132,22 +137,25 @@ span {
 
     .menu {
         width: 220px;
-        border-radius: 16px;
+        border-radius: 6px;
         position: absolute;
         right: -20px;
         top: 54px;
-        padding: 24px 12px;
-        background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(165, 239, 255, 0) 0%, rgba(110, 191, 244, 0) 77.08%, rgba(70, 144, 213, 0) 100%), linear-gradient(0deg, rgba(52, 49, 49, 0.2), rgba(52, 49, 49, 0.2));
-        backdrop-filter: blur(80px);
-        border: 1px solid #EABFFF;
-        color: #C5C5C5;
-        font-weight: 600;
-        font-size: 14px;
-        line-height: 13px;
-        display: flex;
-        flex-direction: column;
-        gap: 40px;
+        padding: 2px;
         z-index: 100000;
+        background: radial-gradient(80.38% 222.5% at -13.75% -12.36%, #98F9FF 0%, rgba(255, 255, 255, 0) 100%),
+            radial-gradient(80.69% 208.78% at 108.28% 112.58%, #EABFFF 0%, rgba(135, 38, 183, 0) 100%);
+
+        .menu_wrapper {
+            width: 100%;
+            border-radius: 6px;
+            padding: 24px 16px;
+            background: #18181C;
+            backdrop-filter: blur(80px);
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
 
         .menu-content {
             display: flex;
@@ -160,6 +168,18 @@ span {
                 background: $border-color;
                 margin-bottom: -12px;
                 margin-top: 12px;
+            }
+
+            .link {
+                color: #C5C5C5;
+                font-weight: 600;
+                font-size: 14px;
+                line-height: 13px;
+                transition: color 0.1s ease-in;
+
+                &:hover {
+                    color: $select-enabled;
+                }
             }
         }
     }

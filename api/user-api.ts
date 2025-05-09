@@ -17,6 +17,9 @@ export interface User {
     reviews_count: number;
     speciality: string;
     skills: string[];
+    telegram: string;
+    behance: string;
+    git: string;
 }
 
 export async function getUser() {

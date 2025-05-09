@@ -10,6 +10,8 @@
                         </p>
                         <p class="page" :class="{ 'active': active === 'profile' }" @click="active = 'profile'">Профиль
                         </p>
+                        <p class="page" :class="{ 'active': active === 'socials' }" @click="active = 'socials'">Ссылки
+                        </p>
                     </div>
                 </div>
                 <div v-if="active === 'general'" class="settings_form">
@@ -69,6 +71,20 @@
                         <UIDevSelect :list="countries" :selected="profile.country" @select="handleSelect"></UIDevSelect>
                     </div>
                 </div>
+                <div v-if="active === 'socials'" class="settings_form">
+                    <div class="block">
+                        <p>Telegram</p>
+                        <UIDevInput v-model="profile.telegram" type="text" placeholder="Вставьте полную ссылку на ваш Telegram"></UIDevInput>
+                    </div>
+                    <div class="block">
+                        <p>Behance</p>
+                        <UIDevInput v-model="profile.behance" type="text" placeholder="Вставьте полную ссылку на ваш Behance"></UIDevInput>
+                    </div>
+                    <div class="block">
+                        <p>Github/Gitlab</p>
+                        <UIDevInput v-model="profile.git" type="text" placeholder="Вставьте полную ссылку на ваш Github/Gitlab"></UIDevInput>
+                    </div>
+                </div>
                 <div class="buttons">
                     <UIDevButton :active="true" @click="saveUser" style="width: 200px;">Сохранить</UIDevButton>
                     <button class="delete">Удалить акканут</button>
@@ -100,6 +116,9 @@ const profile = ref<any>({
     skills: [],
     description: '',
     country: '',
+    telegram: '',
+    behance: '',
+    git: '',
 });
 
 const pass = ref({
@@ -120,16 +139,19 @@ async function deleteSkill(index: number) {
 
 async function saveUser(skills?: string[]) {
     if (!userStore.user) return;
-    
-    const updateData = {
+
+        const updateData = {
         ...general.value,
         ...profile.value
     };
     delete updateData.email;
 
+    let skillsArray = (typeof skills === "object" && skills.length > 0) ? skills : [];
+    skillsArray = (skillsArray.length ? skillsArray : (updateData.skills.length ? updateData.skills : userStore.user.skills))
+
     await userStore.editMe({
         ...updateData,
-        skills: skills || updateData.skills
+        skills: skillsArray,
     });
 
     if ((pass.value.password === pass.value.newPassword) && pass.value.password) {
@@ -148,6 +170,9 @@ async function saveUser(skills?: string[]) {
         skills: [...userStore.user.skills],
         description: userStore.user.description || '',
         country: userStore.user.country || null,
+        telegram: userStore.user.telegram || '',
+        behance: userStore.user.behance || '',
+        git: userStore.user.git || ''
     }
 }
 
@@ -184,6 +209,9 @@ onMounted(async () => {
         skills: [...userStore.user.skills],
         description: userStore.user.description || '',
         country: userStore.user.country || null,
+        telegram: userStore.user.telegram || '',
+        behance: userStore.user.behance || '',
+        git: userStore.user.git || ''
     }
 
     countries.value = await getCountries();
