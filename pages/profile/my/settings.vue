@@ -97,9 +97,11 @@
 <script setup lang="ts">
 import { baseURL } from '~/api';
 import { getCountries, setAvatar } from '~/api/user-api';
+import { useNotifications } from '~/store/notiStore';
 import { useUserStore } from '~/store/userStore';
 
 const userStore = useUserStore();
+const notiStore = useNotifications();
 
 const active = ref('general');
 const countries = ref<string[]>([]);
@@ -174,6 +176,8 @@ async function saveUser(skills?: string[]) {
         behance: userStore.user.behance || '',
         git: userStore.user.git || ''
     }
+
+    await notiStore.setNotification('Изменения сохранены');
 }
 
 async function uploadPhoto(img: File) {

@@ -1,8 +1,9 @@
-import { getOrderById, getOrderByUserId, getOrders, getResponse, getResponses, markOrderViewed, postResponse, type Order } from "~/api/order-api";
+import { getMyResponses, getOrderById, getOrderByUserId, getOrders, getResponse, getResponsesOnOrder, markOrderViewed, postResponse, type Order, type OrderResponse } from "~/api/order-api";
 
 export const useOrderStore = defineStore('order', () => {
     const orders = ref<Order[]>([]);
     const myOrders = ref<Order[]>([]);
+    const myResponses = ref<OrderResponse[]>([]);
 
     async function getAllOrders() {
         const res = await getOrders();
@@ -37,7 +38,7 @@ export const useOrderStore = defineStore('order', () => {
     }
 
     async function getOrderResponses(id: string) {
-        const res = await getResponses(id);
+        const res = await getResponsesOnOrder(id);
 
         return res;
     }
@@ -48,9 +49,16 @@ export const useOrderStore = defineStore('order', () => {
         return res;
     }
 
+    async function getResponses() {
+        const res = await getMyResponses();
+
+        myResponses.value = res;
+    }
+
     return { 
         orders,
         myOrders,
+        myResponses,
 
         getAllOrders,
         getOrder,
@@ -59,5 +67,6 @@ export const useOrderStore = defineStore('order', () => {
         getOrderResponse,
         getOrderResponses,
         getUserOrders,
+        getResponses,
     };
 });

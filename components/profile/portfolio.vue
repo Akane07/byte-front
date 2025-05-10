@@ -41,6 +41,7 @@ async function handleDelete() {
 
 .work {
     width: 250px;
+    min-width: 250px;
     height: 180px;
     background: transparent;
     border-radius: 6px;
@@ -48,6 +49,8 @@ async function handleDelete() {
     overflow: hidden;
     position: relative;
     cursor: pointer;
+    scroll-snap-align: start;
+    user-select: none;
 
     img {
         object-fit: cover;

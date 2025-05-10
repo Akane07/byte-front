@@ -2,6 +2,7 @@
   <div>
     <NuxtPage />
   </div>
+  <Notifications></Notifications>
 </template>
 
 <script setup lang="ts">

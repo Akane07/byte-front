@@ -16,13 +16,20 @@ export interface Order {
     viewed_by: string[];
     is_active: boolean;
     created_at: string;
+    performer?: string;
+    draft?: boolean;
 }
 
-export interface Response {
+export interface OrderResponse {
+    id: string;
     order_id: string;
     user_id: string;
     description: string;
     created_at: string;
+    title: string;
+    price: number;
+    viewed: boolean;
+    price_type: "contract" | "fixed";
 }
 
 
@@ -46,8 +53,18 @@ export async function getOrderById(id: string) {
     }
 }
 
+export async function deleteOrder(id: string) {
+    try {
+        const response = await api.delete(`/order/${id}`);
+
+        return response.data;
+    } catch (e: any) {
+        return e.response.data;
+    }
+}
+
 export async function postResponse(id: string, description: string) {
-    const response = await api.post<Response>(`/order/${id}/response`, {
+    const response = await api.post<OrderResponse>(`/order/${id}/response`, {
         description,
     });
 
@@ -55,13 +72,13 @@ export async function postResponse(id: string, description: string) {
 }
 
 export async function getResponse(id: string) {
-    const response = await api.get<Response>(`/order/${id}/response`);
+    const response = await api.get<OrderResponse>(`/order/${id}/response`);
 
     return response.data;
 }
 
-export async function getResponses(id: string) {
-    const response = await api.get<Response[]>(`/order/${id}/responses`);
+export async function getResponsesOnOrder(id: string) {
+    const response = await api.get<OrderResponse[]>(`/order/${id}/responses`);
 
     return response.data;
 }
@@ -70,9 +87,31 @@ export async function markOrderViewed(orderId: string) {
     await api.post<Order[]>(`/order/${orderId}/viewed`);
 }
 
+
+
 export async function getOrderByUserId(id: string) {
     try {
         const response = await api.get<Order[]>(`/order/user/${id}`);
+
+        return response.data;
+    } catch (e: any) {
+        return e.response.data;
+    }
+}
+
+export async function getMyResponses() {
+    try {
+        const response = await api.post<Order[]>('/order/responses');
+
+        return response.data;
+    } catch (e: any) {
+        return e.response.data;
+    }
+}
+
+export async function deleteResponse(id: string, order_id: string) {
+    try {
+        const response = await api.delete(`/order/${order_id}/response/${id}`);
 
         return response.data;
     } catch (e: any) {

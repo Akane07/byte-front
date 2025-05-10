@@ -28,11 +28,11 @@
                         <p>Все предложения</p>
                     </div>
                     <div class="orders_buttons">
-                        <UIDevNavButton :stroke="true" :secondary="true" @click="navigateTo('/orders/my')">
+                        <!-- <UIDevNavButton :stroke="true" :secondary="true" @click="navigateTo('/orders/my')">
                             <IconsOrders style="transform: scale(1.3); margin-right: 8px;"></IconsOrders>
                             Мои заказы
-                        </UIDevNavButton>
-                        <UIDevNavButton :stroke="true">
+                        </UIDevNavButton> -->
+                        <UIDevNavButton :stroke="true" @click="navigateTo('/orders/create')">
                             <IconsPlus style="transform: scale(1.3); margin-right: 8px;"></IconsPlus>
                             Создать заказ
                         </UIDevNavButton>
@@ -56,8 +56,6 @@
 import { type Order } from '~/api/order-api';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
-
-const route = useRoute();
 
 const userStore = useUserStore();
 const orderStore = useOrderStore();

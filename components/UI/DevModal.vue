@@ -68,6 +68,7 @@ onMounted(() => {
 
             p {
                 color: white;
+                font-weight: 600;
             }
 
             .cross {
@@ -81,6 +82,7 @@ onMounted(() => {
             margin-top: 12px;
             display: flex;
             justify-content: flex-end;
+            gap: 12px;
         }
     }
 }

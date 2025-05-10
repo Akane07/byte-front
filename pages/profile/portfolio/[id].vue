@@ -13,7 +13,8 @@
                 <div v-if="!portfolio.liked_by.includes(userStore.user.id)" class="like_button" @click="ratePortfolio">
                     <IconsLike></IconsLike>
                 </div>
-                <div v-if="portfolio.liked_by.includes(userStore.user.id)" class="like_button liked" @click="ratePortfolio">
+                <div v-if="portfolio.liked_by.includes(userStore.user.id)" class="like_button liked"
+                    @click="ratePortfolio">
                     <div class="like_wrapper">
                         <IconsLike></IconsLike>
                     </div>
@@ -52,9 +53,18 @@
                         </UIDevButton>
                     </div>
                 </div>
-                <div class="other_portfolio" v-if="portfolios">
-                    <ProfilePortfolio v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id" :other="userStore.user.id !== user.id">
-                    </ProfilePortfolio>
+                <div class="portfolio_wrapper" v-if="portfolios">
+                    <div class="other_portfolio">
+                        <ProfilePortfolio v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id"
+                            :other="userStore.user.id !== user.id">
+                        </ProfilePortfolio>
+                        <ProfilePortfolio v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id"
+                            :other="userStore.user.id !== user.id">
+                        </ProfilePortfolio>
+                        <ProfilePortfolio v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id"
+                            :other="userStore.user.id !== user.id">
+                        </ProfilePortfolio>
+                    </div>
                 </div>
                 <div class="bottom_info">
                     <div class="block">
@@ -91,6 +101,7 @@ const portfolioStore = usePortfolioStore();
 const portfolio = ref<Portfolio>();
 const portfolios = ref<Portfolio[]>();
 const user = ref<User | null>(null);
+const divRef = ref<HTMLDivElement | null>(null);
 
 async function ratePortfolio() {
     if (!userStore.user) return;
@@ -113,9 +124,13 @@ onMounted(async () => {
         user.value = userStore.user;
         await portfolioStore.getMyPortfolio();
         portfolios.value = portfolioStore.portfolio;
+        const index = portfolios.value.findIndex((p) => p.id === id) as number;
+        portfolios.value?.splice(index, 1);
     } else {
         user.value = await userStore.getUserId(portfolio.value.user_id);
         portfolios.value = await portfolioStore.getPortfoliosById(portfolio.value.user_id);
+        const index = portfolios.value?.findIndex((p) => p.id === id) as number;
+        portfolios.value?.splice(index, 1);
     }
 
     await viewPortfolio(id);
@@ -244,7 +259,6 @@ onMounted(async () => {
             background: $tag-color;
             border-radius: 6px;
             margin-bottom: 100px;
-            padding: 40px 48px;
             display: flex;
             flex-direction: column;
             gap: 32px;
@@ -253,6 +267,7 @@ onMounted(async () => {
                 display: flex;
                 align-items: center;
                 gap: 16px;
+                padding: 40px 48px 0 48px;
 
                 .name {
                     display: flex;
@@ -267,9 +282,18 @@ onMounted(async () => {
                 }
             }
 
-            .other_portfolio {
-                display: flex;
-                gap: 24px;
+            .portfolio_wrapper {
+                position: relative;
+                margin: 0 40px 0 48px;
+
+                .other_portfolio {
+                    display: flex;
+                    gap: 24px;
+                    overflow-x: auto;
+                    scroll-snap-type: x mandatory;
+                    scrollbar-width: none;
+                    scroll-behavior: smooth;
+                }
             }
 
             .bottom_info {
@@ -277,6 +301,7 @@ onMounted(async () => {
                 align-items: start;
                 justify-content: space-between;
                 gap: 64px;
+                padding: 0 48px 40px 48px;
 
                 .block {
                     display: flex;

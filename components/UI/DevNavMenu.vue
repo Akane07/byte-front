@@ -32,7 +32,7 @@
                             <div class="border"></div>
                         </div>
                         <div class="menu-content">
-                            <NuxtLink class="pointer link" @click="navigateTo('/orders/my')">Мои заказы</NuxtLink>
+                            <NuxtLink class="pointer link" @click="navigateTo('/orders/my')">Мои заказы/отклики</NuxtLink>
                             <!-- <NuxtLink class="pointer">Мои услуги</NuxtLink> -->
                             <NuxtLink class="pointer link" @click="navigateTo('/profile/my/portfolio')">Портфолио
                             </NuxtLink>
