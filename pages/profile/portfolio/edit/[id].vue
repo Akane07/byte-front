@@ -173,12 +173,6 @@ async function uploadFiles() {
         formData.append("skills", portfolio.value.skills[skill]);
     }
 
-    console.log(
-        files, photos
-    );
-
-    // return;
-
     if (editMode.value) {
         await portfolioStore.editPortfolio(formData, route.params.id as string);
     } else {

@@ -1,4 +1,5 @@
-import { getMyResponses, getOrderById, getOrderByUserId, getOrders, getResponse, getResponsesOnOrder, markOrderViewed, postResponse, type Order, type OrderResponse } from "~/api/order-api";
+import { getMyResponses, getOrderById, getOrderByUserId, getOrders, getResponse, getResponsesOnOrder, markOrderViewed, postOrder, postResponse, type Order, type OrderResponse } from "~/api/order-api";
+import { useCategory } from './categoryStore';
 
 export const useOrderStore = defineStore('order', () => {
     const orders = ref<Order[]>([]);
@@ -55,6 +56,16 @@ export const useOrderStore = defineStore('order', () => {
         myResponses.value = res;
     }
 
+    async function createOrder(order: Partial<Order>) {
+        const categoryStore = useCategory();
+
+        order.category = categoryStore.getCategoryIdByTitle(order.category as string) as number;
+
+        const res = await postOrder(order);
+
+        return res;
+    }
+
     return { 
         orders,
         myOrders,
@@ -68,5 +79,6 @@ export const useOrderStore = defineStore('order', () => {
         getOrderResponses,
         getUserOrders,
         getResponses,
+        createOrder,
     };
 });

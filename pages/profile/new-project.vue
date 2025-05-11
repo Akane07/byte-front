@@ -173,7 +173,6 @@ function deleteSkill(index: number) {
 }
 
 function saveSkills(skills: string[]) {
-    console.log(skills, 'skills');
     portfolio.value.skills = skills;
 }
 </script>

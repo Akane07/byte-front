@@ -5,13 +5,20 @@ export interface Order {
     user_id: string;
     title: string;
     description: string;
-    price: number;
-    price_type: 'contract' | 'fixed'; // договорная или фиксированная цена
+    price: number | {
+        from: number;
+        to: number;
+    };
+    price_type: 'contract' | 'fixed' | 'hourly';
     type: 'one-time' | 'reusable';
     for_experts: boolean;
-    deadlines: 'contract' | 'more-than-month' | 'less-than-month' | string;
+    deadlines: 'less-week' | 'more-week' | 'less-month' | 'more-month' | 'contract' | 'custom';
+    deadline_date?: {
+        from: string;
+        to: string;
+    };
     skills: string[];
-    category: string;
+    category: string | number;
     response_count: number;
     viewed_by: string[];
     is_active: boolean;
@@ -36,6 +43,16 @@ export interface OrderResponse {
 export async function getOrders() {
     try {
         const response = await api.get<Order[]>('/order');
+
+        return response.data;
+    } catch (e: any) {
+        return e.response.data;
+    }
+}
+
+export async function postOrder(order: Partial<Order>) {
+    try {
+        const response = await api.post<Order>('/order', order);
 
         return response.data;
     } catch (e: any) {
@@ -86,7 +103,6 @@ export async function getResponsesOnOrder(id: string) {
 export async function markOrderViewed(orderId: string) {
     await api.post<Order[]>(`/order/${orderId}/viewed`);
 }
-
 
 
 export async function getOrderByUserId(id: string) {

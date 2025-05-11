@@ -19,7 +19,7 @@
 <script setup lang="ts">
 const props = defineProps<{
     list: string[],
-    selected: string
+    selected: string,
 }>();
 
 defineEmits<{
@@ -71,6 +71,8 @@ useClickOutside(selectRef, () => {
     position: relative;
     user-select: none;
     cursor: pointer;
+    border: 1px solid #3C3B3B;
+    transition: 0.2s ease-in;
 
     .select_input {
         display: flex;
@@ -105,6 +107,7 @@ useClickOutside(selectRef, () => {
         max-height: 250px;
         overflow-y: scroll;
         cursor: pointer;
+        z-index: 100;
 
         .element {
             padding: 12px 16px;
@@ -141,6 +144,16 @@ useClickOutside(selectRef, () => {
         &::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+    }
+
+    &:hover {
+        border: 1px solid #444343;
+        background: rgb(50, 50, 50);
+    }
+
+    &:focus-within {
+        border: 1px solid #444343;
+        background: rgb(50, 50, 50);
     }
 }
 </style>

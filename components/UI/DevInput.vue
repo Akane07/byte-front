@@ -35,6 +35,8 @@ const inputRef = ref<HTMLInputElement | null>(null);
     border-radius: 6px;
     background: $tag-color;
     cursor: pointer;
+    border: 1px solid #3C3B3B;
+    transition: 0.2s ease-in;
 
     input {
         padding: 12px 16px;
@@ -53,6 +55,16 @@ const inputRef = ref<HTMLInputElement | null>(null);
             opacity: 0.8;
             cursor: not-allowed;
         }
+    }
+
+    &:hover {
+        border: 1px solid #444343;
+        background: rgb(50, 50, 50);
+    }
+
+    &:focus-within {
+        border: 1px solid #444343;
+        background: rgb(50, 50, 50);
     }
 }
 </style>

@@ -1,7 +1,8 @@
 <template>
     <div style="position:relative; overflow:hidden;">
         <textarea ref="textareaRef" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"
-            :placeholder="placeholder" style="min-height:40px; height:auto; overflow:hidden; resize:none;" :maxlength="maxlength || 200"></textarea>
+            :placeholder="placeholder" style="min-height:40px; height:auto; overflow:hidden; resize:none;"
+            :maxlength="maxlength || 200"></textarea>
         <div ref="mirrorRef" style="white-space:pre-wrap; visibility:hidden; position:absolute; z-index:-1;"></div>
     </div>
 </template>
@@ -52,6 +53,8 @@ textarea {
     padding: 12px 16px;
     color: $text-color-main;
     font-size: 16px;
+    border: 1px solid #3C3B3B;
+    transition: 0.2s ease-in;
 
     &::placeholder {
         color: $text-placeholder;
@@ -60,6 +63,16 @@ textarea {
     &:disabled {
         opacity: 0.8;
         cursor: not-allowed;
+    }
+
+    &:hover {
+        border: 1px solid #444343;
+        background: rgb(50, 50, 50);
+    }
+
+    &:focus-within {
+        border: 1px solid #444343;
+        background: rgb(50, 50, 50);
     }
 }
 </style>
