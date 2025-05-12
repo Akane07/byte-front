@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-defineProps<{
+const props = defineProps<{
     modelValue: string;
     placeholder?: string;
     maxlength?: string;
@@ -21,7 +21,21 @@ defineEmits<{
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const mirrorRef = ref<HTMLDivElement | null>(null);
 
+watch(props, () => {
+    console.log(props.modelValue, 'props watch');
+    
+    if (!textareaRef.value) return;
+    if (!mirrorRef.value) return;
+
+    mirrorRef.value.textContent = textareaRef.value.value;
+    textareaRef.value.style.height = 'auto';
+    textareaRef.value.style.height = (textareaRef.value.scrollHeight > 100 ? textareaRef.value.scrollHeight : 100) + 'px';
+}, {
+    deep: true
+})
+
 onMounted(() => {
+    console.log(props.modelValue, 'props');
     if (!textareaRef.value) return;
     if (!mirrorRef.value) return;
 

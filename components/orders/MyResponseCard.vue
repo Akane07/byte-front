@@ -8,7 +8,7 @@
             <div class="stats_info">
                 <!-- <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)" :src="baseURL + userStore.user?.avatar"></UIUserAvatar> -->
                 <span class="border">Отклик от {{ useUserCreated(response.created_at) }}</span>
-                <button class="border edit">Редактировать</button>
+                <button class="border edit" @click="navigateTo(`/orders/${response.order_id}?edit=true`)">Редактировать</button>
                 <button class="border delete" @click.stop="modal = true">Удалить отклик</button>
             </div>
         </div>
@@ -161,14 +161,15 @@ async function handleDelete() {
         .tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 8px;
             margin: 8px 0;
 
             span {
                 background: $tag-secondary-color;
                 color: $text-color-secondary;
-                padding: 6px 12px;
+                padding: 6px 14px;
                 border-radius: 6px;
+                font-size: 14px;
             }
         }
     }

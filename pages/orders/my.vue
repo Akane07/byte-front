@@ -31,7 +31,8 @@
                     </div>
                 </div>
                 <div class="orders_list" v-if="orderStore.myOrders.length">
-                    <OrdersMyOrderCard v-for="order in orderStore.myOrders" :key="order.id" :order="order" @update-orders="updateOrders"></OrdersMyOrderCard>
+                    <OrdersMyOrderCard v-for="order in orderStore.myOrders" :key="order.id" :order="order"
+                        @update-orders="updateOrders"></OrdersMyOrderCard>
                 </div>
                 <div class="orders_list" v-else>
                     <p>У вас нет активных заказов</p>
@@ -69,6 +70,10 @@
                         </UIDevNavButton>
                     </div>
                 </div>
+                <div class="orders_list" v-if="orderStore.myDrafts.length">
+                    <OrdersMyDraftCard v-for="order in orderStore.myDrafts" :key="order.id"
+                        :order="order"></OrdersMyDraftCard>
+                </div>
             </div>
         </div>
     </div>
@@ -96,6 +101,7 @@ onMounted(async () => {
     if (!userStore.user?.id) return;
     orderStore.myOrders = await orderStore.getUserOrders(userStore.user?.id);
     await orderStore.getResponses();
+    await orderStore.getMyDrafts(userStore.user.id);
 })
 </script>
 

@@ -8,7 +8,8 @@
                 <div class="main_info">
                     <p>{{ order?.title }}</p>
                     <div class="stats_info">
-                        <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)" :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
+                        <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"
+                            :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                         <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений {{ order.response_count }}</span>
                     </div>
@@ -21,14 +22,14 @@
                 </div>
                 <div class="preferences">
                     <div class="block">
-                        <IconsCalendar style="width: 40px; height: 40px;"></IconsCalendar>
+                        <IconsCalendar style="min-width: 30px; min-height: 30px;"></IconsCalendar>
                         <div class="text">
                             <p>{{ useOrderDeadlines(order.deadlines) }}</p>
                             <span>Продолжительность проекта</span>
                         </div>
                     </div>
                     <div class="block" v-if="order.for_experts">
-                        <IconsExpert style="width: 40px; height: 40px;"></IconsExpert>
+                        <IconsExpert style="min-width: 30px; min-height: 30px;"></IconsExpert>
                         <div class="text">
                             <p>Для экспертов</p>
                             <span>Я готов платить более высокую ставку опытным фрилансерам.</span>
@@ -203,7 +204,10 @@ watch(props, async () => {
                 }
             }
 
-            .description, .type, .preferences, .skills {
+            .description,
+            .type,
+            .preferences,
+            .skills {
                 font-size: 14px;
                 padding: 24px 12px 24px 0;
                 border-bottom: 1px solid $border-color;
@@ -219,9 +223,14 @@ watch(props, async () => {
                     gap: 12px;
 
                     .text {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
+
                         p {
                             font-weight: 600;
-                            font-size: 13px;
+                            font-size: 12px;
+                            white-space: nowrap;
                         }
 
                         span {
@@ -245,18 +254,19 @@ watch(props, async () => {
                 .tags {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 12px;
+                    gap: 8px;
 
                     span {
                         background: $tag-color;
                         color: $text-color-secondary;
-                        padding: 6px 12px;
+                        padding: 6px 14px;
                         border-radius: 6px;
+                        font-size: 14px;
                     }
                 }
             }
 
-            & > p {
+            &>p {
                 padding-top: 12px;
                 font-size: 12px;
                 color: $text-color-secondary;
@@ -277,6 +287,7 @@ watch(props, async () => {
                 flex-direction: column;
                 align-items: center;
                 gap: 16px;
+
                 p {
                     font-weight: 600;
                     font-size: 16px;
@@ -289,11 +300,11 @@ watch(props, async () => {
                 flex-direction: column;
                 gap: 16px;
 
-                & > p {
+                &>p {
                     color: white;
                     font-weight: 600;
                     font-size: 15px;
-                } 
+                }
 
                 .block {
                     display: flex;
@@ -344,7 +355,7 @@ watch(props, async () => {
                     }
                 }
 
-                & > span {
+                &>span {
                     color: $active-button-color;
                     font-weight: 600;
                     font-size: 12px;

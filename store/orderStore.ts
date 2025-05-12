@@ -1,10 +1,11 @@
-import { getMyResponses, getOrderById, getOrderByUserId, getOrders, getResponse, getResponsesOnOrder, markOrderViewed, postOrder, postResponse, type Order, type OrderResponse } from "~/api/order-api";
+import { getDrafts, getMyResponses, getOrderById, getOrderByUserId, getOrders, getResponse, getResponsesOnOrder, markOrderViewed, patchOrder, postOrder, postResponse, type Order, type OrderResponse } from "~/api/order-api";
 import { useCategory } from './categoryStore';
 
 export const useOrderStore = defineStore('order', () => {
     const orders = ref<Order[]>([]);
     const myOrders = ref<Order[]>([]);
     const myResponses = ref<OrderResponse[]>([]);
+    const myDrafts = ref<Order[]>([]);
 
     async function getAllOrders() {
         const res = await getOrders();
@@ -14,12 +15,13 @@ export const useOrderStore = defineStore('order', () => {
         }
     }
 
-    async function getOrder(id: string) {
+    async function getOrder(id: string): Promise<Order | null> {
         const res = await getOrderById(id);
 
         if (res.id) {
             return res;
         }
+        return null;
     }
 
     async function viewOrder(id: string) {
@@ -50,6 +52,14 @@ export const useOrderStore = defineStore('order', () => {
         return res;
     }
 
+    async function getMyDrafts(user_id: string) {
+        const drafts = await getDrafts(user_id);
+
+        if (drafts.length) {
+            myDrafts.value = drafts;
+        }
+    }
+
     async function getResponses() {
         const res = await getMyResponses();
 
@@ -57,19 +67,37 @@ export const useOrderStore = defineStore('order', () => {
     }
 
     async function createOrder(order: Partial<Order>) {
+
+        if (order.draft) {
+            const res = await postOrder(order);
+
+            return res;
+        }
+
         const categoryStore = useCategory();
 
-        order.category = categoryStore.getCategoryIdByTitle(order.category as string) as number;
+        order.category = categoryStore.getCategoryIdByTitle(order.category as unknown as string) as number;
 
         const res = await postOrder(order);
 
         return res;
     }
 
-    return { 
+    async function editOrder(order: Partial<Order>, order_id: string) {
+        const categoryStore = useCategory();
+
+        order.category = categoryStore.getCategoryIdByTitle(order.category as unknown as string) as number;
+
+        const res = await patchOrder(order_id, order);
+
+        return res;
+    }
+
+    return {
         orders,
         myOrders,
         myResponses,
+        myDrafts,
 
         getAllOrders,
         getOrder,
@@ -78,7 +106,9 @@ export const useOrderStore = defineStore('order', () => {
         getOrderResponse,
         getOrderResponses,
         getUserOrders,
+        getMyDrafts,
         getResponses,
         createOrder,
+        editOrder,
     };
 });

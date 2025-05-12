@@ -18,13 +18,13 @@ export interface Order {
         to: string;
     };
     skills: string[];
-    category: string | number;
+    category: number;
     response_count: number;
     viewed_by: string[];
     is_active: boolean;
     created_at: string;
     performer?: string;
-    draft?: boolean;
+    draft: boolean;
 }
 
 export interface OrderResponse {
@@ -50,9 +50,29 @@ export async function getOrders() {
     }
 }
 
+export async function getDrafts(user_id: string) {
+    try {
+        const response = await api.get<Order[]>(`/order/user/${user_id}/drafts`);
+
+        return response.data;
+    } catch (e: any) {
+        return e.response.data;
+    }
+}
+
 export async function postOrder(order: Partial<Order>) {
     try {
         const response = await api.post<Order>('/order', order);
+
+        return response.data;
+    } catch (e: any) {
+        return e.response.data;
+    }
+}
+
+export async function patchOrder(order_id: string, order: Partial<Order>) {
+    try {
+        const response = await api.patch<Order>(`/order/${order_id}`, order);
 
         return response.data;
     } catch (e: any) {
@@ -82,6 +102,14 @@ export async function deleteOrder(id: string) {
 
 export async function postResponse(id: string, description: string) {
     const response = await api.post<OrderResponse>(`/order/${id}/response`, {
+        description,
+    });
+
+    return response.data;
+}
+
+export async function editResponse(id: string, response_id: string, description: string) {
+    const response = await api.patch<OrderResponse>(`/order/${id}/response/${response_id}`, {
         description,
     });
 

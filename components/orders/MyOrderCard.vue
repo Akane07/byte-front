@@ -13,15 +13,15 @@
                     :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                 <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                 <span class="border">Предложений {{ order.response_count }}</span>
-                <button class="border edit">Редактировать</button>
+                <button class="border edit" @click="navigateTo(`/orders/${order.id}/edit`)">Редактировать</button>
                 <button class="border delete" @click.stop="modal = true">Удалить заказ</button>
             </div>
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton v-if="!order.is_active" :active="false">В архиве</UIDevButton>
-            <UIDevButton v-else-if="order.is_active && !order.performer" :active="true">Активен</UIDevButton>
-            <UIDevButton v-else-if="order.is_active && order.performer" :active="true">Есть исполнитель</UIDevButton>
+            <UIDevButton v-if="!order.is_active" :active="false" style="min-width: 155px;">В архиве</UIDevButton>
+            <UIDevButton v-else-if="order.is_active && !order.performer" :active="true" style="min-width: 155px;">Активен</UIDevButton>
+            <UIDevButton v-else-if="order.is_active && order.performer" :active="true" style="min-width: 155px;">Есть исполнитель</UIDevButton>
         </div>
     </div>
 
@@ -92,6 +92,7 @@ const viewed = computed(() => {
         border-left: 1px solid $border-color;
         padding-left: 40px;
         cursor: pointer;
+        min-width: 195px;
 
         p {
             font-weight: 600;
@@ -176,14 +177,15 @@ const viewed = computed(() => {
         .tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 8px;
             margin: 8px 0;
 
             span {
                 background: $tag-secondary-color;
                 color: $text-color-secondary;
-                padding: 6px 12px;
+                padding: 6px 14px;
                 border-radius: 6px;
+                font-size: 14px;
             }
         }
     }

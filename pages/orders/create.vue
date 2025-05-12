@@ -189,8 +189,8 @@
         <div class="right_part">
           <div class="block">
             <p>Подробно опишите, что нужно сделать</p>
-            <UIDevTextarea v-model="newOrder.description"
-              placeholder="Описание вашего заказа" maxlength="2000"></UIDevTextarea>
+            <UIDevTextarea v-model="newOrder.description" placeholder="Описание вашего заказа" maxlength="2000">
+            </UIDevTextarea>
           </div>
         </div>
       </div>
@@ -203,8 +203,9 @@
       <div class="actions">
         <UIDevButton class="next" :active="false" @click="prevStep">Назад</UIDevButton>
         <div class="right">
-          <button class="draft">Сохранить как черновик</button>
-          <UIDevButton class="next" :active="true" @click="nextStep">{{ step === 5 ? 'Опубликовать' : 'Далее' }}</UIDevButton>
+          <button class="draft" @click="saveAsDraft">Сохранить как черновик</button>
+          <UIDevButton class="next" :active="true" @click="nextStep">{{ step === 5 ? 'Опубликовать' : 'Далее' }}
+          </UIDevButton>
         </div>
       </div>
     </div>
@@ -217,11 +218,13 @@
 <script setup lang="ts">
 import { IconsCalendar } from "#components";
 import { useCategory } from "~/store/categoryStore";
+import { useNotifications } from "~/store/notiStore";
 import { useOrderStore } from "~/store/orderStore";
 
 const router = useRouter();
 const categoryStore = useCategory();
 const orderStore = useOrderStore();
+const notifications = useNotifications();
 
 const modal = shallowRef(false);
 const wrapperRef = ref<HTMLDivElement | null>(null);
@@ -282,7 +285,7 @@ function prevStep() {
   }
 }
 
-function nextStep() {
+async function nextStep() {
   switch (step.value) {
     case 1:
       if (newOrder.value.title) {
@@ -318,8 +321,18 @@ function nextStep() {
       return;
     case 5:
       newOrder.value.draft = false;
-      orderStore.createOrder(newOrder.value as any);
-      return;
+      await orderStore.createOrder(newOrder.value as any);
+      notifications.setNotification('Заказ успешно опубликован!')
+      navigateTo('/orders/my');
+  }
+}
+
+async function saveAsDraft() {
+  if ((step.value > 1) || newOrder.value.title) {
+    newOrder.value.draft = true;
+    await orderStore.createOrder(newOrder.value as any);
+  } else {
+    await notifications.setNotification('Нельзя сохранить пустой заказ');
   }
 }
 
@@ -491,6 +504,7 @@ onMounted(async () => {
           gap: 8px;
           flex-wrap: wrap;
           min-height: 120px;
+          user-select: none;
 
           .tag {
             display: flex;

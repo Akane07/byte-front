@@ -127,14 +127,15 @@ const viewed = computed(() => {
         .tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 8px;
             margin: 8px 0;
 
             span {
                 background: $tag-secondary-color;
                 color: $text-color-secondary;
-                padding: 6px 12px;
+                padding: 6px 14px;
                 border-radius: 6px;
+                font-size: 14px;
             }
         }
     }

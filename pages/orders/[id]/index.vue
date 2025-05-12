@@ -12,7 +12,8 @@
                 <div class="main_info">
                     <p>{{ order?.title }}</p>
                     <div class="stats_info">
-                        <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)" :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
+                        <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"
+                            :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                         <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений {{ order.response_count }}</span>
                     </div>
@@ -25,14 +26,14 @@
                 </div>
                 <div class="preferences">
                     <div class="block">
-                        <IconsCalendar style="width: 40px; height: 40px;"></IconsCalendar>
+                        <IconsCalendar style="min-width: 40px; min-height: 40px;"></IconsCalendar>
                         <div class="text">
-                            <p>{{ useOrderDeadlines(order.deadlines) }}</p>
+                            <p>{{ useOrderDeadlines(order.deadlines, order.deadline_date) }}</p>
                             <span>Продолжительность проекта</span>
                         </div>
                     </div>
                     <div class="block" v-if="order.for_experts">
-                        <IconsExpert style="width: 40px; height: 40px;"></IconsExpert>
+                        <IconsExpert style="min-width: 40px; min-height: 40px;"></IconsExpert>
                         <div class="text">
                             <p>Для экспертов</p>
                             <span>Я готов платить более высокую ставку опытным фрилансерам.</span>
@@ -47,19 +48,60 @@
                 </div>
                 <p>{{ useUserCreated(order.created_at) }}</p>
             </div>
-            <div class="right_part">
+            <div class="right_part" v-if="!response.id">
                 <p>Ваше предложение</p>
-                <UIDevTextarea v-model="response.description"></UIDevTextarea>
-                <UIDevButton style="align-self: flex-start;" :active="true" :disabled="!response.description"
+                <UIDevTextarea v-model="newResponse.description"></UIDevTextarea>
+                <UIDevButton style="align-self: flex-start;" :active="true" :disabled="!newResponse.description"
                     @click="handlePostResponse">Откликнуться</UIDevButton>
+            </div>
+            <div class="right_part" v-if="response.id && !edit && userStore.user">
+                <p>Ваше предложение</p>
+                <div class="block">
+                    <UIUserAvatar :src="baseURL + userStore.user?.avatar"
+                        @click="navigateTo(`/profile/${userStore.user.id}`)"></UIUserAvatar>
+                    <span>Отклик от {{ useUserCreated(response.created_at) }}</span>
+                </div>
+                <div class="block">
+                    <p>{{ response.description }}</p>
+                </div>
+                <div class="actions">
+                    <button class="edit" @click="edit = true">Редактировать</button>
+                    <button class="delete" @click="modal = true">Удалить</button>
+                </div>
+            </div>
+            <div class="right_part" v-if="response.id && edit && userStore.user">
+                <p>Ваше предложение</p>
+                <div class="block">
+                    <UIUserAvatar :src="baseURL + userStore.user?.avatar"
+                        @click="navigateTo(`/profile/${userStore.user.id}`)"></UIUserAvatar>
+                    <span>Отклик от {{ useUserCreated(response.created_at) }}</span>
+                </div>
+                <div class="block">
+                    <UIDevTextarea v-model="response.description" style="width: 100%;"></UIDevTextarea>
+                </div>
+                <div class="actions">
+                    <UIDevButton style="align-self: flex-start;" :active="true" @click="handleEditResponse">Подтвердить
+                    </UIDevButton>
+                    <button class="delete" @click="edit = false">Отменить</button>
+                </div>
             </div>
         </div>
     </div>
+
+    <UIDevModal v-if="modal" title="Подтверждение" @close="modal = false">
+        <template #body>
+            <p class="confirm">Вы уверены, что хотите удалить свой отклик? Отменить это действие будет невозможно.</p>
+        </template>
+        <template #buttons>
+            <UIDevButton :active="false" @click.stop="modal = false">Отмена</UIDevButton>
+            <UIDevButton :active="true" @click.stop="handleDelete">Удалить</UIDevButton>
+        </template>
+    </UIDevModal>
 </template>
 
 <script setup lang="ts">
 import { baseURL } from '~/api';
-import type { Order } from '~/api/order-api';
+import { deleteResponse, editResponse, type Order } from '~/api/order-api';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
 
@@ -69,14 +111,50 @@ const userStore = useUserStore();
 
 const order = ref<Order | null>(null);
 
-const response = ref({
+const edit = shallowRef(false);
+const modal = shallowRef(false);
+const newResponse = ref({
     description: ''
+});
+const response = ref({
+    created_at: '',
+    description: '',
+    id: '',
 });
 
 async function handlePostResponse() {
     if (!route.params.id) return;
 
-    const res = await orderStore.postOrderResponse(route.params.id as string, response.value.description);
+    const res = await orderStore.postOrderResponse(route.params.id as string, newResponse.value.description);
+
+    response.value.created_at = res.created_at;
+    response.value.description = res.description;
+    response.value.id = res.id;
+    newResponse.value.description = '';
+}
+
+async function handleEditResponse() {
+    if (!order.value) return;
+
+    const res = await editResponse(order.value.id, response.value.id, response.value.description);
+
+    response.value.created_at = res.created_at;
+    response.value.description = res.description;
+    response.value.id = res.id;
+    edit.value = false;
+}
+
+async function handleDelete() {
+    if (!order.value) return;
+    const res = await deleteResponse(response.value.id, order.value.id);
+
+    if (res) {
+        response.value.created_at = '';
+        response.value.description = '';
+        response.value.id = '';
+        modal.value = false;
+        order.value = await orderStore.getOrder(route.params.id as string);
+    }
 }
 
 onMounted(async () => {
@@ -89,11 +167,15 @@ onMounted(async () => {
     if (hasRes.description) {
         response.value = hasRes;
     }
+
+    if (route.query.edit) {
+        edit.value = true;
+    }
 })
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+@import '../../../assets/styles/vars.scss';
 
 .wrapper {
     display: flex;
@@ -166,9 +248,13 @@ onMounted(async () => {
                     gap: 12px;
 
                     .text {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
                         p {
                             font-weight: 600;
-                            font-size: 13px;
+                            font-size: 12px;
+                            white-space: nowrap;
                         }
 
                         span {
@@ -192,13 +278,14 @@ onMounted(async () => {
                 .tags {
                     display: flex;
                     flex-wrap: wrap;
-                    gap: 12px;
+                    gap: 8px;
 
                     span {
                         background: $tag-color;
                         color: $text-color-secondary;
-                        padding: 6px 12px;
+                        padding: 6px 14px;
                         border-radius: 6px;
+                        font-size: 14px;
                     }
                 }
             }
@@ -240,6 +327,52 @@ onMounted(async () => {
                 font-weight: 500;
                 font-size: 22px;
             }
+
+            .block {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid $border-color;
+
+                span {
+                    font-size: 12px;
+                    color: $text-color-secondary;
+                }
+
+                p {
+                    font-weight: 500;
+                    font-size: 14px;
+                    color: $text-color-main;
+                    padding-bottom: 8px;
+                }
+            }
+
+            .actions {
+                display: flex;
+                gap: 24px;
+
+                .edit {
+                    background: #DD6B20;
+                    border-radius: 6px;
+                    padding: 12px 28px;
+                    color: white;
+                    border: none;
+                    outline: none;
+                    cursor: pointer;
+                }
+
+                .delete {
+                    width: 160px;
+                    background: #FF6969;
+                    border-radius: 6px;
+                    padding: 12px 28px;
+                    color: white;
+                    border: none;
+                    outline: none;
+                    cursor: pointer;
+                }
+            }
         }
 
         @media screen and (max-width: 1200px) {
@@ -260,5 +393,10 @@ onMounted(async () => {
             }
         }
     }
+}
+
+.confirm {
+    max-width: 400px;
+    color: white;
 }
 </style>

@@ -13,7 +13,7 @@ export const useNotifications = defineStore('notifications', () => {
 
         setTimeout(() => {
             div.classList.add('active');
-        }, 1000);
+        }, 100);
 
         setTimeout(() => {
             div.classList.remove('active');

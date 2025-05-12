@@ -13,6 +13,8 @@ export const useCategory = defineStore('category', () => {
     }
 
     async function getSkillsById(title: string) {
+        console.log(title, 'title');
+        
         const id = categories.value.find((cat) => {
             return cat.title === title;
         })?.id;
@@ -31,12 +33,12 @@ export const useCategory = defineStore('category', () => {
         return id;
     }
 
-    function getCategoryTItleById(id: number) {
+    function getCategoryTitleById(id: number) {
         const title = categories.value.find((cat) => {
             return cat.id === id;
         })?.title;
 
-        return title;
+        return title || '';
     }
 
     return {
@@ -47,6 +49,6 @@ export const useCategory = defineStore('category', () => {
         getAllCategories,
         getSkillsById,
         getCategoryIdByTitle,
-        getCategoryTItleById,
+        getCategoryTitleById,
     };
 });
