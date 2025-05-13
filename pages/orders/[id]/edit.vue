@@ -15,7 +15,7 @@
                 </div>
                 <div class="right_part">
                     <div class="block">
-                        <p>Напишите название для своего заказа</p>
+                        <p>Напишите название для своего заказа<span style="color: #FF6969">*</span></p>
                         <UIDevInput v-model="newOrder.title" type="text"
                             placeholder="Например, Front-end разработчик или Web-designer"></UIDevInput>
                     </div>
@@ -49,7 +49,7 @@
                 </div>
                 <div class="right_part">
                     <div class="block">
-                        <p>Категория заказа</p>
+                        <p>Категория заказа<span style="color: #FF6969">*</span></p>
                         <UIDevSelect style="width: 100%" :list="categoryStore.mapCategories"
                             :selected="newOrder.category" @select="handleSelect"></UIDevSelect>
                     </div>
@@ -89,7 +89,7 @@
                                 <IconsCalendar style="transform: scale(1.4);"></IconsCalendar>
                                 <div class="text">
                                     <p>{{ deadline }}</p>
-                                    <span>Продолжительность проекта</span>
+                                    <span>Продолжительность проекта<span style="color: #FF6969">*</span></span>
                                 </div>
                             </div>
                             <div class="checkbox" @click="modal = true">
@@ -193,7 +193,7 @@
                 </div>
                 <div class="right_part">
                     <div class="block">
-                        <p>Подробно опишите, что нужно сделать</p>
+                        <p>Подробно опишите, что нужно сделать<span style="color: #FF6969">*</span></p>
                         <UIDevTextarea v-if="newOrder.description" v-model="newOrder.description" placeholder="Описание вашего заказа"
                             maxlength="2000"></UIDevTextarea>
                     </div>
@@ -208,7 +208,7 @@
             <div class="actions">
                 <UIDevButton class="next" :active="false" @click="prevStep">Назад</UIDevButton>
                 <div class="right">
-                    <button class="draft">Сохранить как черновик</button>
+                    <button class="draft" @click="saveAsDraft">Сохранить как черновик</button>
                     <UIDevButton class="next" :active="true" @click="nextStep">{{ step === 5 ? 'Сохранить' : 'Далее'
                     }}</UIDevButton>
                 </div>
@@ -392,6 +392,17 @@ function handleDeadlines(date: "contract" | "less-week" | "more-week" | "less-mo
     }
 
     modal.value = false;
+}
+
+async function saveAsDraft() {
+  if ((step.value > 1) || newOrder.value.title) {
+    newOrder.value.draft = true;
+    await orderStore.editOrder(newOrder.value as any, id.value);
+    await notifications.setNotification('Черновик сохранен!');
+    navigateTo('/orders/my');
+  } else {
+    await notifications.setNotification('Нельзя сохранить пустой заказ');
+  }
 }
 
 onMounted(async () => {
@@ -745,7 +756,7 @@ onMounted(async () => {
     }
 
     .footer {
-        position: absolute;
+        position: fixed;
         bottom: 0;
         left: 0;
         padding: 30px 100px;

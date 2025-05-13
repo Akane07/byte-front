@@ -39,6 +39,7 @@
 <script setup lang="ts">
 import { baseURL } from '~/api';
 import { deleteOrder, type Order } from '~/api/order-api';
+import { useNotifications } from '~/store/notiStore';
 import { useUserStore } from '~/store/userStore';
 
 const props = defineProps<{
@@ -50,6 +51,7 @@ const emit = defineEmits<{
 }>();
 
 const userStore = useUserStore();
+const notifications = useNotifications();
 
 const modal = shallowRef(false);
 
@@ -61,7 +63,8 @@ async function handleDelete() {
     const res = await deleteOrder(props.order.id);
 
     if (res) {
-        emit('updateOrders')
+        emit('updateOrders');
+        notifications.setNotification('Заказ успешно удален');
     }
 }
 
@@ -92,7 +95,7 @@ const viewed = computed(() => {
         border-left: 1px solid $border-color;
         padding-left: 40px;
         cursor: pointer;
-        min-width: 195px;
+        min-width: 200px;
 
         p {
             font-weight: 600;

@@ -40,9 +40,9 @@ export interface OrderResponse {
 }
 
 
-export async function getOrders() {
+export async function getOrders(page: number = 1, filters: any) {
     try {
-        const response = await api.get<Order[]>('/order');
+        const response = await api.get<{ orders: Order[], currentPage: number, totalPages: number }>(`/order?page=${page}&${filters}`);
 
         return response.data;
     } catch (e: any) {

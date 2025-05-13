@@ -1,5 +1,5 @@
 <template>
-    <div class="order_card" @click="handleOrderRedirect" :class="{ 'viewed': viewed }">
+    <div class="order_card" @click="handleOrderRedirect">
         <div class="order_info">
             <div class="text_info">
                 <p>{{ order.title }}</p>
@@ -11,12 +11,13 @@
             <div class="stats_info">
                 <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"
                     :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
+                    <span class="border">От {{ useUserCreated(order.created_at) }}</span>
                 <button class="border delete" @click.stop="modal = true">Удалить черновик</button>
             </div>
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton :active="false" style="min-width: 155px;">Черновик</UIDevButton>
+            <UIDevButton :active="false" style="min-width: 155px; color: #9E9E9E; border-color: #9E9E9E;">Черновик</UIDevButton>
         </div>
     </div>
 
@@ -34,6 +35,7 @@
 <script setup lang="ts">
 import { baseURL } from '~/api';
 import { deleteOrder, type Order } from '~/api/order-api';
+import { useNotifications } from '~/store/notiStore';
 import { useUserStore } from '~/store/userStore';
 
 const props = defineProps<{
@@ -44,6 +46,7 @@ const emit = defineEmits<{
     (e: 'updateOrders'): void
 }>();
 
+const notifications = useNotifications();
 const userStore = useUserStore();
 
 const modal = shallowRef(false);
@@ -54,15 +57,13 @@ function handleOrderRedirect() {
 
 async function handleDelete() {
     const res = await deleteOrder(props.order.id);
-
+    modal.value = false;
+    
     if (res) {
         emit('updateOrders')
+        notifications.setNotification('Черновик успешно удален');
     }
 }
-
-const viewed = computed(() => {
-    return props.order.viewed_by.includes(userStore.user?.id || '');
-});
 </script>
 
 <style lang="scss" scoped>
@@ -87,11 +88,11 @@ const viewed = computed(() => {
         border-left: 1px solid $border-color;
         padding-left: 40px;
         cursor: pointer;
-        min-width: 195px;
+        min-width: 200px;
 
         p {
             font-weight: 600;
-            color: $active-button-color;
+            color: $text-color-secondary;
             transition: color 0.3s ease-in-out;
         }
     }
@@ -112,7 +113,7 @@ const viewed = computed(() => {
             cursor: pointer;
 
             p {
-                color: $select-enabled;
+                color: $text-color-secondary;
                 font-weight: 600;
                 font-size: 18px;
                 transition: color 0.3s ease-in-out;
@@ -201,29 +202,6 @@ const viewed = computed(() => {
         }
 
         .order_actions {
-            p {
-                color: white;
-            }
-        }
-    }
-
-    &.viewed {
-        .order_info {
-            .text_info {
-                p {
-                    color: white;
-                }
-
-                span {}
-            }
-
-            .stats_info {
-                span.border {}
-            }
-        }
-
-        .order_actions {
-
             p {
                 color: white;
             }

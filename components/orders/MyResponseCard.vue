@@ -32,6 +32,7 @@
 
 <script setup lang="ts">
 import { deleteResponse, type OrderResponse } from '~/api/order-api';
+import { useNotifications } from '~/store/notiStore';
 
 const props = defineProps<{
     response: OrderResponse
@@ -40,6 +41,8 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'updateResponses') : void
 }>();
+
+const notifications = useNotifications();
 
 const modal = shallowRef(false);
 
@@ -52,6 +55,7 @@ async function handleDelete() {
 
     if (res) {
         emit('updateResponses')
+        notifications.setNotification('Отклик успешно удален');
     }
 }
 </script>
@@ -78,6 +82,7 @@ async function handleDelete() {
         border-left: 1px solid $border-color;
         padding-left: 40px;
         cursor: pointer;
+        min-width: 200px;
 
         p {
             font-weight: 600;

@@ -71,8 +71,11 @@
                     </div>
                 </div>
                 <div class="orders_list" v-if="orderStore.myDrafts.length">
-                    <OrdersMyDraftCard v-for="order in orderStore.myDrafts" :key="order.id"
-                        :order="order"></OrdersMyDraftCard>
+                    <OrdersMyDraftCard v-for="order in orderStore.myDrafts" :key="order.id" :order="order"
+                        @update-orders="updateOrders"></OrdersMyDraftCard>
+                </div>
+                <div class="orders_list" v-else>
+                    <p>У вас нет черновиков</p>
                 </div>
             </div>
         </div>
@@ -93,7 +96,9 @@ async function updateResponses() {
 }
 
 async function updateOrders() {
+    if (!userStore.user?.id) return;
     orderStore.myOrders = await orderStore.getUserOrders(userStore.user!.id);
+    await orderStore.getMyDrafts(userStore.user.id);
 }
 
 onMounted(async () => {

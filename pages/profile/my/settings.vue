@@ -19,11 +19,11 @@
                         <p>Логин</p>
                         <UIDevInput v-model="general.nickname" type="text" placeholder="Отображаемый ник"></UIDevInput>
                     </div>
-                    <div class="block">
+                    <!-- <div class="block">
                         <p>Телефон</p>
                         <UIDevInput v-model="general.phone" type="text" placeholder="Номер телефона" maxlength="14">
                         </UIDevInput>
-                    </div>
+                    </div> -->
                     <div class="block">
                         <p>Почта</p>
                         <UIDevInput v-model="general.email" type="text" placeholder="Почта, привязанная к аккануту"

@@ -7,16 +7,7 @@
             <div class="filters">
                 <p>Найти проект</p>
                 <div class="filters_block">
-                    <UIDevCheckbox v-model="filters.design">Графический дизайн</UIDevCheckbox>
-                    <UIDevCheckbox v-model="filters.it">IT-технологии и Разработка</UIDevCheckbox>
-                    <UIDevCheckbox v-model="filters.web">Веб-разработка и дизайн</UIDevCheckbox>
-                    <UIDevCheckbox v-model="filters.media">Медиа и Моушен дизайн</UIDevCheckbox>
-                    <UIDevCheckbox v-model="filters.ad">Маркетинг и Реклама</UIDevCheckbox>
-                    <UIDevCheckbox v-model="filters.outsource">Аутсорсинг и Консалтинг</UIDevCheckbox>
-                    <UIDevCheckbox v-model="filters.promotion">Интернет продвижение</UIDevCheckbox>
-                    <UIDevCheckbox v-model="filters.engineering">Инженерия</UIDevCheckbox>
-                    <UIDevCheckbox v-model="filters.texts">Тексты и переводы</UIDevCheckbox>
-                    <UIDevCheckbox v-model="filters.other">Другое</UIDevCheckbox>
+                    <UIDevCheckbox v-for="filter in filters" v-model="filter.checked">{{ filter.title }}</UIDevCheckbox>
                 </div>
                 <div class="buttons">
                     <UIDevNavButton class="save_button" @click="savefilters">Сохранить</UIDevNavButton>
@@ -28,10 +19,6 @@
                         <p>Все предложения</p>
                     </div>
                     <div class="orders_buttons">
-                        <!-- <UIDevNavButton :stroke="true" :secondary="true" @click="navigateTo('/orders/my')">
-                            <IconsOrders style="transform: scale(1.3); margin-right: 8px;"></IconsOrders>
-                            Мои заказы
-                        </UIDevNavButton> -->
                         <UIDevNavButton :stroke="true" @click="navigateTo('/orders/create')">
                             <IconsPlus style="transform: scale(1.3); margin-right: 8px;"></IconsPlus>
                             Создать заказ
@@ -43,7 +30,8 @@
                         @showOrder="showOrder"></OrdersOrderCard>
                 </div>
                 <div class="pagionation">
-                    <UIDevPagionation></UIDevPagionation>
+                    <UIDevPagionation :total="orderStore.total" :currentPage="orderStore.page" @change="getOrders">
+                    </UIDevPagionation>
                 </div>
             </div>
         </div>
@@ -54,28 +42,25 @@
 
 <script setup lang="ts">
 import { type Order } from '~/api/order-api';
+import { useCategory } from '~/store/categoryStore';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
 
 const userStore = useUserStore();
 const orderStore = useOrderStore();
+const category = useCategory();
 
 const hoverOrder = ref<Order | null>(null);
-const filters = ref({
-    design: false,
-    it: false,
-    web: false,
-    media: false,
-    ad: false,
-    outsource: false,
-    promotion: false,
-    engineering: false,
-    texts: false,
-    other: false,
-});
+const filters = ref<{
+    id: number,
+    title: string,
+    checked: boolean
+}[]>([]);
 
-function savefilters() {
-    localStorage.setItem("byte-filters", JSON.stringify(filters.value));
+async function savefilters() {
+    localStorage.setItem("byte-filters", JSON.stringify(filters.value.filter(filter => filter.checked)));
+    orderStore.page = 1;
+    await orderStore.getAllOrders(filters.value);
 }
 
 function showOrder(order: Order) {
@@ -86,13 +71,43 @@ function handleCloseOrder() {
     hoverOrder.value = null;
 }
 
+async function getOrders(page: number) {
+    if (page > orderStore.total) return;
+    orderStore.page = page;
+    await orderStore.getAllOrders(filters.value);
+
+    window.scroll({ top: 0 });
+}
+
 onMounted(async () => {
     await userStore.checkAuth();
+    await category.getAllCategories();
 
-    const lsFilters = localStorage.getItem("byte-filters");
-    lsFilters && (filters.value = JSON.parse(lsFilters));
+    for (const filter of category.categories) {
+        filters.value.push({
+            id: filter.id,
+            title: filter.title,
+            checked: false
+        });
+    }
 
-    await orderStore.getAllOrders();
+    let lsFilters = localStorage.getItem("byte-filters");
+
+    if (lsFilters) {
+        lsFilters = JSON.parse(lsFilters);
+        if (!lsFilters) return;
+
+        for (const filter of filters.value) {
+            for (const lsFilter of lsFilters) {
+                if (filter.id === lsFilter.id) {
+                    filter.checked = true;
+                }
+            }
+        }
+    }
+
+
+    await orderStore.getAllOrders(filters.value);
 })
 </script>
 
@@ -126,6 +141,7 @@ onMounted(async () => {
         display: flex;
         flex-direction: column;
         gap: 24px;
+        min-height: 800px;
 
         p {
             font-weight: 400;
@@ -141,14 +157,16 @@ onMounted(async () => {
             display: flex;
             flex-direction: column;
             gap: 24px;
+            height: 100%;
+            min-height: 600px;
         }
 
         .buttons {
             margin-top: 12px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
             align-items: center;
+            justify-self: end;
 
             .save_button {
                 width: 100%;
@@ -165,6 +183,7 @@ onMounted(async () => {
         padding: 46px 20px;
         border-radius: 0 20px 20px 20px;
         border-left: 1px solid $border-color;
+        min-height: 800px;
 
         display: flex;
         flex-direction: column;
@@ -185,14 +204,15 @@ onMounted(async () => {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            // overflow-y: scroll;
-            // max-height: 600px;
+            height: 100%;
+            min-height: 600px;
         }
 
         .pagionation {
             display: flex;
             justify-content: center;
             margin-top: 32px;
+            justify-self: end;
         }
     }
 }

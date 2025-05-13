@@ -1,4 +1,4 @@
-export function useSliceDescription(description: string) {
-    if (description.length < 250) return description;
-    return description.slice(0, 250) + '...';
+export function useSliceDescription(description: string, to?: number) {
+    if (description.length < (to || 250)) return description;
+    return description.slice(0, (to || 250)) + '...';
 }

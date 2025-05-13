@@ -3,15 +3,25 @@ import { useCategory } from './categoryStore';
 
 export const useOrderStore = defineStore('order', () => {
     const orders = ref<Order[]>([]);
+    const page = ref(1);
+    const total = ref(1);
+
     const myOrders = ref<Order[]>([]);
     const myResponses = ref<OrderResponse[]>([]);
     const myDrafts = ref<Order[]>([]);
 
-    async function getAllOrders() {
-        const res = await getOrders();
+    async function getAllOrders(filters?: { title: string; id: number; checked: boolean }[]) {
+        let filtersString = '';
+        if (filters) {
+            filtersString = filters.filter(filter => filter.checked).map(filter => `categories=${filter.id}`).join('&');
+        }
+            
+        const res = await getOrders(page.value, filtersString);        
 
-        if (res.length) {
-            orders.value = res;
+        if (res.currentPage) {
+            orders.value = res.orders;
+            page.value = res.currentPage;
+            total.value = res.totalPages;
         }
     }
 
@@ -57,6 +67,8 @@ export const useOrderStore = defineStore('order', () => {
 
         if (drafts.length) {
             myDrafts.value = drafts;
+        } else {
+            myDrafts.value = [];
         }
     }
 
@@ -95,6 +107,9 @@ export const useOrderStore = defineStore('order', () => {
 
     return {
         orders,
+        page,
+        total,
+
         myOrders,
         myResponses,
         myDrafts,

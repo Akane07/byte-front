@@ -1,8 +1,7 @@
 <template>
     <div style="position:relative; overflow:hidden;">
         <textarea ref="textareaRef" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)"
-            :placeholder="placeholder" style="min-height:40px; height:auto; overflow:hidden; resize:none;"
-            :maxlength="maxlength || 200"></textarea>
+            :placeholder="placeholder" :maxlength="maxlength || 200"></textarea>
         <div ref="mirrorRef" style="white-space:pre-wrap; visibility:hidden; position:absolute; z-index:-1;"></div>
     </div>
 </template>
@@ -23,7 +22,7 @@ const mirrorRef = ref<HTMLDivElement | null>(null);
 
 watch(props, () => {
     console.log(props.modelValue, 'props watch');
-    
+
     if (!textareaRef.value) return;
     if (!mirrorRef.value) return;
 
@@ -58,7 +57,6 @@ onMounted(() => {
 
 textarea {
     width: 100%;
-    height: 100px;
     resize: vertical;
     background: $tag-color;
     border: none;
@@ -69,6 +67,11 @@ textarea {
     font-size: 16px;
     border: 1px solid #3C3B3B;
     transition: 0.2s ease-in;
+    max-height: 550px;
+    min-height: 40px;
+    overflow-y: auto;
+    height: auto;
+    resize: none;
 
     &::placeholder {
         color: $text-placeholder;
@@ -87,6 +90,27 @@ textarea {
     &:focus-within {
         border: 1px solid #444343;
         background: rgb(50, 50, 50);
+    }
+
+    /* width */
+    &::-webkit-scrollbar {
+        width: 6px;
+        border-radius: 6px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: #2E2E2E;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 }
 </style>

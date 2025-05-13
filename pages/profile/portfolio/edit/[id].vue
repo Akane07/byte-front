@@ -8,19 +8,19 @@
         <div class="portfolio">
             <div class="left_part">
                 <div class="block">
-                    <p>Название проекта</p>
+                    <p>Название проекта<span style="color: #FF6969">*</span></p>
                     <UIDevInput v-model="portfolio.title" type="text"
-                        placeholder="Введите краткое, но понятное название" maxlength="20"></UIDevInput>
+                        placeholder="Введите краткое, но понятное название" maxlength="40"></UIDevInput>
                 </div>
                 <div class="block">
-                    <p>Ваша роль</p>
+                    <p>Ваша роль<span style="color: #FF6969">*</span></p>
                     <UIDevInput v-model="portfolio.role" type="text"
-                        placeholder="Например, Front-end разработчик или Web-designer" maxlength="20"></UIDevInput>
+                        placeholder="Например, Front-end разработчик или Web-designer" maxlength="40"></UIDevInput>
                 </div>
                 <div class="block">
-                    <p>Описание проекта</p>
+                    <p>Описание проекта<span style="color: #FF6969">*</span></p>
                     <UIDevTextarea v-model="portfolio.description"
-                        placeholder="Например, Front-end разработчик или Web-designer"></UIDevTextarea>
+                        placeholder="Например, Front-end разработчик или Web-designer" maxlength="1000"></UIDevTextarea>
                 </div>
                 <div class="block">
                     <p>Навыки</p>
@@ -72,7 +72,7 @@
                             <IconsPaperclip class="icon"></IconsPaperclip>
                         </div>
                         <p>
-                            Добавьте фото или видео к проекту <br />
+                            Добавьте фото или видео к проекту<span style="color: #FF6969">*</span><br />
                             Первое фото будет обложкой для проекта
                         </p>
                     </div>

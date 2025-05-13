@@ -13,8 +13,6 @@ export const useCategory = defineStore('category', () => {
     }
 
     async function getSkillsById(title: string) {
-        console.log(title, 'title');
-        
         const id = categories.value.find((cat) => {
             return cat.title === title;
         })?.id;
@@ -39,6 +37,23 @@ export const useCategory = defineStore('category', () => {
         })?.title;
 
         return title || '';
+    }
+
+    function returnFilters(filters: { design: boolean, it: boolean, web: boolean, media: boolean, ad: boolean, outsource: boolean, promotion: boolean, engineering: boolean, texts: boolean, other: boolean }) {
+        const res = [];
+
+        if (filters.design) res.push('design');
+        if (filters.it) res.push('it');
+        if (filters.web) res.push('web');
+        if (filters.media) res.push('media');
+        if (filters.ad) res.push('ad');
+        if (filters.outsource) res.push('outsource');
+        if (filters.promotion) res.push('promotion');
+        if (filters.engineering) res.push('engineering');
+        if (filters.texts) res.push('texts');
+        if (filters.other) res.push('other');
+
+        return res.join('=true&');
     }
 
     return {

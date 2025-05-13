@@ -10,7 +10,7 @@ export function useOrderCreated(created_at: string): string {
     if (diffMinutes < 1) {
       return 'только что';
     } else if (diffMinutes < 60) {
-      return `${diffMinutes} ${getPlural(diffMinutes, 'минута', 'минуты', 'минут')} назад`;
+      return `${diffMinutes} ${getPlural(diffMinutes, 'минуту', 'минуты', 'минут')} назад`;
     } else if (diffHours < 24) {
       return `${diffHours} ${getPlural(diffHours, 'час', 'часа', 'часов')} назад`;
     } else if (diffDays < 30) {

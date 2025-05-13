@@ -9,7 +9,8 @@
                 <span v-for="skill in order.skills" :key="skill">{{ skill }}</span>
             </div>
             <div class="stats_info">
-                <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)" :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
+                <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"
+                    :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                 <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                 <span>Предложений {{ order.response_count }}</span>
             </div>
@@ -67,6 +68,7 @@ const viewed = computed(() => {
         border-left: 1px solid $border-color;
         padding-left: 40px;
         cursor: pointer;
+        min-width: 200px;
 
         p {
             font-weight: 600;
@@ -96,6 +98,8 @@ const viewed = computed(() => {
                 font-size: 18px;
                 transition: color 0.3s ease-in-out;
                 cursor: pointer;
+                max-width: 750px;
+                overflow: hidden;
             }
 
             span {
@@ -103,6 +107,8 @@ const viewed = computed(() => {
                 font-weight: 500;
                 font-size: 14px;
                 cursor: pointer;
+                max-width: 750px;
+                overflow: hidden;
             }
         }
 

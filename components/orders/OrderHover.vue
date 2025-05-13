@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div class="description">
-                    <p>{{ order.description }}</p>
+                    <p>{{ useSliceDescription(order.description, 1000) }}</p>
                 </div>
                 <div class="type">
                     <p>Тип проекта: {{ useOrderType(order.type) }}</p>

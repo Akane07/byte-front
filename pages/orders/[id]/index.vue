@@ -50,7 +50,7 @@
             </div>
             <div class="right_part" v-if="!response.id">
                 <p>Ваше предложение</p>
-                <UIDevTextarea v-model="newResponse.description"></UIDevTextarea>
+                <UIDevTextarea v-model="newResponse.description" maxlength="2000"></UIDevTextarea>
                 <UIDevButton style="align-self: flex-start;" :active="true" :disabled="!newResponse.description"
                     @click="handlePostResponse">Откликнуться</UIDevButton>
             </div>
@@ -77,7 +77,7 @@
                     <span>Отклик от {{ useUserCreated(response.created_at) }}</span>
                 </div>
                 <div class="block">
-                    <UIDevTextarea v-model="response.description" style="width: 100%;"></UIDevTextarea>
+                    <UIDevTextarea v-model="response.description" style="width: 100%;" maxlength="2000"></UIDevTextarea>
                 </div>
                 <div class="actions">
                     <UIDevButton style="align-self: flex-start;" :active="true" @click="handleEditResponse">Подтвердить

@@ -15,7 +15,7 @@
         </div>
         <div class="right_part">
           <div class="block">
-            <p>Напишите название для своего заказа</p>
+            <p>Напишите название для своего заказа<span style="color: #FF6969">*</span></p>
             <UIDevInput v-model="newOrder.title" type="text"
               placeholder="Например, Front-end разработчик или Web-designer"></UIDevInput>
           </div>
@@ -49,7 +49,7 @@
         </div>
         <div class="right_part">
           <div class="block">
-            <p>Категория заказа</p>
+            <p>Категория заказа<span style="color: #FF6969">*</span></p>
             <UIDevSelect style="width: 100%" :list="categoryStore.mapCategories" :selected="newOrder.category"
               @select="handleSelect"></UIDevSelect>
           </div>
@@ -88,7 +88,7 @@
                 <IconsCalendar style="transform: scale(1.4);"></IconsCalendar>
                 <div class="text">
                   <p>{{ deadline }}</p>
-                  <span>Продолжительность проекта</span>
+                  <span>Продолжительность проекта<span style="color: #FF6969">*</span></span>
                 </div>
               </div>
               <div class="checkbox" @click="modal = true">
@@ -188,7 +188,7 @@
         </div>
         <div class="right_part">
           <div class="block">
-            <p>Подробно опишите, что нужно сделать</p>
+            <p>Подробно опишите, что нужно сделать<span style="color: #FF6969">*</span></p>
             <UIDevTextarea v-model="newOrder.description" placeholder="Описание вашего заказа" maxlength="2000">
             </UIDevTextarea>
           </div>
@@ -312,7 +312,7 @@ async function nextStep() {
       }
       return;
     case 4:
-      if (newOrder.value.price_type && newOrder.value.price) {
+      if (newOrder.value.price_type === 'contract' || (newOrder.value.price_type && newOrder.value.price)) {
         newOrder.value.draft = true;
         step.value = 5;
         scrollTo();
@@ -331,6 +331,8 @@ async function saveAsDraft() {
   if ((step.value > 1) || newOrder.value.title) {
     newOrder.value.draft = true;
     await orderStore.createOrder(newOrder.value as any);
+    await notifications.setNotification('Черновик сохранен!');
+    router.back();
   } else {
     await notifications.setNotification('Нельзя сохранить пустой заказ');
   }
@@ -723,7 +725,7 @@ onMounted(async () => {
   }
 
   .footer {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     padding: 30px 100px;
