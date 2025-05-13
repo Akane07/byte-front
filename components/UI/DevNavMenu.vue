@@ -39,8 +39,9 @@
                             <div class="border"></div>
                         </div>
                         <div class="menu-content">
+                            <NuxtLink class="pointer link" @click="navigateTo('/donates')">Донаты</NuxtLink>
                             <NuxtLink class="pointer link">Обратная связь</NuxtLink>
-                            <NuxtLink class="pointer link">Выход</NuxtLink>
+                            <NuxtLink class="pointer link" @click="userStore.logout()">Выход</NuxtLink>
                         </div>
                     </div>
                 </div>

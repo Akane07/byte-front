@@ -46,6 +46,10 @@ import { useCategory } from '~/store/categoryStore';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
 
+definePageMeta({
+    middleware: ['auth'],
+});
+
 const userStore = useUserStore();
 const orderStore = useOrderStore();
 const category = useCategory();

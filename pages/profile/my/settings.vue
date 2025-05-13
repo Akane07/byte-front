@@ -100,6 +100,10 @@ import { getCountries, setAvatar } from '~/api/user-api';
 import { useNotifications } from '~/store/notiStore';
 import { useUserStore } from '~/store/userStore';
 
+definePageMeta({
+    middleware: ['auth'],
+});
+
 const userStore = useUserStore();
 const notiStore = useNotifications();
 

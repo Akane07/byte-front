@@ -86,6 +86,10 @@
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
 
+definePageMeta({
+    middleware: ['auth'],
+});
+
 const userStore = useUserStore();
 const orderStore = useOrderStore();
 

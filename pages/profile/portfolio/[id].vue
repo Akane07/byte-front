@@ -94,6 +94,10 @@ import type { User } from '~/api/user-api';
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
 
+definePageMeta({
+    middleware: ['auth'],
+});
+
 const route = useRoute();
 const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();

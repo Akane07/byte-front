@@ -8,11 +8,17 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
     if (!beenUsed) {
         beenUsed = true;
-        try {            
+        try {                 
             await userStore.checkAuth();
+            console.log(userStore);
+            
         } catch (error) {
             return navigateTo("/");
         }
+    }
+
+    if (!userStore.isAuth && !(to.path).includes("/auth")) {
+        return navigateTo("/auth/login");
     }
 
     if ((to.path).includes("/auth")) {

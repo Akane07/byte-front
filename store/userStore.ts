@@ -31,6 +31,7 @@ export const useUserStore = defineStore('user', () => {
         user.value = null;
         isAuth.value = false;
         localStorage.removeItem('byte-accessToken');
+        navigateTo('/auth/login');
     }
 
     async function getUserId(id: string) {

@@ -105,6 +105,10 @@ import { deleteResponse, editResponse, type Order } from '~/api/order-api';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
 
+definePageMeta({
+    middleware: ['auth'],
+});
+
 const route = useRoute();
 const orderStore = useOrderStore();
 const userStore = useUserStore();

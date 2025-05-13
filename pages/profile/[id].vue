@@ -86,6 +86,10 @@ import { useUserStore } from '~/store/userStore';
 import type { Portfolio } from '~/api/portfolio-api';
 import { usePortfolioStore } from '~/store/portfolioStore';
 
+definePageMeta({
+    middleware: ['auth'],
+});
+
 const route = useRoute();
 const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();

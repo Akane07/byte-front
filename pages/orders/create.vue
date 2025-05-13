@@ -221,6 +221,10 @@ import { useCategory } from "~/store/categoryStore";
 import { useNotifications } from "~/store/notiStore";
 import { useOrderStore } from "~/store/orderStore";
 
+definePageMeta({
+    middleware: ['auth'],
+});
+
 const router = useRouter();
 const categoryStore = useCategory();
 const orderStore = useOrderStore();

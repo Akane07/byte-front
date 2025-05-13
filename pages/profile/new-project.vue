@@ -87,6 +87,10 @@
 <script setup lang="ts">
 import { usePortfolioStore } from '../../store/portfolioStore';
 
+definePageMeta({
+    middleware: ['auth'],
+});
+
 const portfolioStore = usePortfolioStore();
 
 const portfolio = ref({
