@@ -66,8 +66,8 @@
                     <p>Портфолио</p>
                 </div>
                 <div class="portfolio_blocks">
-                    <ProfilePortfolio v-for="portfolio in portfolios" :key="portfolio.id"
-                        :portfolio="portfolio" :other="true"></ProfilePortfolio>
+                    <ProfilePortfolio v-for="portfolio in portfolios" :key="portfolio.id" :portfolio="portfolio"
+                        :other="true"></ProfilePortfolio>
                 </div>
             </div>
             <div class="feedbacks">
@@ -97,11 +97,12 @@ const portfolioStore = usePortfolioStore();
 const portfolios = ref<Portfolio[]>([]);
 const user = ref<User | null>(null);
 
-onMounted(async () => {
-    const id = route.params.id as string;
-    user.value = await userStore.getUserId(id);
+const id = route.params.id as string;
+user.value = await userStore.getUserId(id);
+portfolios.value = await portfolioStore.getPortfoliosById(id);
 
-    portfolios.value = await portfolioStore.getPortfoliosById(id);
+onMounted(async () => {
+
 });
 </script>
 
@@ -245,7 +246,8 @@ onMounted(async () => {
             }
         }
 
-        .portfolio, .feedbacks {
+        .portfolio,
+        .feedbacks {
             display: flex;
             flex-direction: column;
             gap: 40px;

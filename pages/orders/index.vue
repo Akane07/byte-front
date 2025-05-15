@@ -83,17 +83,20 @@ async function getOrders(page: number) {
     window.scroll({ top: 0 });
 }
 
+await category.getAllCategories();
+
+for (const filter of category.categories) {
+    filters.value.push({
+        id: filter.id,
+        title: filter.title,
+        checked: false
+    });
+}
+
+await orderStore.getAllOrders(filters.value);
+
 onMounted(async () => {
     await userStore.checkAuth();
-    await category.getAllCategories();
-
-    for (const filter of category.categories) {
-        filters.value.push({
-            id: filter.id,
-            title: filter.title,
-            checked: false
-        });
-    }
 
     let lsFilters = localStorage.getItem("byte-filters");
 
@@ -109,7 +112,6 @@ onMounted(async () => {
             }
         }
     }
-
 
     await orderStore.getAllOrders(filters.value);
 })

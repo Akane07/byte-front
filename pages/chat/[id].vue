@@ -81,6 +81,7 @@
 <script setup lang="ts">
 import { io } from 'socket.io-client';
 import { api, baseURL } from '~/api';
+import { getCategories } from '~/api/category-api';
 import type { User } from '~/api/user-api';
 import { useUserStore } from '~/store/userStore';
 
@@ -92,6 +93,7 @@ const socket = io('http://localhost:3002', {
 
 const userStore = useUserStore();
 
+const chats = ref<any[]>([]);
 const user = ref<User | null>(null);
 const text = ref('');
 const file = ref<File | null>(null);
@@ -103,6 +105,9 @@ const isOnline = computed(() => {
 })
 
 const sendMessage = async () => {
+    if (!user.value) return;
+    if (!text.value) return;
+
     let mediaUrl = null;
     let mediaType = null;
 
@@ -143,6 +148,7 @@ const sendMessage = async () => {
 };
 
 onMounted(async () => {
+    chats.value = await api.get('/chat/all');
     console.log(route.params.id, 'route.params.id');
 
     await userStore.checkAuth();

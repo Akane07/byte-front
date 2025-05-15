@@ -105,7 +105,6 @@ const portfolioStore = usePortfolioStore();
 const portfolio = ref<Portfolio>();
 const portfolios = ref<Portfolio[]>();
 const user = ref<User | null>(null);
-const divRef = ref<HTMLDivElement | null>(null);
 
 async function ratePortfolio() {
     if (!userStore.user) return;

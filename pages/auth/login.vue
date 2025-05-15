@@ -1,32 +1,35 @@
 <template>
-    <div class="login-wrapper">
-        <div class="login-menu">
-            <div class="text-menu">
-                <span class="menu-hero">Вход</span>
-                <span class="menu-context typed-wrapper">
-                    <span class="typed-text">Добро пожаловать</span>
-                </span>
-            </div>
-            <div class="nav-menu">
-                <DevAuthInput v-model="loginData.email" placeholder="Ваша почта" type="text" />
-                <DevAuthInput v-model="loginData.password" placeholder="Пароль" type="password" />
-                <DevNavButton @click="handleLogin">Войти</DevNavButton>
-            </div>
-            <div class="log-and-recovery">
-                <div class="google">
-                    <div class="google-icon">
-                        <img src="../../assets/icons/Google.svg" alt="">
-                    </div>
-                    <div class="text-google">
-                        <span class="log">Войти с помощью</span>
-                        <span class="google-text">Google</span>
-                    </div>
+    <div class="wrapper">
+        <div class="login-wrapper">
+            <div class="login-menu">
+                <div class="text-menu">
+                    <span class="menu-hero">Вход</span>
+                    <span class="menu-context typed-wrapper">
+                        <span class="typed-text">Добро пожаловать</span>
+                    </span>
                 </div>
-                <span class="recovery-text">Забыли пароль? <NuxtLink to="/auth/recovery" class="recovery">Восстановить
-                    </NuxtLink></span>
+                <div class="nav-menu">
+                    <DevAuthInput v-model="loginData.email" placeholder="Ваша почта" type="text" />
+                    <DevAuthInput v-model="loginData.password" placeholder="Пароль" type="password" />
+                    <DevNavButton @click="handleLogin">Войти</DevNavButton>
+                </div>
+                <div class="log-and-recovery">
+                    <div class="google">
+                        <div class="google-icon">
+                            <img src="../../assets/icons/Google.svg" alt="">
+                        </div>
+                        <div class="text-google">
+                            <span class="log">Войти с помощью</span>
+                            <span class="google-text">Google</span>
+                        </div>
+                    </div>
+                    <span class="recovery-text">Забыли пароль? <NuxtLink to="/auth/recovery" class="recovery">
+                            Восстановить
+                        </NuxtLink></span>
+                </div>
             </div>
+            <DevAuthBoard :recovery="false"></DevAuthBoard>
         </div>
-        <DevAuthBoard :recovery="false"></DevAuthBoard>
     </div>
 </template>
 
@@ -64,13 +67,26 @@ async function handleLogin() {
 <style scoped lang="scss">
 @import '../../assets/styles/vars.scss';
 
+.wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    position: relative;
+    margin-bottom: 100px;
+    overflow: hidden;
+}
+
 .login-wrapper {
     display: flex;
     align-items: center;
-    justify-content: end;
+    // justify-content: end;
     gap: 131px;
     height: 100vh;
     width: 100%;
+    max-width: 1440px;
     overflow: hidden;
 }
 
