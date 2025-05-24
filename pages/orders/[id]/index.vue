@@ -175,6 +175,10 @@ onMounted(async () => {
     if (route.query.edit) {
         edit.value = true;
     }
+
+    if (order.value?.user_id !== userStore.user?.id && !order.value?.viewed_by.includes(userStore.user?.id || '')) {
+        await orderStore.viewOrder(route.params.id as string);
+    }
 })
 </script>
 

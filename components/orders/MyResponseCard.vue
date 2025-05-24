@@ -88,6 +88,7 @@ async function handleDelete() {
             font-weight: 600;
             color: $active-button-color;
             transition: color 0.3s ease-in-out;
+            text-align: center;
         }
     }
 

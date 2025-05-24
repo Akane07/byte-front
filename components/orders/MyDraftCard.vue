@@ -94,6 +94,7 @@ async function handleDelete() {
             font-weight: 600;
             color: $text-color-secondary;
             transition: color 0.3s ease-in-out;
+            text-align: center;
         }
     }
 

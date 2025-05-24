@@ -116,9 +116,10 @@ function handleOrderRedirect() {
 }
 
 watch(props, async () => {
-    if (!props.order?.user_id) return;
+    if (!props.order?.user_id || !userStore.user || props.order.viewed_by.includes(userStore.user?.id)) return;
     user.value = await userStore.getUserId(props.order?.user_id);
     await orderStore.viewOrder(props.order.id);
+    props.order.viewed_by.push(userStore.user?.id || '');
 });
 </script>
 

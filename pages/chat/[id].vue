@@ -25,13 +25,13 @@
                         </div>
                         <!-- <span>1ч</span> -->
                     </div>
-                    <div class="user" v-for="user in 5" :key="user">
+                    <div class="user" v-for="chat in chats" :key="chat.name">
                         <img src="https://placehold.co/50x50" alt="avatar">
                         <div class="info">
-                            <p>Username</p>
-                            <span>Last message</span>
+                            <p>{{ chat.name }}</p>
+                            <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>
                         </div>
-                        <span>1ч</span>
+                        <span>{{ useTimeAgo(chat.lastMessageDate) }}</span>
                     </div>
                 </div>
             </div>
@@ -134,32 +134,27 @@ const sendMessage = async () => {
         createdAt: new Date().toISOString(),
     });
 
-    socket.emit('sendMessage', {
-        receiverId: userStore.user?.id,
-        senderId: user.value?.id,
-        text: text.value,
-        mediaUrl,
-        mediaType,
-        createdAt: new Date().toISOString(),
-    });
+    // socket.emit('sendMessage', {
+    //     receiverId: userStore.user?.id,
+    //     senderId: user.value?.id,
+    //     text: text.value,
+    //     mediaUrl,
+    //     mediaType,
+    //     createdAt: new Date().toISOString(),
+    // });
 
     text.value = '';
     file.value = null;
 };
 
 onMounted(async () => {
-    chats.value = await api.get('/chat/all');
-    console.log(route.params.id, 'route.params.id');
-
     await userStore.checkAuth();
-
+    chats.value = (await api.get('/chat/all')).data;
     user.value = await userStore.getUserId(route.params.id as string);
-
     const res = await api.get(`/chat?user=${route.params.id as string}`);
     messages.value = res.data;
 
     socket.emit('joinRoom', route.params.id as string);
-
     socket.on('receiveMessage', (msg) => {
         messages.value.push(msg);
     });

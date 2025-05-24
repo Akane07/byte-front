@@ -194,7 +194,7 @@
                 <div class="right_part">
                     <div class="block">
                         <p>Подробно опишите, что нужно сделать<span style="color: #FF6969">*</span></p>
-                        <UIDevTextarea v-if="newOrder.description" v-model="newOrder.description" placeholder="Описание вашего заказа"
+                        <UIDevTextarea v-model="newOrder.description" placeholder="Описание вашего заказа"
                             maxlength="2000"></UIDevTextarea>
                     </div>
                 </div>
@@ -210,7 +210,7 @@
                 <div class="right">
                     <button class="draft" @click="saveAsDraft">Сохранить как черновик</button>
                     <UIDevButton class="next" :active="true" @click="nextStep">{{ step === 5 ? 'Сохранить' : 'Далее'
-                    }}</UIDevButton>
+                        }}</UIDevButton>
                 </div>
             </div>
         </div>
@@ -261,6 +261,7 @@ const newOrder = ref({
     skills: [] as string[],
     category: "",
     draft: true,
+    created_at: '',
 });
 const id = shallowRef('');
 
@@ -332,10 +333,21 @@ async function nextStep() {
             }
             return;
         case 5:
-            newOrder.value.draft = false;
-            await orderStore.editOrder(newOrder.value as any, id.value);
-            notifications.setNotification('Заказ успешно обновлен!')
-            navigateTo('/orders/my');
+
+            if (newOrder.value.draft) {
+                newOrder.value.draft = false;
+                newOrder.value.created_at = new Date().toISOString();
+                await orderStore.editOrder(newOrder.value as any, id.value);
+                notifications.setNotification('Заказ успешно опубликован!')
+                navigateTo('/orders/my');
+            } else {
+                newOrder.value.draft = false;
+                delete newOrder.value.created_at;
+                
+                await orderStore.editOrder(newOrder.value as any, id.value);
+                notifications.setNotification('Заказ успешно обновлен!')
+                navigateTo('/orders/my');
+            }
     }
 }
 
@@ -399,14 +411,14 @@ function handleDeadlines(date: "contract" | "less-week" | "more-week" | "less-mo
 }
 
 async function saveAsDraft() {
-  if ((step.value > 1) || newOrder.value.title) {
-    newOrder.value.draft = true;
-    await orderStore.editOrder(newOrder.value as any, id.value);
-    await notifications.setNotification('Черновик сохранен!');
-    navigateTo('/orders/my');
-  } else {
-    await notifications.setNotification('Нельзя сохранить пустой заказ');
-  }
+    if ((step.value > 1) || newOrder.value.title) {
+        newOrder.value.draft = true;
+        await orderStore.editOrder(newOrder.value as any, id.value);
+        await notifications.setNotification('Черновик сохранен!');
+        navigateTo('/orders/my');
+    } else {
+        await notifications.setNotification('Нельзя сохранить пустой заказ');
+    }
 }
 
 onMounted(async () => {

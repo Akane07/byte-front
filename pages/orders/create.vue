@@ -400,6 +400,7 @@ function handleDeadlines(date: "contract" | "less-week" | "more-week" | "less-mo
 
   modal.value = false;
 }
+
 await categoryStore.getAllCategories();
 
 // onMounted(async () => {

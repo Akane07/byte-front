@@ -15,7 +15,7 @@
             </div>
             <div class="orders">
                 <div class="orders_header">
-                    <div class="lol">
+                    <div class="title">
                         <p>Все предложения</p>
                     </div>
                     <div class="orders_buttons">
@@ -93,7 +93,7 @@ for (const filter of category.categories) {
     });
 }
 
-await orderStore.getAllOrders(filters.value);
+// await orderStore.getAllOrders(filters.value);
 
 onMounted(async () => {
     await userStore.checkAuth();
@@ -203,6 +203,10 @@ onMounted(async () => {
             .orders_buttons {
                 display: flex;
                 gap: 16px;
+            }
+
+            .title {
+                font-size: 18px;
             }
         }
 
