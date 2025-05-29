@@ -1,5 +1,5 @@
 <template>
-    <div class="order_card" @click="$emit('showOrder', order)" :class="{ 'viewed': viewed }">
+    <div class="order_card">
         <div class="order_info">
             <div class="text_info">
                 <p>{{ order.title }}</p>
@@ -13,13 +13,14 @@
                     :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                 <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                 <span class="border">Предложений {{ order.response_count }}</span>
-                <button class="border edit" @click="navigateTo(`/orders/${order.id}/edit`)">Редактировать</button>
-                <button class="border delete" @click.stop="modal = true">Удалить заказ</button>
+                <button class="border edit" @click="navigateTo(`/orders/${order.id}/edit`)" v-if="!plain">Редактировать</button>
+                <button class="border delete" @click.stop="modal = true" v-if="!plain">Удалить заказ</button>
             </div>
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton v-if="!order.is_active" :active="false" style="min-width: 155px;">В архиве</UIDevButton>
+            <UIDevButton v-if="plain" :active="true" @click="$emit('suggest', order.id)">Предложить</UIDevButton>
+            <UIDevButton v-else-if="!order.is_active" :active="false" style="min-width: 155px;">В архиве</UIDevButton>
             <UIDevButton v-else-if="order.is_active && !order.performer" :active="true" style="min-width: 155px;">Активен</UIDevButton>
             <UIDevButton v-else-if="order.is_active && order.performer" :active="true" style="min-width: 155px;">Есть исполнитель</UIDevButton>
         </div>
@@ -43,21 +44,19 @@ import { useNotifications } from '~/store/notiStore';
 import { useUserStore } from '~/store/userStore';
 
 const props = defineProps<{
-    order: Order
+    order: Order,
+    plain?: boolean
 }>();
 
 const emit = defineEmits<{
-    (e: 'updateOrders'): void
+    (e: 'updateOrders'): void,
+    (e: 'suggest', id: string): void
 }>();
 
 const userStore = useUserStore();
 const notifications = useNotifications();
 
 const modal = shallowRef(false);
-
-function handleOrderRedirect() {
-    navigateTo(`/orders/${props.order.id}`)
-}
 
 async function handleDelete() {
     const res = await deleteOrder(props.order.id);
@@ -67,10 +66,6 @@ async function handleDelete() {
         notifications.setNotification('Заказ успешно удален');
     }
 }
-
-const viewed = computed(() => {
-    return props.order.viewed_by.includes(userStore.user?.id || '');
-});
 </script>
 
 <style lang="scss" scoped>

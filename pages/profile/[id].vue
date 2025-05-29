@@ -33,7 +33,7 @@
                 </div>
                 <div class="border"></div>
                 <div class="right_part">
-                    <UIDevButton :active="true">
+                    <UIDevButton :active="true" @click="navigateTo(`/chat/${user.id}`)">
                         Отправить сообщение
                     </UIDevButton>
                     <div class="user_stats">

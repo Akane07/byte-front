@@ -24,7 +24,7 @@
                     <div class="block">
                         <IconsCalendar style="min-width: 30px; min-height: 30px;"></IconsCalendar>
                         <div class="text">
-                            <p>{{ useOrderDeadlines(order.deadlines) }}</p>
+                            <p>{{ useOrderDeadlines(order.deadlines, order.deadline_date) }}</p>
                             <span>Продолжительность проекта</span>
                         </div>
                     </div>

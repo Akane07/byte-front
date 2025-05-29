@@ -6,8 +6,8 @@
         <div class="chat_wrapper">
             <div class="menu">
                 <div class="head">
-                    <p>Сообщения</p>
-                    <span>12</span>
+                    <p>Чаты</p>
+                    <span>{{ chats.length }}</span>
                 </div>
                 <div class="search">
                     <div class="input">
@@ -16,13 +16,13 @@
                     </div>
                 </div>
                 <div class="users">
-                    <div class="user" v-for="user in 5" :key="user">
-                        <img src="https://placehold.co/50x50" alt="avatar">
+                    <div class="user" v-for="chat in chats" :key="chat.name" @click="navigateTo(`/chat/${chat.userId}`)">
+                        <img :src="baseURL + chat.avatar" alt="avatar">
                         <div class="info">
-                            <p>Username</p>
-                            <span>Last message</span>
+                            <p>{{ chat.name }}</p>
+                            <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>
                         </div>
-                        <span>1ч</span>
+                        <span>{{ useTimeAgo(chat.lastMessageDate) }}</span>
                     </div>
                 </div>
             </div>
@@ -49,11 +49,13 @@ const chats = ref<any[]>([]);
 onMounted(async () => {
     await userStore.checkAuth();
 
-    chats.value = await api.get('/chat/all');
+    chats.value = (await api.get('/chat/all')).data;
 })
 </script>
 
 <style lang="scss" scoped>
+@import "../../assets/styles/vars.scss";
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -143,13 +145,14 @@ onMounted(async () => {
                     display: flex;
                     align-items: center;
                     gap: 16px;
-                    padding: 16px 0;
+                    padding: 16px;
                     cursor: pointer;
 
                     img {
                         width: 50px;
                         height: 50px;
                         border-radius: 6px;
+                        cursor: pointer;
                     }
 
                     .info {
@@ -157,16 +160,19 @@ onMounted(async () => {
                         flex-direction: column;
                         gap: 4px;
                         width: 100%;
+                        cursor: pointer;
 
                         p {
                             font-weight: 600;
                             font-size: 14px;
                             color: #F1ECFF;
+                            cursor: pointer;
                         }
 
                         &>span {
                             font-size: 12px;
                             color: #9E9E9F;
+                            cursor: pointer;
                         }
                     }
 
@@ -176,11 +182,13 @@ onMounted(async () => {
                         font-weight: 600;
                         height: 100%;
                         padding-top: 8px;
+                        cursor: pointer;
                     }
 
                     &.active {
                         border-radius: 6px;
                         background: rgba(131, 85, 250, 0.06);
+                        cursor: pointer;
                     }
                 }
             }
@@ -196,6 +204,7 @@ onMounted(async () => {
                 display: flex;
                 gap: 8px;
                 padding: 14.5px 24px;
+                min-height: 73px;
                 border-bottom: 1px solid #333339;
 
                 .info {
@@ -277,45 +286,10 @@ onMounted(async () => {
             }
 
             .input {
+                min-height: 69px;
                 width: 100%;
                 padding: 12px 24px;
                 border-top: 1px solid #333339;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-
-                .file {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-
-                    input {
-                        opacity: 0;
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                    }
-                }
-
-                .input_wrapper {
-                    display: flex;
-                    width: 100%;
-                    background: #494949;
-                    border-radius: 6px;
-                    padding: 10px 20px;
-
-                    input {
-                        width: 100%;
-                        background: transparent;
-                        border: none;
-                        outline: none;
-                        color: #F1ECFF;
-                        font-size: 14px;
-                    }
-                }
             }
         }
     }

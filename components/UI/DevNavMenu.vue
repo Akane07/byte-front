@@ -17,7 +17,7 @@
             </div>
             <div v-else-if="userStore.checked" class="nav-buttons">
                 <IconsHome class="pointer" @click="navigateTo('/orders')"></IconsHome>
-                <IconsChat class="pointer"></IconsChat>
+                <IconsChat class="pointer" @click="navigateTo('/chat')"></IconsChat>
                 <UIUserAvatar class="pointer" @click.stop="showMenu = !showMenu"
                     :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                 <IconsArrow class="pointer arrow" @click.stop="showMenu = !showMenu" :class="{ active: showMenu }">

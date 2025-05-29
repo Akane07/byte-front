@@ -25,6 +25,7 @@ export interface Order {
     created_at: string;
     performer?: string;
     draft: boolean;
+    is_suggest: boolean;
 }
 
 export interface OrderResponse {
@@ -161,4 +162,10 @@ export async function deleteResponse(id: string, order_id: string) {
     } catch (e: any) {
         return e.response.data;
     }
+}
+
+export async function getOrdersBetweenUsers(id: string, uid: string): Promise<Order[]> {
+    const res = await api.get<Order[]>(`/chat/between/${id}/and/${uid}`);
+
+    return res.data;
 }

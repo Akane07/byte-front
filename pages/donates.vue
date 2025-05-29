@@ -65,7 +65,7 @@
                                     <p>Банковская карта</p>
                                     <span>1234 5678 9101 1121</span>
                                 </div>
-                                <div class="copy" @click="copyToClipboard('1234 5678 9101 1121')">
+                                <div class="copy" @click="copyToClipboard('1234 5678 9101 1121', 'card')">
                                     Скопировать
                                 </div>
                             </div>
@@ -77,7 +77,7 @@
                                     <p>USDT TRC-20</p>
                                     <span>gfkfsiogsjdfgiospdgjspidofgwkwpoi43fjcwio4355w345j43c5</span>
                                 </div>
-                                <div class="copy" @click="copyToClipboard('gfkfsiogsjdfgiospdgjspidofgwkwpoi43fjcwio4355w345j43c5')">
+                                <div class="copy" @click="copyToClipboard('gfkfsiogsjdfgiospdgjspidofgwkwpoi43fjcwio4355w345j43c5', 'crypto')">
                                     Скопировать
                                 </div>
                             </div>
@@ -92,12 +92,11 @@
 <script setup lang="ts">
 import { useNotifications } from '~/store/notiStore';
 
-
 const notifications = useNotifications();
 
-async function copyToClipboard(text: string) {
+async function copyToClipboard(text: string, type: 'card' | 'crypto') {
     navigator.clipboard.writeText(text);
-    await notifications.setNotification('Ссылка скопирована!');
+    await notifications.setNotification(type === 'card' ? 'Номер карты скопирован!' : 'Хещ скопирован!');
 }
 </script>
 

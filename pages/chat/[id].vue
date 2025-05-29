@@ -6,8 +6,8 @@
         <div class="chat_wrapper">
             <div class="menu">
                 <div class="head">
-                    <p>Сообщения</p>
-                    <span>12</span>
+                    <p>Чаты</p>
+                    <span>{{ chats.length }}</span>
                 </div>
                 <div class="search">
                     <div class="input">
@@ -16,17 +16,9 @@
                     </div>
                 </div>
                 <div class="users">
-                    <div class="user active" v-if="user">
-                        <img v-if="user.avatar" :src="baseURL + user.avatar" alt="avatar">
-                        <img v-else src="https://placehold.co/50x50" alt="avatar">
-                        <div class="info">
-                            <p>{{ user?.name }}</p>
-                            <span>Last message</span>
-                        </div>
-                        <!-- <span>1ч</span> -->
-                    </div>
-                    <div class="user" v-for="chat in chats" :key="chat.name">
-                        <img src="https://placehold.co/50x50" alt="avatar">
+                    <div class="user" v-for="chat in chats" :key="chat.name"
+                        :class="chat.userId === user?.id ? 'active' : ''" @click="navigateTo(`/chat/${chat.userId}`)">
+                        <img :src="baseURL + chat.avatar" alt="avatar">
                         <div class="info">
                             <p>{{ chat.name }}</p>
                             <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>
@@ -38,9 +30,10 @@
             <div class="chat">
                 <div class="head">
                     <div class="info" v-if="user">
-                        <UIUserAvatar :src="baseURL + user.avatar"></UIUserAvatar>
+                        <UIUserAvatar :src="baseURL + user.avatar" @click="navigateTo(`/profile/${user.id}`)">
+                        </UIUserAvatar>
                         <div class="name">
-                            <p>{{ user?.name }}</p>
+                            <p @click="navigateTo(`/profile/${user.id}`)">{{ user?.name }}</p>
                             <div class="online">
                                 <div v-if="isOnline" class="is_online"></div>
                                 <div v-else class="is_offline"></div>
@@ -49,15 +42,77 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="messages">
-                    <div v-for="msg in messages" :key="msg._id" class="message_wrapper"  :class="msg.senderId !== user.id ? 'right' : 'left'">
-                        <div class="message">
-                            <p>{{ msg.text }}</p>
-                            <img v-if="msg.mediaType === 'image'" :src="msg.mediaUrl" width="200" />
-                            <video v-if="msg.mediaType === 'video'" :src="msg.mediaUrl" width="200" controls />
-                        </div>
+                    <div class="buttons" v-if="user">
+                        <button class="view" @click="navigateTo(`/chat/mutual/${user.id}`)">
+                            <IconsSuggest></IconsSuggest>
+                            Активные заказы ({{ ordersBetweenUsers.length }})
+                        </button>
+                        <button class="request" @click="navigateTo(`/orders/suggest?id=${user.id}`)">
+                            <IconsOrder></IconsOrder>
+                            Предложить заказ
+                        </button>
                     </div>
+                </div>
+                <div class="messages" ref="messagesRef">
+                    <template v-if="user">
+                        <div v-for="msg in messages" :key="msg._id" class="message_wrapper"
+                            :class="[msg.senderId !== user.id ? 'right' : 'left', msg.status === 'server' ? 'server' : '']">
+                            <div v-if="!msg.is_suggest" class="message">
+                                <p>{{ msg.text }}</p>
+                                <img v-if="msg.mediaType === 'image'" :src="msg.mediaUrl" width="200" />
+                                <video v-if="msg.mediaType === 'video'" :src="msg.mediaUrl" width="200" controls />
+                                <span class="time" v-if="msg.status !== 'server'">{{ useMessageCreated(msg.createdAt)
+                                }}</span>
+                            </div>
+                            <div v-else-if="msg.is_suggest && msg.senderId === userStore.user?.id" class="suggest">
+                                <!-- Предложение заказа от отправителя -->
+                                <div class="header">
+                                    <IconsSuggest></IconsSuggest>
+                                    <p>Предложение от {{ userStore.user?.nickname }}</p>
+                                </div>
+                                <div class="description">
+                                    <p>{{ordersInChat.find(order => order.id === msg.orderId)?.description}}</p>
+                                </div>
+                                <div class="deadlines">
+                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.deadline_date) }}</span></p>
+                                </div>
+                                <div class="amount">
+                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.price) }}</span></p>
+                                </div>
+                                <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
+                                    <button class="delete" @click="deleteSuggest(msg._id)">Отозвать</button>
+                                </div>
+                            </div>
+                            <div v-else class="suggest">
+                                <!-- Предложение заказа от получателя -->
+                                <div class="header">
+                                    <IconsSuggest></IconsSuggest>
+                                    <p>Предложение от {{ userStore.user?.nickname }}</p>
+                                </div>
+                                <div class="description">
+                                    <p>{{ordersInChat.find(order => order.id === msg.orderId)?.description}}</p>
+                                </div>
+                                <div class="deadlines">
+                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.deadline_date) }}</span></p>
+                                </div>
+                                <div class="amount">
+                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.price) }}</span></p>
+                                </div>
+                                <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
+                                    <button class="view" @click="openModal(msg.orderId, msg._id)">Просмотреть</button>
+                                    <button class="delete" @click="rejectSuggest(msg._id)">Отклонить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
                 <div class="input">
                     <div class="file">
@@ -76,14 +131,66 @@
             </div>
         </div>
     </div>
+
+    <UIDevCustomModal v-if="modalAccept && order" @close="modalAccept = false">
+        <div class="left_part">
+            <div class="title">
+                <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
+            </div>
+            <div class="main_info">
+                <p>{{ order?.title }}</p>
+                <div class="stats_info">
+                    <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"
+                        :src="baseURL + userStore.user?.avatar">
+                    </UIUserAvatar>
+                    <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
+                    <span>Предложений {{ order.response_count }}</span>
+                </div>
+            </div>
+            <div class="description">
+                <p>{{ order.description }}</p>
+            </div>
+            <div class="type">
+                <p>Тип проекта: {{ useOrderType(order.type) }}</p>
+            </div>
+            <div class="preferences">
+                <div class="block">
+                    <IconsCalendar style="min-width: 40px; min-height: 40px;"></IconsCalendar>
+                    <div class="text">
+                        <p>{{ useOrderDeadlines(order.deadlines, order.deadline_date) }}</p>
+                        <span>Продолжительность проекта</span>
+                    </div>
+                </div>
+                <div class="block" v-if="order.for_experts">
+                    <IconsExpert style="min-width: 40px; min-height: 40px;"></IconsExpert>
+                    <div class="text">
+                        <p>Для экспертов</p>
+                        <span>Я готов платить более высокую ставку опытным фрилансерам.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="skills">
+                <p>Навыки и экспертный опыт</p>
+                <div class="tags">
+                    <span v-for="skill in order.skills" :key="skill">{{ skill }}</span>
+                </div>
+            </div>
+            <div class="buttons">
+                <button class="view" @click="acceptSuggest(currentMessageId)">Принять</button>
+                <button class="delete" @click="rejectSuggest(currentMessageId)">Отклонить</button>
+            </div>
+        </div>
+    </UIDevCustomModal>
 </template>
 
 <script setup lang="ts">
 import { io } from 'socket.io-client';
 import { api, baseURL } from '~/api';
-import { getCategories } from '~/api/category-api';
+import { getOrdersBetweenUsers, type Order } from '~/api/order-api';
 import type { User } from '~/api/user-api';
+import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
+
 
 const route = useRoute();
 
@@ -92,12 +199,20 @@ const socket = io('http://localhost:3002', {
 });
 
 const userStore = useUserStore();
+const orderStore = useOrderStore();
 
+const modalAccept = shallowRef(false);
+const messagesRef = ref<HTMLDivElement | null>(null);
 const chats = ref<any[]>([]);
-const user = ref<User | null>(null);
-const text = ref('');
-const file = ref<File | null>(null);
 const messages = ref<any[]>([]);
+const user = ref<User | null>(null);
+const text = shallowRef('');
+const file = ref<File | null>(null);
+const ordersInChat = ref<any[]>([]);
+
+const ordersBetweenUsers = ref<Order[]>([]);
+const order = ref<Order | null>(null);
+const currentMessageId = shallowRef('');
 
 const isOnline = computed(() => {
     if (!user.value) return;
@@ -132,20 +247,72 @@ const sendMessage = async () => {
         mediaUrl,
         mediaType,
         createdAt: new Date().toISOString(),
+        is_suggest: false
     });
-
-    // socket.emit('sendMessage', {
-    //     receiverId: userStore.user?.id,
-    //     senderId: user.value?.id,
-    //     text: text.value,
-    //     mediaUrl,
-    //     mediaType,
-    //     createdAt: new Date().toISOString(),
-    // });
 
     text.value = '';
     file.value = null;
 };
+
+function scrollToBottom() {
+    const container = messagesRef.value;
+    if (container) {
+        container.scrollTop = container.scrollHeight;
+    }
+}
+
+async function searchForOrders() {
+    ordersInChat.value = messages.value.filter(msg => msg.is_suggest);
+    ordersInChat.value = await Promise.all(ordersInChat.value.map(async (msg) => {
+        if (!msg.orderId) return;
+        const order = await orderStore.getOrder(msg.orderId);
+        return order;
+    }));
+    ordersInChat.value = ordersInChat.value.filter(Boolean);
+    console.log(ordersInChat.value);
+
+}
+
+async function openModal(orderId: string, messageId: string) {
+    order.value = await orderStore.getOrder(orderId);
+    currentMessageId.value = messageId;
+    modalAccept.value = true;
+}
+
+async function acceptSuggest(id: string) {
+    modalAccept.value = false;
+
+    socket.emit('acceptMessage', {
+        senderId: userStore.user?.id,
+        receiverId: user.value?.id,
+        messageId: id,
+        name: userStore.user?.name,
+        orderId: order.value?.id,
+    });
+}
+
+async function rejectSuggest(id: string) {
+    socket.emit('rejectMessage', {
+        senderId: userStore.user?.id,
+        receiverId: user.value?.id,
+        messageId: id,
+        name: userStore.user?.name
+    });
+}
+
+async function deleteSuggest(id: string) {
+    socket.emit('deleteMessage', {
+        senderId: userStore.user?.id,
+        receiverId: user.value?.id,
+        messageId: id
+    })
+}
+
+watch(messages, () => {
+    nextTick(() => {
+        scrollToBottom();
+    });
+}, { deep: true });
 
 onMounted(async () => {
     await userStore.checkAuth();
@@ -153,15 +320,34 @@ onMounted(async () => {
     user.value = await userStore.getUserId(route.params.id as string);
     const res = await api.get(`/chat?user=${route.params.id as string}`);
     messages.value = res.data;
+    await searchForOrders();
+    ordersBetweenUsers.value = await getOrdersBetweenUsers(userStore.user?.id as string, user.value?.id as string);
 
     socket.emit('joinRoom', route.params.id as string);
     socket.on('receiveMessage', (msg) => {
         messages.value.push(msg);
     });
+    socket.on('messageDeleted', (msg: { messageId: string }) => {
+        messages.value = messages.value.filter(m => m._id !== msg.messageId);
+    });
+    socket.on('messageAccepted', (msg: { messageId: string }) => {
+        const index = messages.value.findIndex(m => m._id === msg.messageId) as number;
+        messages.value[index].status = 'accepted';
+    });
+    socket.on('messageRejected', (msg: { messageId: string }) => {
+        const index = messages.value.findIndex(m => m._id === msg.messageId) as number;
+        messages.value[index].status = 'rejected';
+    });
+
+    nextTick(() => {
+        scrollToBottom();
+    });
 })
 </script>
 
 <style lang="scss" scoped>
+@import "../../assets/styles/vars.scss";
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -251,13 +437,14 @@ onMounted(async () => {
                     display: flex;
                     align-items: center;
                     gap: 16px;
-                    padding: 16px 0;
+                    padding: 16px;
                     cursor: pointer;
 
                     img {
                         width: 50px;
                         height: 50px;
                         border-radius: 6px;
+                        cursor: pointer;
                     }
 
                     .info {
@@ -265,16 +452,19 @@ onMounted(async () => {
                         flex-direction: column;
                         gap: 4px;
                         width: 100%;
+                        cursor: pointer;
 
                         p {
                             font-weight: 600;
                             font-size: 14px;
                             color: #F1ECFF;
+                            cursor: pointer;
                         }
 
                         &>span {
                             font-size: 12px;
                             color: #9E9E9F;
+                            cursor: pointer;
                         }
                     }
 
@@ -284,11 +474,13 @@ onMounted(async () => {
                         font-weight: 600;
                         height: 100%;
                         padding-top: 8px;
+                        cursor: pointer;
                     }
 
                     &.active {
                         border-radius: 6px;
                         background: rgba(131, 85, 250, 0.06);
+                        cursor: pointer;
                     }
                 }
             }
@@ -302,7 +494,8 @@ onMounted(async () => {
             .head {
                 width: 100%;
                 display: flex;
-                gap: 8px;
+                justify-content: space-between;
+                gap: 24px;
                 padding: 14.5px 24px;
                 border-bottom: 1px solid #333339;
 
@@ -348,6 +541,49 @@ onMounted(async () => {
                         }
                     }
                 }
+
+                .buttons {
+                    display: flex;
+                    gap: 12px;
+
+                    .request {
+                        cursor: pointer;
+                        background: rgba(139, 96, 250, 0.1);
+                        border-radius: 6px;
+                        padding: 10px 16px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                        border: none;
+                        outline: none;
+                        color: #8B60FA;
+                        font-weight: 600;
+
+                        svg {
+                            cursor: pointer;
+                        }
+                    }
+
+                    .view {
+                        cursor: pointer;
+                        background: #C6F6D51A;
+                        border-radius: 6px;
+                        padding: 10px 16px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                        border: none;
+                        outline: none;
+                        color: #38A169;
+                        font-weight: 600;
+
+                        svg {
+                            cursor: pointer;
+                        }
+                    }
+                }
             }
 
             .messages {
@@ -365,11 +601,39 @@ onMounted(async () => {
                     display: flex;
                     justify-content: end;
 
+                    .time {
+                        color: #9E9E9F;
+                        font-size: 10px;
+                    }
+
                     &.left {
                         justify-content: start;
 
                         .message {
                             background: #494949;
+                        }
+
+                        .time {
+                            width: 100%;
+                            text-align: end;
+                        }
+                    }
+
+                    &.right {
+                        .time {
+                            width: 100%;
+                            text-align: start;
+                            color: #ffffff;
+                        }
+                    }
+
+                    &.server {
+                        justify-content: center;
+                        width: 100%;
+
+                        .message {
+                            background: transparent;
+                            color: #9E9E9F;
                         }
                     }
 
@@ -380,6 +644,108 @@ onMounted(async () => {
                         max-width: 45%;
                         color: #FFFFFF;
                         font-size: 15px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
+                    }
+
+                    .suggest {
+                        width: 100%;
+                        max-width: 440px;
+                        padding: 22px 16px;
+                        background: #C6F6D51A;
+                        border-radius: 6px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 20px;
+                        overflow: hidden;
+
+                        .header {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            padding-bottom: 20px;
+                            border-bottom: 1px solid #38A169;
+
+                            p {
+                                font-weight: 600;
+                                font-size: 16px;
+                                color: #38A169;
+                            }
+                        }
+
+                        .description {
+                            width: 100%;
+                            padding-bottom: 20px;
+                            border-bottom: 1px solid rgb(255, 255, 255, 0.4);
+                            overflow: hidden;
+
+                            p {
+                                font-size: 14px;
+                                color: #FFFFFF;
+                            }
+                        }
+
+                        .deadlines {
+                            overflow: hidden;
+                            padding-bottom: 20px;
+                            border-bottom: 1px solid rgb(255, 255, 255, 0.4);
+
+                            p {
+                                font-size: 14px;
+                                color: #FFFFFF;
+
+                                span {
+                                    font-weight: 600;
+                                    font-size: 15px;
+                                    color: #DD6B20;
+                                }
+                            }
+                        }
+
+                        .amount {
+                            overflow: hidden;
+                            padding-bottom: 20px;
+                            border-bottom: 1px solid rgb(255, 255, 255, 0.4);
+
+                            p {
+                                font-size: 14px;
+                                color: #FFFFFF;
+
+                                span {
+                                    font-weight: 600;
+                                    font-size: 15px;
+                                    color: #8B60FA;
+                                }
+                            }
+                        }
+
+                        .buttons {
+                            display: flex;
+                            gap: 12px;
+                            align-items: center;
+                            justify-content: center;
+
+                            button {
+                                border: none;
+                                outline: none;
+                                border-radius: 6px;
+                                padding: 12px 28px;
+                                color: #FFFFFF;
+                                font-weight: 600;
+                                cursor: pointer;
+                                width: 100%;
+                                max-width: 180px;
+
+                                &.delete {
+                                    background: #FF6969;
+                                }
+
+                                &.view {
+                                    background: #8355FA;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -424,6 +790,153 @@ onMounted(async () => {
                         font-size: 14px;
                     }
                 }
+            }
+        }
+    }
+}
+
+.left_part {
+    width: 100%;
+    max-width: 600px;
+    border-right: 1px solid $border-color;
+    height: 100%;
+    padding: 32px;
+    border-radius: 20px;
+    background: #222228;
+    box-shadow: 0px 0px 15px 0px #FFFFFF1A;
+    color: white;
+
+    .main_info {
+        margin-top: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        border-bottom: 1px solid $border-color;
+        padding-bottom: 16px;
+
+        p {
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .stats_info {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            gap: 12px;
+            color: $text-color-secondary;
+
+            .border {
+                border-right: 1px solid $border-color;
+                padding-right: 12px;
+            }
+        }
+    }
+
+    .description,
+    .type,
+    .preferences,
+    .skills {
+        font-size: 14px;
+        padding: 24px 12px 24px 0;
+        border-bottom: 1px solid $border-color;
+    }
+
+    .preferences {
+        display: flex;
+        gap: 16px;
+
+        .block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .text {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                p {
+                    font-weight: 600;
+                    font-size: 12px;
+                    white-space: nowrap;
+                }
+
+                span {
+                    font-weight: 500;
+                    font-size: 12px;
+                    color: $text-color-secondary;
+                }
+            }
+        }
+    }
+
+    .skills {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        p {
+            font-weight: 500;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            span {
+                background: $tag-color;
+                color: $text-color-secondary;
+                padding: 6px 14px;
+                border-radius: 6px;
+                font-size: 14px;
+            }
+        }
+    }
+
+    .title {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        span {
+            font-weight: 500;
+            font-size: 22px;
+        }
+
+        p {
+            font-weight: 600;
+            font-size: 18px;
+            color: $active-button-color;
+        }
+    }
+
+    .buttons {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: center;
+        margin-top: 24px;
+
+        button {
+            border: none;
+            outline: none;
+            border-radius: 6px;
+            padding: 12px 28px;
+            color: #FFFFFF;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            max-width: 180px;
+
+            &.delete {
+                background: #FF6969;
+            }
+
+            &.view {
+                background: #8355FA;
             }
         }
     }
