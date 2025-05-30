@@ -55,14 +55,86 @@
                 </div>
                 <div class="messages" ref="messagesRef">
                     <template v-if="user">
-                        <div v-for="msg in messages" :key="msg._id" class="message_wrapper"
+                        <div v-for="msg in messages" :key="msg.id" class="message_wrapper"
                             :class="[msg.senderId !== user.id ? 'right' : 'left', msg.status === 'server' ? 'server' : '']">
-                            <div v-if="!msg.is_suggest" class="message">
+                            <div v-if="!msg.is_suggest && msg.status !== 'response' && !msg.responseId" class="message">
                                 <p>{{ msg.text }}</p>
-                                <img v-if="msg.mediaType === 'image'" :src="msg.mediaUrl" width="200" />
-                                <video v-if="msg.mediaType === 'video'" :src="msg.mediaUrl" width="200" controls />
+                                <img v-if="msg.mediaType === 'image' && msg.status !== 'server'" :src="msg.mediaUrl"
+                                    width="200" />
+                                <video v-if="msg.mediaType === 'video' && msg.status !== 'server'" :src="msg.mediaUrl"
+                                    width="200" controls />
                                 <span class="time" v-if="msg.status !== 'server'">{{ useMessageCreated(msg.createdAt)
                                 }}</span>
+                            </div>
+                            <div class="response"
+                                v-else-if="msg.status === 'response' && msg.senderId === userStore.user?.id">
+                                <!-- Предложение заказа от отправителя -->
+                                <div class="header">
+                                    <IconsSuggest></IconsSuggest>
+                                    <p>Отклик от {{ userStore.user?.nickname }}</p>
+                                </div>
+                                <div class="description">
+                                    <p>{{responsesInChat.find(res => res.id === msg.responseId)?.description}}</p>
+                                </div>
+                                <div class="deadlines">
+                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.deadline_date) }}</span></p>
+                                </div>
+                                <div class="amount">
+                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.price) }}</span></p>
+                                </div>
+                                <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
+                                    <button class="delete"
+                                        @click="handleDeleteResponse(msg.responseId, msg.orderId, msg.id)">Удалить
+                                        отклик</button>
+                                </div>
+                            </div>
+                            <div class="response" v-else-if="msg.status === 'response'">
+                                <!-- Предложение заказа от получателя -->
+                                <div class="header">
+                                    <IconsSuggest></IconsSuggest>
+                                    <p>Отклик от {{ user.nickname }}</p>
+                                </div>
+                                <div class="description">
+                                    <p>{{responsesInChat.find(res => res.id === msg.responseId)?.description}}</p>
+                                </div>
+                                <div class="deadlines">
+                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.deadline_date) }}</span></p>
+                                </div>
+                                <div class="amount">
+                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.price) }}</span></p>
+                                </div>
+                                <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
+                                    <button class="view" @click="openModal(msg.orderId, msg.id)">Принять</button>
+                                    <button class="delete" @click="rejectSuggest(msg.id)">Отклонить</button>
+                                </div>
+                            </div>
+                            <div class="response" v-else-if="(msg.status !== 'response') && msg.responseId">
+                                <!-- Предложение заказа от получателя -->
+                                <div class="header">
+                                    <IconsSuggest></IconsSuggest>
+                                    <p>Отклик от {{ user.nickname }}</p>
+                                </div>
+                                <div class="description">
+                                    <p>{{responsesInChat.find(res => res.id === msg.responseId)?.description}}</p>
+                                </div>
+                                <div class="deadlines">
+                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.deadline_date) }}</span></p>
+                                </div>
+                                <div class="amount">
+                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                            msg.orderId)?.price) }}</span></p>
+                                </div>
                             </div>
                             <div v-else-if="msg.is_suggest && msg.senderId === userStore.user?.id" class="suggest">
                                 <!-- Предложение заказа от отправителя -->
@@ -84,14 +156,14 @@
                                             msg.orderId)?.price) }}</span></p>
                                 </div>
                                 <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
-                                    <button class="delete" @click="deleteSuggest(msg._id)">Отозвать</button>
+                                    <button class="delete" @click="deleteSuggest(msg.id)">Отозвать</button>
                                 </div>
                             </div>
                             <div v-else class="suggest">
                                 <!-- Предложение заказа от получателя -->
                                 <div class="header">
                                     <IconsSuggest></IconsSuggest>
-                                    <p>Предложение от {{ userStore.user?.nickname }}</p>
+                                    <p>Предложение от {{ user.nickname }}</p>
                                 </div>
                                 <div class="description">
                                     <p>{{ordersInChat.find(order => order.id === msg.orderId)?.description}}</p>
@@ -107,8 +179,8 @@
                                             msg.orderId)?.price) }}</span></p>
                                 </div>
                                 <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
-                                    <button class="view" @click="openModal(msg.orderId, msg._id)">Просмотреть</button>
-                                    <button class="delete" @click="rejectSuggest(msg._id)">Отклонить</button>
+                                    <button class="view" @click="openModal(msg.orderId, msg.id)">Просмотреть</button>
+                                    <button class="delete" @click="rejectSuggest(msg.id)">Отклонить</button>
                                 </div>
                             </div>
                         </div>
@@ -186,11 +258,10 @@
 <script setup lang="ts">
 import { io } from 'socket.io-client';
 import { api, baseURL } from '~/api';
-import { getOrdersBetweenUsers, type Order } from '~/api/order-api';
+import { deleteResponse, getOrdersBetweenUsers, getResponseById, type Order } from '~/api/order-api';
 import type { User } from '~/api/user-api';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
-
 
 const route = useRoute();
 
@@ -209,6 +280,7 @@ const user = ref<User | null>(null);
 const text = shallowRef('');
 const file = ref<File | null>(null);
 const ordersInChat = ref<any[]>([]);
+const responsesInChat = ref<any[]>([]);
 
 const ordersBetweenUsers = ref<Order[]>([]);
 const order = ref<Order | null>(null);
@@ -224,7 +296,7 @@ const sendMessage = async () => {
     if (!text.value) return;
 
     let mediaUrl = null;
-    let mediaType = null;
+    let mediaType = 'none';
 
     if (file.value) {
         const formData = new FormData();
@@ -262,15 +334,40 @@ function scrollToBottom() {
 }
 
 async function searchForOrders() {
-    ordersInChat.value = messages.value.filter(msg => msg.is_suggest);
+    ordersInChat.value = messages.value.filter(msg => msg.orderId);
+    ordersInChat.value = ordersInChat.value.reduce((acc, msg) => {
+        if (!acc.find((m: any) => m.orderId === msg.orderId)) {
+            return [...acc, msg];
+        }
+        return acc;
+    }, []);
+
     ordersInChat.value = await Promise.all(ordersInChat.value.map(async (msg) => {
         if (!msg.orderId) return;
         const order = await orderStore.getOrder(msg.orderId);
         return order;
     }));
-    ordersInChat.value = ordersInChat.value.filter(Boolean);
-    console.log(ordersInChat.value);
 
+    ordersInChat.value = ordersInChat.value.filter(Boolean);
+}
+
+async function searchForResponses() {
+    responsesInChat.value = messages.value.filter(msg => msg.responseId);
+    responsesInChat.value = responsesInChat.value.reduce((acc, msg) => {
+        if (!acc.find((m: any) => m.responseId === msg.responseId)) {
+            return [...acc, msg];
+        }
+        return acc;
+    }, []);
+
+    responsesInChat.value = await Promise.all(responsesInChat.value.map(async (msg) => {
+        if (!msg.orderId) return;
+
+        const res = await getResponseById(msg.orderId, msg.responseId);
+        return res;
+    }));
+
+    responsesInChat.value = responsesInChat.value.filter(Boolean);
 }
 
 async function openModal(orderId: string, messageId: string) {
@@ -308,6 +405,16 @@ async function deleteSuggest(id: string) {
     })
 }
 
+async function handleDeleteResponse(id: string, orderId: string, messageId: string) {
+    const res = await deleteResponse(id, orderId);
+
+    socket.emit('deleteMessage', {
+        senderId: userStore.user?.id,
+        receiverId: user.value?.id,
+        messageId,
+    })
+}
+
 watch(messages, () => {
     nextTick(() => {
         scrollToBottom();
@@ -321,6 +428,7 @@ onMounted(async () => {
     const res = await api.get(`/chat?user=${route.params.id as string}`);
     messages.value = res.data;
     await searchForOrders();
+    await searchForResponses();
     ordersBetweenUsers.value = await getOrdersBetweenUsers(userStore.user?.id as string, user.value?.id as string);
 
     socket.emit('joinRoom', route.params.id as string);
@@ -328,20 +436,23 @@ onMounted(async () => {
         messages.value.push(msg);
     });
     socket.on('messageDeleted', (msg: { messageId: string }) => {
-        messages.value = messages.value.filter(m => m._id !== msg.messageId);
+        messages.value = messages.value.filter(m => m.id !== msg.messageId);
     });
     socket.on('messageAccepted', (msg: { messageId: string }) => {
-        const index = messages.value.findIndex(m => m._id === msg.messageId) as number;
+        const index = messages.value.findIndex(m => m.id === msg.messageId) as number;
         messages.value[index].status = 'accepted';
     });
     socket.on('messageRejected', (msg: { messageId: string }) => {
-        const index = messages.value.findIndex(m => m._id === msg.messageId) as number;
+        const index = messages.value.findIndex(m => m.id === msg.messageId) as number;
         messages.value[index].status = 'rejected';
     });
 
     nextTick(() => {
         scrollToBottom();
     });
+
+    console.log(ordersInChat, 'ordersInChat');
+    
 })
 </script>
 
@@ -649,7 +760,8 @@ onMounted(async () => {
                         gap: 2px;
                     }
 
-                    .suggest {
+                    .suggest,
+                    .response {
                         width: 100%;
                         max-width: 440px;
                         padding: 22px 16px;

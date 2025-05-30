@@ -100,6 +100,7 @@
 </template>
 
 <script setup lang="ts">
+import { io } from 'socket.io-client';
 import { baseURL } from '~/api';
 import { deleteResponse, editResponse, type Order } from '~/api/order-api';
 import { useOrderStore } from '~/store/orderStore';
@@ -107,6 +108,10 @@ import { useUserStore } from '~/store/userStore';
 
 definePageMeta({
     middleware: ['auth'],
+});
+
+const socket = io('http://localhost:3002', {
+    transports: ['websocket'],
 });
 
 const route = useRoute();
@@ -124,10 +129,11 @@ const response = ref({
     created_at: '',
     description: '',
     id: '',
+    messageId: '',
 });
 
 async function handlePostResponse() {
-    if (!route.params.id) return;
+    if (!route.params.id || !order.value?.user_id) return;
 
     const res = await orderStore.postOrderResponse(route.params.id as string, newResponse.value.description);
 
@@ -135,6 +141,22 @@ async function handlePostResponse() {
     response.value.description = res.description;
     response.value.id = res.id;
     newResponse.value.description = '';
+
+    socket.emit('postResponse', {
+        senderId: userStore.user!.id,
+        receiverId: order.value.user_id,
+        orderId: order.value.id,
+        responseId: res.id,
+    });
+
+    const hasRes = await orderStore.getOrderResponse(route.params.id as string);
+
+    if (hasRes) {
+        response.value.created_at = hasRes.created_at;
+        response.value.description = hasRes.description;
+        response.value.id = hasRes.id;
+        response.value.messageId = hasRes.messageId || '';
+    }
 }
 
 async function handleEditResponse() {
@@ -152,6 +174,18 @@ async function handleDelete() {
     if (!order.value) return;
     const res = await deleteResponse(response.value.id, order.value.id);
 
+    console.log({
+        senderId: userStore.user?.id,
+        receiverId: order.value?.user_id,
+        messageId: response.value?.messageId,
+    });
+
+    socket.emit('deleteMessage', {
+        senderId: userStore.user?.id,
+        receiverId: order.value?.user_id,
+        messageId: response.value?.messageId,
+    })
+
     if (res) {
         response.value.created_at = '';
         response.value.description = '';
@@ -163,6 +197,7 @@ async function handleDelete() {
 
 onMounted(async () => {
     await userStore.checkAuth();
+    if (!userStore.user?.id) return;
 
     order.value = await orderStore.getOrder(route.params.id as string);
 
@@ -179,6 +214,9 @@ onMounted(async () => {
     if (order.value?.user_id !== userStore.user?.id && !order.value?.viewed_by.includes(userStore.user?.id || '')) {
         await orderStore.viewOrder(route.params.id as string);
     }
+
+    if (order.value?.user_id === userStore.user?.id) return;
+    socket.emit('joinRoom', order.value?.user_id as string);
 })
 </script>
 
@@ -259,6 +297,7 @@ onMounted(async () => {
                         display: flex;
                         flex-direction: column;
                         gap: 4px;
+
                         p {
                             font-weight: 600;
                             font-size: 12px;

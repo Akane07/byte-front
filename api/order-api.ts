@@ -38,6 +38,7 @@ export interface OrderResponse {
     price: number;
     viewed: boolean;
     price_type: "contract" | "fixed";
+    messageId?: string;
 }
 
 
@@ -123,6 +124,12 @@ export async function getResponse(id: string) {
     return response.data;
 }
 
+export async function getResponseById(id: string, rid: string) {
+    const response = await api.get<OrderResponse>(`/order/${id}/response/${rid}`);
+
+    return response.data;
+}
+
 export async function getResponsesOnOrder(id: string) {
     const response = await api.get<OrderResponse[]>(`/order/${id}/responses`);
 
@@ -132,7 +139,6 @@ export async function getResponsesOnOrder(id: string) {
 export async function markOrderViewed(orderId: string) {
     await api.post<Order[]>(`/order/${orderId}/viewed`);
 }
-
 
 export async function getOrderByUserId(id: string) {
     try {
