@@ -379,13 +379,18 @@ async function openModal(orderId: string, messageId: string) {
 async function acceptSuggest(id: string) {
     modalAccept.value = false;
 
+    const type = (order.value?.user_id === userStore.user?.id) ? 'buyer' : 'seller';
+
     socket.emit('acceptMessage', {
         senderId: userStore.user?.id,
         receiverId: user.value?.id,
         messageId: id,
         name: userStore.user?.name,
         orderId: order.value?.id,
+        type,
     });
+
+    ordersBetweenUsers.value = await getOrdersBetweenUsers(userStore.user?.id as string, user.value?.id as string);
 }
 
 async function rejectSuggest(id: string) {
@@ -438,9 +443,10 @@ onMounted(async () => {
     socket.on('messageDeleted', (msg: { messageId: string }) => {
         messages.value = messages.value.filter(m => m.id !== msg.messageId);
     });
-    socket.on('messageAccepted', (msg: { messageId: string }) => {
+    socket.on('messageAccepted', async (msg: { messageId: string }) => {
         const index = messages.value.findIndex(m => m.id === msg.messageId) as number;
         messages.value[index].status = 'accepted';
+        ordersBetweenUsers.value = await getOrdersBetweenUsers(userStore.user?.id as string, user.value?.id as string);
     });
     socket.on('messageRejected', (msg: { messageId: string }) => {
         const index = messages.value.findIndex(m => m.id === msg.messageId) as number;
@@ -450,9 +456,6 @@ onMounted(async () => {
     nextTick(() => {
         scrollToBottom();
     });
-
-    console.log(ordersInChat, 'ordersInChat');
-    
 })
 </script>
 

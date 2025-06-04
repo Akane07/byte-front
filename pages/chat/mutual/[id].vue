@@ -11,8 +11,8 @@
                     </div>
                 </div>
                 <div class="orders_list" v-if="activeOrders.length">
-                    <OrdersMyOrderCard v-for="order in activeOrders" :key="order.id" :order="order"
-                        :plain="true" @suggest="suggestOrder"></OrdersMyOrderCard>
+                    <OrdersMutualOrders v-for="order in activeOrders" :key="order.id" :order="order"
+                        :user_performer="order.performer === userStore.user?.id" ></OrdersMutualOrders>
                 </div>
                 <div class="orders_list" v-else>
                     <p>У вас нет активных заказов с этим пользователем</p>
@@ -39,22 +39,6 @@ const socket = io('http://localhost:3002', {
 const userStore = useUserStore();
 
 const activeOrders = ref<Order[]>([]);
-
-async function suggestOrder(orderId: string) {
-    if (!route.query.id) return;
-    const userId = route.query.id as string;
-
-    socket.emit('sendMessage', {
-        senderId: userStore.user?.id,
-        receiverId: userId,
-        createdAt: new Date().toISOString(),
-        is_suggest: true,
-        text: 'Предложение заказа',
-        orderId,
-    });
-    
-    navigateTo(`/chat/${userId}`);
-}
 
 onMounted(async () => {
     await userStore.checkAuth();
