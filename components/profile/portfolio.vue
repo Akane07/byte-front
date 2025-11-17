@@ -95,7 +95,7 @@ async function handleDelete() {
             top: 10px;
 
             .button {
-                background: white;
+                background: $white;
                 border-radius: 6px;
                 border: 2px solid rgba(70, 144, 212, 0.376);
                 width: 40px;

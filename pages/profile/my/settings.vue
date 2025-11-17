@@ -297,7 +297,7 @@ onMounted(async () => {
                     gap: 12px;
 
                     &>p {
-                        color: white;
+                        color: $white;
                     }
 
                     .photo_wrapper {

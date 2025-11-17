@@ -138,7 +138,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
                     p {
                         font-weight: 600;
                         font-size: 48px;
-                        color: white;
+                        color: $white;
                     }
 
                     span {
@@ -179,7 +179,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
                     p {
                         font-weight: 600;
                         font-size: 48px;
-                        color: white;
+                        color: $white;
                     }
 
                     span {
@@ -203,7 +203,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
                     p {
                         font-weight: 600;
                         font-size: 48px;
-                        color: white;
+                        color: $white;
                     }
 
                     span {
@@ -254,7 +254,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
                                 background: #8B60FA;
                                 border-radius: 6px;
                                 cursor: pointer;
-                                color: white;
+                                color: $white;
                             }
                         }
                     }

@@ -161,7 +161,7 @@ async function handleDelete() {
                 cursor: pointer;
 
                 &.edit {
-                    color: #DD6B20;
+                    color: $text-accent;
                 }
 
                 &.delete {
@@ -191,14 +191,14 @@ async function handleDelete() {
         .order_info {
             .text_info {
                 p {
-                    color: white;
+                    color: $white;
                 }
             }
         }
 
         .order_actions {
             p {
-                color: white;
+                color: $white;
             }
         }
     }

@@ -111,7 +111,7 @@ onMounted(async () => {
                     gap: 10px;
                     padding: 10px 20px;
                     border-radius: 12px;
-                    background: $tag-secondary-color:
+                    background: $tag-secondary-color;
 
                     input {
                         width: 100%;

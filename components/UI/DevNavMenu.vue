@@ -145,8 +145,7 @@ span {
         top: 54px;
         padding: 2px;
         z-index: 100000;
-        background: radial-gradient(80.38% 222.5% at -13.75% -12.36%, #98F9FF 0%, rgba(255, 255, 255, 0) 100%),
-            radial-gradient(80.69% 208.78% at 108.28% 112.58%, #EABFFF 0%, rgba(135, 38, 183, 0) 100%);
+        background: $bg-gradient;
 
         .menu_wrapper {
             width: 100%;

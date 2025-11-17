@@ -25,14 +25,13 @@ const notiStore = useNotifications();
 
     .notification {
         position: fixed;
-        box-shadow: 0px 0px 15px 0px #FFFFFF1A;
+        box-shadow: 0px 0px 15px 0px $shadow;
         border-radius: 6px;
         top: 40px;
         right: -100%;
         z-index: 100000000000;
         transition: right 0.5s ease-in-out;
-        background: radial-gradient(80.38% 222.5% at -13.75% -12.36%, #98F9FF 0%, rgba(255, 255, 255, 0) 100%),
-            radial-gradient(80.69% 208.78% at 108.28% 112.58%, #EABFFF 0%, rgba(135, 38, 183, 0) 100%);
+        background: $bg-gradient;
         padding: 2px;
 
         .bg {
@@ -40,7 +39,7 @@ const notiStore = useNotifications();
             height: 100%;
             padding: 16px 24px;
             font-weight: 600;
-            color: white;
+            color: $white;
             border-radius: 6px;
             border-radius: 6px;
             background: $tag-color;
@@ -61,14 +60,13 @@ const notiStore = useNotifications();
 
 .notification {
     position: fixed;
-    box-shadow: 0px 0px 15px 0px #FFFFFF1A;
+    box-shadow: 0px 0px 15px 0px $shadow;
     border-radius: 6px;
     top: 40px;
     right: -100%;
     z-index: 100000000000;
     transition: right 0.5s ease-in-out;
-    background: radial-gradient(80.38% 222.5% at -13.75% -12.36%, #98F9FF 0%, rgba(255, 255, 255, 0) 100%),
-        radial-gradient(80.69% 208.78% at 108.28% 112.58%, #EABFFF 0%, rgba(135, 38, 183, 0) 100%);
+    background: $bg-gradient;
     padding: 2px;
 
     .bg {
@@ -76,7 +74,7 @@ const notiStore = useNotifications();
         height: 100%;
         padding: 16px 24px;
         font-weight: 600;
-        color: white;
+        color: $white;
         border-radius: 6px;
         border-radius: 6px;
         background: $tag-color;

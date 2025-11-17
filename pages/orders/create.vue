@@ -454,7 +454,7 @@ await categoryStore.getAllCategories();
           display: flex;
           flex-direction: column;
           gap: 12px;
-          color: white;
+          color: $white;
         }
 
         .description {
@@ -463,7 +463,7 @@ await categoryStore.getAllCategories();
           gap: 16px;
 
           p {
-            color: white;
+            color: $white;
           }
 
           ul {
@@ -603,7 +603,7 @@ await categoryStore.getAllCategories();
             gap: 12px;
             padding: 18px 14px;
             border-radius: 6px;
-            border: 1px solid white;
+            border: 1px solid $white;
             transition: border 0.2s ease-in;
             cursor: pointer;
 
@@ -621,7 +621,7 @@ await categoryStore.getAllCategories();
                 align-items: center;
                 justify-content: center;
                 border-radius: 100%;
-                border: 1px solid white;
+                border: 1px solid $white;
                 cursor: pointer;
 
                 .circle {
@@ -662,7 +662,7 @@ await categoryStore.getAllCategories();
           flex-direction: column;
           justify-content: end;
           gap: 12px;
-          color: white;
+          color: $white;
           font-weight: 500;
         }
 
@@ -688,7 +688,7 @@ await categoryStore.getAllCategories();
           p {
             font-size: 16px;
             font-weight: 500;
-            color: white;
+            color: $white;
           }
 
           ul {

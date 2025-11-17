@@ -267,7 +267,7 @@ onMounted(async () => {
             gap: 12px;
 
             &>p {
-                color: white;
+                color: $white;
             }
         }
     }
@@ -354,7 +354,7 @@ onMounted(async () => {
                     top: 10px;
 
                     .button {
-                        background: white;
+                        background: $white;
                         border-radius: 6px;
                         border: 2px solid rgba(70, 144, 212, 0.376);
                         width: 40px;

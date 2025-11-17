@@ -149,14 +149,14 @@ const viewed = computed(() => {
         .order_info {
             .text_info {
                 p {
-                    color: white;
+                    color: $white;
                 }
             }
         }
 
         .order_actions {
             p {
-                color: white;
+                color: $white;
             }
         }
     }
@@ -165,14 +165,14 @@ const viewed = computed(() => {
         .order_info {
             .text_info {
                 p {
-                    color: white;
+                    color: $white;
                 }
             }
         }
 
         .order_actions {
             p {
-                color: white;
+                color: $white;
             }
         }
     }

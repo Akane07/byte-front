@@ -56,7 +56,7 @@ onMounted(() => {
         background: $tag-color;
         border-radius: 6px;
         padding: 22px;
-        box-shadow: 0px 6px 15px 0px rgba(255, 255, 255, 0.1);
+        box-shadow: 0px 6px 15px 0px $shadow;
         display: flex;
         flex-direction: column;
         gap: 22px;
@@ -67,7 +67,7 @@ onMounted(() => {
             justify-content: space-between;
 
             p {
-                color: white;
+                color: $white;
                 font-weight: 600;
             }
 

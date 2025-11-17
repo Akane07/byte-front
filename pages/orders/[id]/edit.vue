@@ -518,7 +518,7 @@ onMounted(async () => {
                     display: flex;
                     flex-direction: column;
                     gap: 12px;
-                    color: white;
+                    color: $white;
                 }
 
                 .description {
@@ -527,7 +527,7 @@ onMounted(async () => {
                     gap: 16px;
 
                     p {
-                        color: white;
+                        color: $white;
                     }
 
                     ul {
@@ -667,7 +667,7 @@ onMounted(async () => {
                         gap: 12px;
                         padding: 18px 14px;
                         border-radius: 6px;
-                        border: 1px solid white;
+                        border: 1px solid $white;
                         transition: border 0.2s ease-in;
                         cursor: pointer;
 
@@ -685,7 +685,7 @@ onMounted(async () => {
                                 align-items: center;
                                 justify-content: center;
                                 border-radius: 100%;
-                                border: 1px solid white;
+                                border: 1px solid $white;
                                 cursor: pointer;
 
                                 .circle {
@@ -726,7 +726,7 @@ onMounted(async () => {
                     flex-direction: column;
                     justify-content: end;
                     gap: 12px;
-                    color: white;
+                    color: $white;
                     font-weight: 500;
                 }
 
@@ -752,7 +752,7 @@ onMounted(async () => {
                     p {
                         font-size: 16px;
                         font-weight: 500;
-                        color: white;
+                        color: $white;
                     }
 
                     ul {

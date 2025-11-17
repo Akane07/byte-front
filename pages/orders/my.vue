@@ -129,7 +129,7 @@ onMounted(async () => {
 }
 
 .orders_wrapper {
-    color: white;
+    color: $white;
     display: flex;
     width: 100%;
     max-width: 1440px;

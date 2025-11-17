@@ -578,7 +578,7 @@ onMounted(async () => {
                         justify-content: start;
 
                         .message {
-                            background: $tag-secondary-color:
+                            background: $tag-secondary-color;
                         }
 
                         .time {
@@ -667,7 +667,7 @@ onMounted(async () => {
                                 span {
                                     font-weight: 600;
                                     font-size: 15px;
-                                    color: #DD6B20;
+                                    color: $text-accent;
                                 }
                             }
                         }
@@ -746,7 +746,7 @@ onMounted(async () => {
                 .input_wrapper {
                     display: flex;
                     width: 100%;
-                    background: $tag-secondary-color:
+                    background: $tag-secondary-color;
                     border-radius: 6px;
                     padding: 10px 20px;
 
@@ -779,8 +779,8 @@ onMounted(async () => {
     padding: 32px;
     border-radius: 20px;
     background: $bg-brand;
-    box-shadow: 0px 0px 15px 0px #FFFFFF1A;
-    color: white;
+    box-shadow: 0px 0px 15px 0px $shadow;
+    color: $white;
 
     .main_info {
         margin-top: 32px;
@@ -791,7 +791,7 @@ onMounted(async () => {
         padding-bottom: 16px;
 
         p {
-            color: white;
+            color: $white;
             font-weight: 600;
             font-size: 18px;
         }

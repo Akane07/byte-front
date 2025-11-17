@@ -256,7 +256,7 @@ onMounted(async () => {
                 padding-bottom: 16px;
 
                 p {
-                    color: white;
+                    color: $white;
                     font-weight: 600;
                     font-size: 18px;
                 }
@@ -400,10 +400,10 @@ onMounted(async () => {
                 gap: 24px;
 
                 .edit {
-                    background: #DD6B20;
+                    background: $text-accent;
                     border-radius: 6px;
                     padding: 12px 28px;
-                    color: white;
+                    color: $white;
                     border: none;
                     outline: none;
                     cursor: pointer;
@@ -414,7 +414,7 @@ onMounted(async () => {
                     background: $text-red;
                     border-radius: 6px;
                     padding: 12px 28px;
-                    color: white;
+                    color: $white;
                     border: none;
                     outline: none;
                     cursor: pointer;
@@ -444,6 +444,6 @@ onMounted(async () => {
 
 .confirm {
     max-width: 400px;
-    color: white;
+    color: $white;
 }
 </style>

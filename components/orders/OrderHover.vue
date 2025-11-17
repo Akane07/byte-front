@@ -192,7 +192,7 @@ watch(props, async () => {
 
     & > .bordered {
       width: 1px;
-      background: white;
+      background: $white;
       height: 100%;
       position: absolute;
       top: 0;
@@ -233,7 +233,7 @@ watch(props, async () => {
         padding-bottom: 16px;
 
         p {
-          color: white;
+          color: $white;
           font-weight: 600;
           font-size: 18px;
         }
@@ -349,7 +349,7 @@ watch(props, async () => {
         gap: 16px;
 
         & > p {
-          color: white;
+          color: $white;
           font-weight: 600;
           font-size: 15px;
         }
@@ -379,7 +379,7 @@ watch(props, async () => {
         gap: 16px;
 
         p {
-          color: white;
+          color: $white;
           font-weight: 600;
           font-size: 15px;
         }

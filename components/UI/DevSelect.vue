@@ -111,7 +111,7 @@ useClickOutside(selectRef, () => {
         left: 0;
         background: $tag-color;
         border-radius: 6px;
-        box-shadow: 0px 6px 15px 0px #FFFFFF1A;
+        box-shadow: 0px 6px 15px 0px $shadow;
         max-height: 250px;
         overflow-y: scroll;
         cursor: pointer;
@@ -123,7 +123,7 @@ useClickOutside(selectRef, () => {
             background: $tag-color;
 
             &:hover {
-                color: white;
+                color: $white;
                 background: $select-hover;
             }
         }

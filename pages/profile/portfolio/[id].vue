@@ -148,7 +148,7 @@ onMounted(async () => {
     margin-bottom: 100px;
 
     .portfolio {
-        color: white;
+        color: $white;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -273,7 +273,7 @@ onMounted(async () => {
                     gap: 12px;
 
                     p {
-                        color: white;
+                        color: $white;
                         font-weight: 600;
                         font-size: 14px;
                     }

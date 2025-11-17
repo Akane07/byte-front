@@ -177,7 +177,7 @@ onMounted(async () => {
   margin-bottom: 100px;
 
   .profile {
-    color: white;
+    color: $white;
     display: flex;
     flex-direction: column;
     gap: 40px;
