@@ -60,7 +60,7 @@
 import DevNavButton from './DevNavButton.vue';
 import DevButton from './DevButton.vue';
 import { useUserStore } from '~/store/userStore';
-import { baseURL } from '~/api';
+import { baseURL } from '~/shared/api';
 
 const userStore = useUserStore();
 

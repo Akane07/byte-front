@@ -24,8 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from '~/api';
-import { type Portfolio } from "~/api/portfolio-api";
+import { baseURL } from '~/shared/api';
+import { type Portfolio } from "~/shared/api/portfolio-api";
 import { usePortfolioStore } from '~/store/portfolioStore';
 
 const props = defineProps<{

@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { type Order } from '~/api/order-api';
+import { type Order } from '~/shared/api/order-api';
 import { useCategory } from '~/store/categoryStore';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';

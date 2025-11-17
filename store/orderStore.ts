@@ -1,4 +1,4 @@
-import { getDrafts, getMyResponses, getOrderById, getOrderByUserId, getOrders, getResponse, getResponsesOnOrder, markOrderViewed, patchOrder, postOrder, postResponse, type Order, type OrderResponse } from "~/api/order-api";
+import { getDrafts, getMyResponses, getOrderById, getOrderByUserId, getOrders, getResponse, getResponsesOnOrder, markOrderViewed, patchOrder, postOrder, postResponse, type Order, type OrderResponse } from "~/shared/api/order-api";
 import { useCategory } from './categoryStore';
 
 export const useOrderStore = defineStore('order', () => {

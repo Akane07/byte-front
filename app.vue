@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { setToken } from "./api";
+import { setToken } from "./shared/api";
 import { useUserStore } from "./store/userStore";
 import { useOrderStore } from '~/store/orderStore';
 

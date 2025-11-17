@@ -231,9 +231,9 @@
 
 <script setup lang="ts">
 import { io } from 'socket.io-client';
-import { api, baseURL } from '~/api';
-import { deleteResponse, getOrdersBetweenUsers, getResponseById, type Order } from '~/api/order-api';
-import type { User } from '~/api/user-api';
+import { api, baseURL } from '~/shared/api';
+import { deleteResponse, getOrdersBetweenUsers, getResponseById, type Order } from '~/shared/api/order-api';
+import type { User } from '~/shared/api/user-api';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
 

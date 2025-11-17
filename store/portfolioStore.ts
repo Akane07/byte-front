@@ -1,4 +1,4 @@
-import { deletePortfolio as delPortfolio, getMyPortfolio as getMyPortfolios, getPortfolioById, getPortfolios, patchPortfolio, postPortfolio, type Portfolio } from "~/api/portfolio-api";
+import { deletePortfolio as delPortfolio, getMyPortfolio as getMyPortfolios, getPortfolioById, getPortfolios, patchPortfolio, postPortfolio, type Portfolio } from "~/shared/api/portfolio-api";
 
 export const usePortfolioStore = defineStore('portfolio', () => {
     const portfolio = ref<Portfolio[]>([]);

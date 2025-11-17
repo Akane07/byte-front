@@ -65,7 +65,7 @@ textarea {
     padding: 12px 16px;
     color: $text-main;
     font-size: 16px;
-    border: 1px solid #3C3B3B;
+    border: 1px solid $tag-hover;
     transition: 0.2s ease-in;
     max-height: 550px;
     min-height: 40px;
@@ -83,12 +83,12 @@ textarea {
     }
 
     &:hover {
-        border: 1px solid #444343;
+        border: 1px solid $border-secondary;
         background: rgb(50, 50, 50);
     }
 
     &:focus-within {
-        border: 1px solid #444343;
+        border: 1px solid $border-secondary;
         background: rgb(50, 50, 50);
     }
 

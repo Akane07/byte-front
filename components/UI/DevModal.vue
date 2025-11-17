@@ -72,7 +72,6 @@ onMounted(() => {
             }
 
             .cross {
-                align-self: flex-end;
                 margin-left: 140px;
                 cursor: pointer;
             }

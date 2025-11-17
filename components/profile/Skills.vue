@@ -90,6 +90,11 @@ watch(modalShow, () => {
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: background 0.3s ease;
+
+            &:hover {
+                background: $tag-hover;
+            }
         }
     }
 
@@ -117,14 +122,14 @@ watch(modalShow, () => {
     flex-wrap: wrap;
     gap: 12px;
     border-radius: 6px;
-    border: 1px solid #3C3B3B;
+    border: 1px solid $tag-hover;
     background: $tag-color;
     transition: 0.2s ease-in;
 
     .skill {
         border-radius: 6px;
         padding: 6px 14px;
-        background: #3C3B3B;
+        background: $tag-hover;
         font-size: 14px;
         color: $text-placeholder;
         display: flex;
@@ -142,13 +147,13 @@ watch(modalShow, () => {
     }
 
     &:hover {
-        border: 1px solid #444343;
-        background: rgb(50, 50, 50);
+        border: 1px solid $border-secondary;
+        background: #323232;
     }
 
     &:focus-within {
-        border: 1px solid #444343;
-        background: rgb(50, 50, 50);
+        border: 1px solid $border-secondary;
+        background: #323232;
     }
 }
 

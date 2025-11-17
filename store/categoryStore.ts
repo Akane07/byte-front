@@ -1,4 +1,4 @@
-import { getCategories, getSkills } from "~/api/category-api";
+import { getCategories, getSkills } from "~/shared/api/category-api";
 
 export const useCategory = defineStore('category', () => {
     const categories = ref<{ id: number, title: string }[]>([]);

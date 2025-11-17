@@ -101,8 +101,8 @@
 
 <script setup lang="ts">
 import { io } from 'socket.io-client';
-import { baseURL } from '~/api';
-import { deleteResponse, editResponse, type Order } from '~/api/order-api';
+import { baseURL } from '~/shared/api';
+import { deleteResponse, editResponse, type Order } from '~/shared/api/order-api';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
 

@@ -23,8 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from '~/api';
-import type { Order } from '~/api/order-api';
+import { baseURL } from '~/shared/api';
+import type { Order } from '~/shared/api/order-api';
 import { useUserStore } from '~/store/userStore';
 
 const props = defineProps<{

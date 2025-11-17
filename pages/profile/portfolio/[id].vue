@@ -82,9 +82,9 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from '~/api';
-import { likePortfolio, viewPortfolio, type Portfolio } from "~/api/portfolio-api";
-import type { User } from '~/api/user-api';
+import { baseURL } from '~/shared/api';
+import { likePortfolio, viewPortfolio, type Portfolio } from "~/shared/api/portfolio-api";
+import type { User } from '~/shared/api/user-api';
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
 

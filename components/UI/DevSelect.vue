@@ -71,7 +71,7 @@ useClickOutside(selectRef, () => {
     position: relative;
     user-select: none;
     cursor: pointer;
-    border: 1px solid #3C3B3B;
+    border: 1px solid $tag-hover;
     transition: 0.2s ease-in;
 
     .select_input {
@@ -155,12 +155,12 @@ useClickOutside(selectRef, () => {
     }
 
     &:hover {
-        border: 1px solid #444343;
+        border: 1px solid $border-secondary;
         background: rgb(50, 50, 50);
     }
 
     &:focus-within {
-        border: 1px solid #444343;
+        border: 1px solid $border-secondary;
         background: rgb(50, 50, 50);
     }
 }

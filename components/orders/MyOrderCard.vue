@@ -82,8 +82,8 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from "~/api";
-import { deleteOrder, type Order } from "~/api/order-api";
+import { baseURL } from "~/shared/api";
+import { deleteOrder, type Order } from "~/shared/api/order-api";
 import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";
 

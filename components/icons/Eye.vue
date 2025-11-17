@@ -2,9 +2,9 @@
     <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
             d="M9.7377 6.50002C9.7377 7.57252 8.7377 8.43919 7.5002 8.43919C6.2627 8.43919 5.2627 7.57252 5.2627 6.50002C5.2627 5.42752 6.2627 4.56085 7.5002 4.56085C8.7377 4.56085 9.7377 5.42752 9.7377 6.50002Z"
-            stroke="$text-secondary" stroke-linecap="round" stroke-linejoin="round" />
+            stroke="#9E9E9E" stroke-linecap="round" stroke-linejoin="round" />
         <path
             d="M7.50039 10.9796C9.70664 10.9796 11.7629 9.85293 13.1941 7.90293C13.7566 7.13918 13.7566 5.85543 13.1941 5.09168C11.7629 3.14168 9.70664 2.01501 7.50039 2.01501C5.29414 2.01501 3.23789 3.14168 1.80664 5.09168C1.24414 5.85543 1.24414 7.13918 1.80664 7.90293C3.23789 9.85293 5.29414 10.9796 7.50039 10.9796Z"
-            stroke="$text-secondary" stroke-linecap="round" stroke-linejoin="round" />
+            stroke="#9E9E9E" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
 </template>

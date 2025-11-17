@@ -28,7 +28,7 @@ export default defineNuxtConfig({
           api: "modern-compiler",
 
           additionalData: `
-        @use '@/assets/styles/vars.scss' as *;
+        @use '~/assets/styles/vars.scss' as *;
         `,
         },
       },
@@ -36,7 +36,7 @@ export default defineNuxtConfig({
     resolve: {
       alias: [
         {
-          find: "@",
+          find: "~",
           replacement: fileURLToPath(new URL("./", import.meta.url)),
         },
       ],

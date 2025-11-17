@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { api, baseURL } from '~/api';
+import { api, baseURL } from '~/shared/api';
 import { useUserStore } from '~/store/userStore';
 
 const userStore = useUserStore();

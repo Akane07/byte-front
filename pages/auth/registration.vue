@@ -34,8 +34,8 @@
 import DevAuthInput from '~/components/auth/AuthInput.vue';
 import DevNavButton from '~/components/UI/DevNavButton.vue';
 import DevAuthBoard from '~/components/auth/AuthBoard.vue';
-import { register } from '~/api/auth-api';
-import { setToken } from '~/api';
+import { register } from '~/shared/api/auth-api';
+import { setToken } from '~/shared/api';
 
 definePageMeta({
     middleware: ['auth'],

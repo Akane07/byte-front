@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from '~/api';
+import { baseURL } from '~/shared/api';
 import { usePortfolioStore } from '~/store/portfolioStore';
 import { useUserStore } from '~/store/userStore';
 

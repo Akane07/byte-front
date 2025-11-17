@@ -1,5 +1,5 @@
-import { setToken } from "~/api";
-import { changePassword, getUser, getUserById, postUser, type User } from "~/api/user-api";
+import { setToken } from "~/shared/api";
+import { changePassword, getUser, getUserById, postUser, type User } from "~/shared/api/user-api";
 
 export const useUserStore = defineStore('user', () => {
     const user = ref<User | null>(null);

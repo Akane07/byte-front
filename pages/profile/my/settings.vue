@@ -95,8 +95,8 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from '~/api';
-import { getCountries, setAvatar } from '~/api/user-api';
+import { baseURL } from '~/shared/api';
+import { getCountries, setAvatar } from '~/shared/api/user-api';
 import { useNotifications } from '~/store/notiStore';
 import { useUserStore } from '~/store/userStore';
 

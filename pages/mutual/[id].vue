@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { io } from 'socket.io-client';
-import { getOrdersBetweenUsers, type Order } from '~/api/order-api';
+import { getOrdersBetweenUsers, type Order } from '~/shared/api/order-api';
 import { useUserStore } from '~/store/userStore';
 
 definePageMeta({

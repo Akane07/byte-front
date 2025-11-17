@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { deleteResponse, type OrderResponse } from '~/api/order-api';
+import { deleteResponse, type OrderResponse } from '~/shared/api/order-api';
 import { useNotifications } from '~/store/notiStore';
 
 const props = defineProps<{

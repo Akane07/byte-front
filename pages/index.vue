@@ -1,147 +1,46 @@
 <template>
-    <div class="home">
-        <UIDevNavMenu></UIDevNavMenu>
-        <div class="wrapper">
-            <UIBackground></UIBackground>
-            <div class="content">
-                <h1>Хотите фармить миллионы? Или найти того, кто их заберёт?</h1>
-                <p>Вам на Freelance Byte...</p>
-                <UIDevNavButton @click="$router.push('/orders')" style="z-index: 100;">Перейти</UIDevNavButton>
-
-                <!-- <div class="canvas">
-                    <canvas id="canvas3d" width="1000" height="1000"></canvas>
-                    <div class="hide-block"></div>
-                </div> -->
-            </div>
-        </div>
+  <div class="home w-full h-screen relative">
+    <UIDevNavMenu></UIDevNavMenu>
+    <div class="absolute w-full h-full flex justify-center px-15 top-0">
+      <UIBackground></UIBackground>
+      <div class="content flex flex-col items-center gap-7.5 text-center">
+        <h1>Виртуальный мир реальных возможностей</h1>
+        <p>Работай с проверенными заказчиками, получай честную оплату и развивай свои навыки каждый день.</p>
+        <UIDevNavButton @click="$router.push('/orders')" style="z-index: 100">Перейти</UIDevNavButton>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { Application } from '@splinetool/runtime';
-
 definePageMeta({
-    middleware: ['auth'],
+  middleware: ["auth"],
 });
-
-onMounted(async () => {
-    // const canvas = document.getElementById('canvas3d') as HTMLCanvasElement;
-    // const app = new Application(canvas);
-    // app.load('https://prod.spline.design/ijwoY6i07SdqDJvF/scene.splinecode');
-})
 </script>
 
 <style scoped lang="scss">
 .home {
-    background-color: $black;
-    width: 100%;
-    height: 100vh;
-    position: relative;
+  background-color: $black;
 
-    .wrapper {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        padding: 0 60px;
-        top: 0;
+  .content {
+    color: $white;
+    margin-top: 260px;
 
-        .content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-            color: $white;
-            text-align: center;
-            margin-top: 260px;
-
-            h1 {
-                font-weight: 600;
-                font-size: clamp(40px, 8vw, 64px);
-                line-height: clamp(40px, 8vw, 80px);
-                max-width: 1100px;
-                width: 100%;
-                z-index: 1;
-            }
-
-            p {
-                font-size: 18px;
-                line-height: 28px;
-                color: $text-secondary;
-                z-index: 3;
-            }
-        }
-
-        .background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-
-            .line {
-                width: 1px;
-                height: 100%;
-                background: linear-gradient(180deg, #404047 0%, rgba(64, 64, 71, 0) 65.45%);
-            }
-        }
-
-        .circles {
-            .circle:nth-child(1) {
-                background: radial-gradient(50% 50% at 50% 50%, $bg-brand 0%, rgba(34, 34, 40, 0) 100%);
-                border-radius: 50%;
-                width: 500px;
-                height: 500px;
-                position: absolute;
-                top: 0px;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-
-            .circle:nth-child(2) {
-                position: absolute;
-                top: 60px;
-                left: 45%;
-                transform: translateX(-50%);
-                z-index: 2;
-            }
-
-            .circle:nth-child(3) {
-                width: 150px;
-                height: 150px;
-                position: absolute;
-                top: 400px;
-                right: 15%;
-                transform: translateX(-50%);
-                z-index: 2;
-            }
-
-            .circle:nth-child(4) {
-                width: 200px;
-                height: 200px;
-                position: absolute;
-                top: 400px;
-                left: 15%;
-                transform: translateX(-50%);
-                z-index: 2;
-            }
-        }
+    h1 {
+      font-weight: 600;
+      font-size: clamp(40px, 8vw, 64px);
+      line-height: clamp(40px, 8vw, 80px);
+      max-width: 1100px;
+      width: 100%;
+      z-index: 1;
     }
 
-    .canvas {
-        position: relative;
-        .hide-block {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 100%;
-            height: 100px;
-            background: black;
-        }
+    p {
+      font-size: 18px;
+      line-height: 28px;
+      color: $text-secondary;
+      z-index: 3;
     }
+  }
 }
 </style>

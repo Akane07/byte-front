@@ -535,12 +535,12 @@ await categoryStore.getAllCategories();
           }
 
           &:hover {
-            border: 1px solid #444343;
+            border: 1px solid $border-secondary;
             background: rgb(50, 50, 50);
           }
 
           &:focus-within {
-            border: 1px solid #444343;
+            border: 1px solid $border-secondary;
             background: rgb(50, 50, 50);
           }
         }
