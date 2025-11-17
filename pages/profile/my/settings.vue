@@ -227,7 +227,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/styles/vars.scss';
+
 
 .wrapper {
     width: 100%;
@@ -247,7 +247,7 @@ onMounted(async () => {
         .settings {
             width: 100%;
             max-width: 500px;
-            color: $text-color-main;
+            color: $text-main;
             display: flex;
             flex-direction: column;
             gap: 48px;
@@ -267,7 +267,7 @@ onMounted(async () => {
                     gap: 32px;
 
                     .page {
-                        color: $text-link-color;
+                        color: $text-link;
                         font-weight: 600;
                         transition: color 0.2s ease-in;
                         cursor: pointer;

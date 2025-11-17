@@ -54,8 +54,6 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/styles/vars.scss";
-
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -69,7 +67,7 @@ onMounted(async () => {
         height: 80dvh;
         margin-top: 40px;
         border-radius: 6px;
-        background: #222228;
+        background: $bg-brand;
         z-index: 10;
 
         .menu {
@@ -91,14 +89,14 @@ onMounted(async () => {
                 &>p {
                     font-weight: 600;
                     font-size: 20px;
-                    color: #F1ECFF;
+                    color: $text-main;
                 }
 
                 &>span {
                     padding: 2px 8px;
                     border-radius: 24px;
                     background: #EDF2F7;
-                    color: #000000;
+                    color: $black;
                     font-size: 12px;
                     font-weight: 600;
                 }
@@ -114,14 +112,14 @@ onMounted(async () => {
                     gap: 10px;
                     padding: 10px 20px;
                     border-radius: 12px;
-                    background: #494949;
+                    background: $tag-secondary-color:
 
                     input {
                         width: 100%;
                         background: transparent;
                         border: none;
                         outline: none;
-                        color: #F1ECFF;
+                        color: $text-main;
                         font-size: 14px;
 
                         &::placeholder {
@@ -165,13 +163,13 @@ onMounted(async () => {
                         p {
                             font-weight: 600;
                             font-size: 14px;
-                            color: #F1ECFF;
+                            color: $text-main;
                             cursor: pointer;
                         }
 
                         &>span {
                             font-size: 12px;
-                            color: #9E9E9F;
+                            color: $text-placeholder;
                             cursor: pointer;
                         }
                     }
@@ -217,7 +215,7 @@ onMounted(async () => {
                         gap: 4px;
 
                         p {
-                            color: #F1ECFF;
+                            color: $text-main;
                             font-weight: 600;
                             font-size: 20px;
                         }
@@ -228,7 +226,7 @@ onMounted(async () => {
                             align-items: center;
 
                             span {
-                                color: #F1ECFF;
+                                color: $text-main;
                                 font-size: 12px;
                                 font-weight: 600;
                             }
@@ -244,7 +242,7 @@ onMounted(async () => {
                                 width: 10px;
                                 height: 10px;
                                 border-radius: 50%;
-                                background: #FF6969;
+                                background: $text-red;
                             }
                         }
                     }
@@ -270,7 +268,7 @@ onMounted(async () => {
                         justify-content: start;
 
                         .message {
-                            background: #494949;
+                            background: $tag-secondary-color:
                         }
                     }
 
@@ -279,7 +277,7 @@ onMounted(async () => {
                         border-radius: 6px;
                         padding: 8px 16px;
                         max-width: 45%;
-                        color: #FFFFFF;
+                        color: $white;
                         font-size: 15px;
                     }
                 }

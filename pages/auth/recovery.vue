@@ -27,7 +27,7 @@ definePageMeta({
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/vars.scss';
+
 
 .recovery-wrapper {
     display: flex;
@@ -57,7 +57,7 @@ definePageMeta({
 .menu-hero {
     font-weight: 600;
     font-size: 48px;
-    color: #fff;
+    color: $white;
 }
 
 .nav-menu {
@@ -68,7 +68,7 @@ definePageMeta({
 }
 
 .menu-context {
-    color: $text-color-secondary;
+    color: $text-secondary;
     display: inline-block;
 }
 

@@ -20,7 +20,7 @@ defineEmits<{
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .select_wrapper {
     display: flex;
@@ -30,7 +30,7 @@ defineEmits<{
     user-select: none;
 
     .select {
-        background: $select-disabled;
+        background: $border-color;
         border-radius: 5px;
         width: 24px;
         height: 24px;
@@ -53,7 +53,7 @@ defineEmits<{
 
     span {
         cursor: pointer;
-        color: $text-color-secondary;
+        color: $text-secondary;
         font-size: 16px;
     }
 

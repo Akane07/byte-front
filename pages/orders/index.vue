@@ -118,7 +118,7 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/vars.scss';
+
 
 .wrapper {
     width: 100%;
@@ -141,7 +141,7 @@ onMounted(async () => {
     .filters {
         width: 25%;
         height: fit-content;
-        background: $main-color;
+        background: $bg-brand;
         padding: 46px 20px;
         border-radius: 20px 0 0 20px;
         display: flex;
@@ -155,7 +155,7 @@ onMounted(async () => {
             text-align: center;
             padding-bottom: 24px;
             border-bottom: 1px solid $border-color;
-            color: $text-color-header;
+            color: $text-header;
         }
 
         .filters_block {
@@ -185,7 +185,7 @@ onMounted(async () => {
     .orders {
         width: 75%;
         height: fit-content;
-        background: $main-color;
+        background: $bg-brand;
         padding: 46px 20px;
         border-radius: 0 20px 20px 20px;
         border-left: 1px solid $border-color;

@@ -53,7 +53,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/vars.scss';
+
 
 textarea {
     width: 100%;
@@ -63,7 +63,7 @@ textarea {
     outline: none;
     border-radius: 6px;
     padding: 12px 16px;
-    color: $text-color-main;
+    color: $text-main;
     font-size: 16px;
     border: 1px solid #3C3B3B;
     transition: 0.2s ease-in;
@@ -100,7 +100,7 @@ textarea {
 
     /* Track */
     &::-webkit-scrollbar-track {
-        background: #2E2E2E;
+        background: $tag-color
     }
 
     /* Handle */

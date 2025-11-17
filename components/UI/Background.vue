@@ -32,7 +32,7 @@
 
 .circles {
     .circle:nth-child(1) {
-        background: radial-gradient(50% 50% at 50% 50%, #222228 0%, rgba(34, 34, 40, 0) 100%);
+        background: radial-gradient(50% 50% at 50% 50%, $bg-brand 0%, rgba(34, 34, 40, 0) 100%);
         border-radius: 50%;
         width: 500px;
         height: 500px;

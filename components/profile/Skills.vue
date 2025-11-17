@@ -68,7 +68,7 @@ watch(modalShow, () => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .skills_wrapper {
     display: flex;
@@ -96,7 +96,7 @@ watch(modalShow, () => {
         border: none;
         outline: none;
         background: transparent;
-        color: #8355FA;
+        color: $select-enabled
         font-size: 16px;
         align-self: flex-start;
         cursor: pointer;
@@ -117,7 +117,7 @@ watch(modalShow, () => {
     gap: 12px;
     border-radius: 6px;
     border: 1px solid #3C3B3B;
-    background: #2E2E2E;
+    background: $tag-color
     transition: 0.2s ease-in;
 
     .skill {

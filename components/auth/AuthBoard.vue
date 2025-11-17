@@ -80,7 +80,7 @@ const props = defineProps<{
 .icon-cont {
     width: 100%;
     min-height: 239px;
-    background: #18181C;
+    background: $input-auth;
     border-radius: 20px;
     display: flex;
     align-items: center;

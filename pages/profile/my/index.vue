@@ -84,7 +84,7 @@
             <div class="portfolio">
                 <div class="header">
                     <p>Портфолио</p>
-                    <UIDevButton :active="false" style="border-color: #8355FA; color: #8355FA;"
+                    <UIDevButton :active="false" style="border-color: $select-enabled color: $select-enabled"
                         @click="navigateTo('/profile/new-project')">
                         <IconsPlus color="#8355FA" style="transform: scale(1.2);"></IconsPlus>
                         Добавить проект в портфолио
@@ -132,7 +132,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/styles/vars.scss';
+
 
 .wrapper {
     width: 100%;
@@ -152,7 +152,7 @@ onMounted(async () => {
         width: 100%;
         max-width: 1440px;
         margin-top: 40px;
-        background: $main-color;
+        background: $bg-brand;
         border-radius: 20px;
         padding: 64px 42px;
 
@@ -184,7 +184,7 @@ onMounted(async () => {
                     display: flex;
                     flex-direction: column;
                     gap: 8px;
-                    color: $text-color-secondary;
+                    color: $text-secondary;
                     font-size: 14px;
 
                     .stat {
@@ -204,7 +204,7 @@ onMounted(async () => {
 
                 .name {
                     font-weight: 600;
-                    color: $active-button-color;
+                    color: $active;
                     font-size: 24px;
                 }
 
@@ -216,7 +216,7 @@ onMounted(async () => {
                 span {
                     margin-top: 12px;
                     font-size: 14px;
-                    color: $text-color-secondary;
+                    color: $text-secondary;
                 }
 
                 .skills {

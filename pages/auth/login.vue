@@ -65,7 +65,7 @@ async function handleLogin() {
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/vars.scss';
+
 
 .wrapper {
     width: 100%;
@@ -107,7 +107,7 @@ async function handleLogin() {
 .menu-hero {
     font-weight: 600;
     font-size: 48px;
-    color: #fff;
+    color: $white;
 }
 
 .nav-menu {
@@ -118,12 +118,12 @@ async function handleLogin() {
 }
 
 .menu-context {
-    color: $text-color-secondary;
+    color: $text-secondary;
     display: inline-block;
 }
 
 .typed-text {
-    color: $text-color-secondary;
+    color: $text-secondary;
     font-size: 18px;
 }
 
@@ -169,7 +169,7 @@ async function handleLogin() {
 }
 
 .google-text {
-    color: #fff;
+    color: $white;
     font-size: 14px;
     letter-spacing: 0%;
     cursor: pointer;
@@ -177,17 +177,17 @@ async function handleLogin() {
 
 .log {
     font-size: 10px;
-    color: $text-color-secondary;
+    color: $text-secondary;
     cursor: pointer;
 }
 
 .recovery-text {
-    color: $text-color-secondary;
+    color: $text-secondary;
     font-size: 14px;
 }
 
 .recovery {
-    color: #fff;
+    color: $white;
     cursor: pointer;
 }
 

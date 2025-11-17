@@ -43,7 +43,7 @@ const notiStore = useNotifications();
             color: white;
             border-radius: 6px;
             border-radius: 6px;
-            background: #2E2E2E;
+            background: $tag-color;
 
         }
 
@@ -79,8 +79,7 @@ const notiStore = useNotifications();
         color: white;
         border-radius: 6px;
         border-radius: 6px;
-        background: #2E2E2E;
-
+        background: $tag-color;
     }
 
     .icon {

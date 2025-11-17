@@ -34,7 +34,7 @@ function handleChange(value: number) {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -56,7 +56,7 @@ input::-webkit-inner-spin-button {
     input {
         width: 100%;
         font-size: 14px;
-        color: $text-color-secondary;
+        color: $text-secondary;
         font-weight: 500;
         text-align: end;
         background: transparent;
@@ -65,7 +65,7 @@ input::-webkit-inner-spin-button {
 
         &::placeholder {
             font-size: 14px;
-            color: $text-color-secondary;
+            color: $text-secondary;
             font-weight: 500;
             text-align: end;
         }
@@ -74,7 +74,7 @@ input::-webkit-inner-spin-button {
     span {
         font-size: 14px;
         font-weight: 500;
-        color: $text-color-secondary;
+        color: $text-secondary;
     }
 }
 </style>
