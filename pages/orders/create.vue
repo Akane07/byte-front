@@ -192,10 +192,10 @@
         <div class="line" :style="{ width: `${step * 20}%` }"></div>
       </div>
       <div class="actions">
-        <UIDevButton class="next" :active="false" @click="prevStep">Назад</UIDevButton>
+        <UIDevButton class="next" @click="prevStep">Назад</UIDevButton>
         <div class="right">
           <button class="draft" @click="saveAsDraft">Сохранить как черновик</button>
-          <UIDevButton class="next" :active="true" @click="nextStep">{{ step === 5 ? 'Опубликовать' : 'Далее' }}
+          <UIDevButton class="next" active @click="nextStep">{{ step === 5 ? 'Опубликовать' : 'Далее' }}
           </UIDevButton>
         </div>
       </div>

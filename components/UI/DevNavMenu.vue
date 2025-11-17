@@ -7,7 +7,7 @@
             </div>
             <div v-if="!userStore.isAuth && userStore.checked" class="nav-buttons">
                 <NuxtLink to="/auth/login">
-                    <DevButton :active="false">
+                    <DevButton>
                         Войти
                     </DevButton>
                 </NuxtLink>
@@ -31,15 +31,8 @@
                             </NuxtLink>
                             <NuxtLink class="pointer link" @click="navigateTo('/profile/my/settings')">Настройки
                             </NuxtLink>
-                            <div class="border"></div>
+                            <div class="bordered"></div>
                         </div>
-                        <!-- <div class="menu-content">
-                            <NuxtLink class="pointer link" @click="navigateTo('/orders/my')">Мои заказы/отклики</NuxtLink>
-                            <NuxtLink class="pointer">Мои услуги</NuxtLink>
-                            <NuxtLink class="pointer link" @click="navigateTo('/profile/my/portfolio')">Портфолио
-                            </NuxtLink>
-                            <div class="border"></div>
-                        </div> -->
                         <div class="menu-content">
                             <NuxtLink class="pointer link" @click="navigateTo('/donates')">Донаты</NuxtLink>
                             <NuxtLink class="pointer link">Обратная связь</NuxtLink>
@@ -56,8 +49,8 @@
             <p class="confirm" style="color: white;">Вы уверены, что хотите выйти из своего аккаунта?</p>
         </template>
         <template #buttons>
-            <UIDevButton :active="false" @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton :active="true" @click.stop="userStore.logout()">Выйти</UIDevButton>
+            <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
+            <UIDevButton active @click.stop="userStore.logout()">Выйти</UIDevButton>
         </template>
     </UIDevModal>
 </template>
@@ -81,8 +74,6 @@ useClickOutside(menuRef, () => {
 </script>
 
 <style lang="scss" scoped>
-
-
 .nav-wrapper {
     width: 100%;
     height: 80px;
@@ -173,7 +164,7 @@ span {
             flex-direction: column;
             gap: 12px;
 
-            .border {
+            .bordered {
                 width: 100%;
                 height: 1px;
                 background: $border-color;

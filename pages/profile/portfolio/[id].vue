@@ -42,12 +42,12 @@
                     <UIUserAvatar size="56px" :src="baseURL + user?.avatar"></UIUserAvatar>
                     <div class="name">
                         <p>{{ user?.nickname || 'Без имени' }}</p>
-                        <UIDevButton v-if="user?.id === userStore.user?.id" :active="true"
+                        <UIDevButton v-if="user?.id === userStore.user?.id" active
                             @click.stop="navigateTo(`/profile/portfolio/edit/${portfolio.id}`)">
                             <IconsPencil></IconsPencil>
                             Редактировать проект
                         </UIDevButton>
-                        <UIDevButton v-if="user?.id !== userStore.user?.id" :active="true"
+                        <UIDevButton v-if="user?.id !== userStore.user?.id" active
                             @click="navigateTo(`/profile/${user?.id}`)">
                             Перейти в профиль
                         </UIDevButton>

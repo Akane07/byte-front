@@ -11,7 +11,7 @@
             <div class="stats_info">
                 <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"
                     :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
-                <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
+                <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                 <span>Предложений {{ order.response_count }}</span>
             </div>
         </div>
@@ -122,7 +122,7 @@ const viewed = computed(() => {
             span {
                 cursor: pointer;
 
-                &.border {
+                &.bordered {
                     border-right: 1px solid $border-color;
                     padding-right: 12px;
                 }
@@ -151,12 +151,6 @@ const viewed = computed(() => {
                 p {
                     color: white;
                 }
-
-                span {}
-            }
-
-            .stats_info {
-                span.border {}
             }
         }
 
@@ -173,17 +167,10 @@ const viewed = computed(() => {
                 p {
                     color: white;
                 }
-
-                span {}
-            }
-
-            .stats_info {
-                span.border {}
             }
         }
 
         .order_actions {
-
             p {
                 color: white;
             }

@@ -21,7 +21,7 @@
             </div>
         </template>
         <template #buttons>
-            <UIDevButton :active="true" @click="$emit('save', copySkills); modalShow = false;">Сохранить</UIDevButton>
+            <UIDevButton active @click="$emit('save', copySkills); modalShow = false;">Сохранить</UIDevButton>
         </template>
     </UIDevModal>
 </template>

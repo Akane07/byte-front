@@ -11,14 +11,14 @@
             <div class="stats_info">
                 <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"
                     :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
-                <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
-                <button class="border edit" @click="navigateTo(`/orders/${order.id}`)" v-if="user_performer">Просмотреть заказ</button>
+                <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
+                <button class="bordered edit" @click="navigateTo(`/orders/${order.id}`)" v-if="user_performer">Просмотреть заказ</button>
             </div>
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton :active="true" style="min-width: 155px; background: #38A169;" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">Перейти в чат</UIDevButton>
-            <UIDevButton :active="true" style="min-width: 155px; background: #38A169;" v-if="user_performer" @click="$emit('finishOrder', order)">Завершить заказ</UIDevButton>
+            <UIDevButton active style="min-width: 155px; background: #38A169;" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">Перейти в чат</UIDevButton>
+            <UIDevButton active style="min-width: 155px; background: #38A169;" v-if="user_performer" @click="$emit('finishOrder', order)">Завершить заказ</UIDevButton>
         </div>
     </div>
 </template>
@@ -118,7 +118,7 @@ const userStore = useUserStore();
                 display: flex;
                 align-items: center;
 
-                &.border {
+                &.bordered {
                     border-right: 1px solid $border-color;
                     padding-right: 12px;
                 }

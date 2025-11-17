@@ -4,8 +4,8 @@
     :class="{ selected: modelValue }"
     @click="$emit('update:modelValue', !modelValue)"
   >
-    <div class="select flex items-center justify-center cursor-pointer">
-      <div class="checked cursor-pointer"></div>
+    <div class="select flex items-center justify-center cursor-pointer w-6 h-6 min-w-6 min-h-6 rounded-md">
+      <div class="checked cursor-pointer rounded-sm w-4 h-4"></div>
     </div>
     <span class="cursor-pointer">
       <slot></slot>
@@ -27,18 +27,15 @@ defineEmits<{
 .select_wrapper {
   .select {
     background: $border-color;
-    border-radius: 6px;
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    min-height: 24px;
 
     .checked {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
       background: $select-enabled;
-      display: none;
+      transition: opacity 0.3s ease-in-out;
+      opacity: 0;
+
+      &:hover {
+        opacity: 0.2;
+      }
     }
   }
 
@@ -50,7 +47,7 @@ defineEmits<{
   &.selected {
     .select {
       .checked {
-        display: block;
+        opacity: 1;
       }
     }
 

@@ -189,7 +189,7 @@
                     <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"
                         :src="baseURL + userStore.user?.avatar">
                     </UIUserAvatar>
-                    <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
+                    <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                     <span>Предложений {{ order.response_count }}</span>
                 </div>
             </div>
@@ -803,7 +803,7 @@ onMounted(async () => {
             gap: 12px;
             color: $text-secondary;
 
-            .border {
+            .bordered {
                 border-right: 1px solid $border-color;
                 padding-right: 12px;
             }

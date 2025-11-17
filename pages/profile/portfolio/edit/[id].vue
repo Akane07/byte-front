@@ -82,7 +82,7 @@
             </div>
         </div>
         <div class="footer">
-            <UIDevButton :active="true" :disabled="!isValid" @click="uploadFiles">Опубликовать</UIDevButton>
+            <UIDevButton active :disabled="!isValid" @click="uploadFiles">Опубликовать</UIDevButton>
         </div>
     </div>
 </template>

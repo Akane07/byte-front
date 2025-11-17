@@ -1,7 +1,7 @@
 <template>
   <button
-    class="flex gap-2 cursor-pointer align-center justify-center whitespace-nowrap py-3 px-6"
-    :class="active === true ? 'active' : 'dev'"
+    class="flex gap-2 cursor-pointer items-center justify-center whitespace-nowrap py-3 px-6"
+    :class="active ? 'active' : 'dev'"
     :disabled="disabled"
   >
     <slot></slot>
@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  active: boolean;
+  active?: boolean;
   disabled?: boolean;
 }>();
 </script>
@@ -19,6 +19,16 @@ defineProps<{
 button {
   border-radius: 6px;
   color: $white;
+  opacity: 1;
+  transition: all 0.3s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    opacity: 0.9;
+  }
 }
 
 .dev {

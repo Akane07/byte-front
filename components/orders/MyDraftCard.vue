@@ -11,13 +11,13 @@
             <div class="stats_info">
                 <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"
                     :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
-                    <span class="border">От {{ useUserCreated(order.created_at) }}</span>
-                <button class="border delete" @click.stop="modal = true">Удалить черновик</button>
+                    <span class="bordered">От {{ useUserCreated(order.created_at) }}</span>
+                <button class="bordered delete" @click.stop="modal = true">Удалить черновик</button>
             </div>
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton :active="false" style="min-width: 155px; color: $text-secondary; border-color: $text-secondary;">Черновик</UIDevButton>
+            <UIDevButton style="min-width: 155px; color: $text-secondary; border-color: $text-secondary;">Черновик</UIDevButton>
         </div>
     </div>
 
@@ -26,8 +26,8 @@
             <p class="confirm">Вы уверены, что хотите удалить свой черновик? Отменить это действие будет невозможно.</p>
         </template>
         <template #buttons>
-            <UIDevButton :active="false" @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton :active="true" @click.stop="handleDelete">Удалить</UIDevButton>
+            <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
+            <UIDevButton active @click.stop="handleDelete">Удалить</UIDevButton>
         </template>
     </UIDevModal>
 </template>
@@ -144,7 +144,7 @@ async function handleDelete() {
                 display: flex;
                 align-items: center;
 
-                &.border {
+                &.bordered {
                     border-right: 1px solid $border-color;
                     padding-right: 12px;
                 }
@@ -193,12 +193,6 @@ async function handleDelete() {
                 p {
                     color: white;
                 }
-
-                span {}
-            }
-
-            .stats_info {
-                span.border {}
             }
         }
 

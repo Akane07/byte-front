@@ -25,15 +25,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="border"></div>
+                <div class="bordered"></div>
                 <div class="middle_part">
                     <p class="name">{{ user.name }}</p>
                     <p class="speciality">{{ user.speciality }}</p>
                     <span>{{ user.description || 'Нет описания' }}</span>
                 </div>
-                <div class="border"></div>
+                <div class="bordered"></div>
                 <div class="right_part">
-                    <UIDevButton :active="true" @click="navigateTo(`/chat/${user.id}`)">
+                    <UIDevButton active @click="navigateTo(`/chat/${user.id}`)">
                         Отправить сообщение
                     </UIDevButton>
                     <div class="user_stats">
@@ -136,7 +136,7 @@ onMounted(async () => {
             gap: 24px;
             border-bottom: 1px solid $border-color;
 
-            .border {
+            .bordered {
                 width: 1px;
                 height: inherit;
                 background: $border-color;

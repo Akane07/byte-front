@@ -7,15 +7,15 @@
             </div>
             <div class="stats_info">
                 <!-- <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)" :src="baseURL + userStore.user?.avatar"></UIUserAvatar> -->
-                <span class="border">Отклик от {{ useUserCreated(response.created_at) }}</span>
-                <button class="border edit" @click="navigateTo(`/orders/${response.order_id}?edit=true`)">Редактировать</button>
-                <button class="border delete" @click.stop="modal = true">Удалить отклик</button>
+                <span class="bordered">Отклик от {{ useUserCreated(response.created_at) }}</span>
+                <button class="bordered edit" @click="navigateTo(`/orders/${response.order_id}?edit=true`)">Редактировать</button>
+                <button class="bordered delete" @click.stop="modal = true">Удалить отклик</button>
             </div>
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(response.price_type, response.price) }}</p>
-            <UIDevButton v-if="response.viewed" :active="true" @click.stop="">Просмотрено</UIDevButton>
-            <UIDevButton v-if="!response.viewed" :active="false" @click.stop="">Не просмотрено</UIDevButton>
+            <UIDevButton v-if="response.viewed" active @click.stop="">Просмотрено</UIDevButton>
+            <UIDevButton v-if="!response.viewed" @click.stop="">Не просмотрено</UIDevButton>
         </div>
     </div>
 
@@ -24,8 +24,8 @@
             <p class="confirm">Вы уверены, что хотите удалить свой отклик? Отменить это действие будет невозможно.</p>
         </template>
         <template #buttons>
-            <UIDevButton :active="false" @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton :active="true" @click.stop="handleDelete">Удалить</UIDevButton>
+            <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
+            <UIDevButton active @click.stop="handleDelete">Удалить</UIDevButton>
         </template>
     </UIDevModal>
 </template>
@@ -137,7 +137,7 @@ async function handleDelete() {
                 display: flex;
                 align-items: center;
 
-                &.border {
+                &.bordered {
                     border-right: 1px solid $border-color;
                     padding-right: 32px;
                 }
@@ -186,12 +186,6 @@ async function handleDelete() {
                 p {
                     color: white;
                 }
-
-                span {}
-            }
-
-            .stats_info {
-                span.border {}
             }
         }
 
@@ -208,17 +202,10 @@ async function handleDelete() {
                 p {
                     color: white;
                 }
-
-                span {}
-            }
-
-            .stats_info {
-                span.border {}
             }
         }
 
         .order_actions {
-
             p {
                 color: white;
             }

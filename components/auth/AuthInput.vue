@@ -2,10 +2,10 @@
     <div class="input-wrapper">
         <input :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" :type="type"
             class="auth-input" :placeholder="placeholder" />
-        <span class="border border-left"></span>
-        <span class="border border-top"></span>
-        <span class="border border-bottom"></span>
-        <span class="border border-right"></span>
+        <span class="bordered border-left"></span>
+        <span class="bordered border-top"></span>
+        <span class="bordered border-bottom"></span>
+        <span class="bordered border-right"></span>
     </div>
 </template>
 
@@ -46,7 +46,7 @@ $animation-duration: 0.2s;
     }
 }
 
-.border {
+.bordered {
     position: absolute;
     background-color: $white;
     pointer-events: none;

@@ -14,7 +14,7 @@
                     <div class="stats_info">
                         <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"
                             :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
-                        <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
+                        <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений {{ order.response_count }}</span>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
             <div class="right_part" v-if="!response.id">
                 <p>Ваше предложение</p>
                 <UIDevTextarea v-model="newResponse.description" maxlength="2000"></UIDevTextarea>
-                <UIDevButton style="align-self: flex-start;" :active="true" :disabled="!newResponse.description"
+                <UIDevButton style="align-self: flex-start;" active :disabled="!newResponse.description"
                     @click="handlePostResponse">Откликнуться</UIDevButton>
             </div>
             <div class="right_part" v-if="response.id && !edit && userStore.user">
@@ -80,7 +80,7 @@
                     <UIDevTextarea v-model="response.description" style="width: 100%;" maxlength="2000"></UIDevTextarea>
                 </div>
                 <div class="actions">
-                    <UIDevButton style="align-self: flex-start;" :active="true" @click="handleEditResponse">Подтвердить
+                    <UIDevButton style="align-self: flex-start;" active @click="handleEditResponse">Подтвердить
                     </UIDevButton>
                     <button class="delete" @click="edit = false">Отменить</button>
                 </div>
@@ -93,8 +93,8 @@
             <p class="confirm">Вы уверены, что хотите удалить свой отклик? Отменить это действие будет невозможно.</p>
         </template>
         <template #buttons>
-            <UIDevButton :active="false" @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton :active="true" @click.stop="handleDelete">Удалить</UIDevButton>
+            <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
+            <UIDevButton active @click.stop="handleDelete">Удалить</UIDevButton>
         </template>
     </UIDevModal>
 </template>
@@ -268,7 +268,7 @@ onMounted(async () => {
                     gap: 12px;
                     color: $text-secondary;
 
-                    .border {
+                    .bordered {
                         border-right: 1px solid $border-color;
                         padding-right: 12px;
                     }

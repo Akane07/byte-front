@@ -86,7 +86,7 @@
                     </div>
                 </div>
                 <div class="buttons">
-                    <UIDevButton :active="true" @click="saveUser" style="width: 200px;">Сохранить</UIDevButton>
+                    <UIDevButton active @click="saveUser" style="width: 200px;">Сохранить</UIDevButton>
                     <button class="delete">Удалить акканут</button>
                 </div>
             </div>

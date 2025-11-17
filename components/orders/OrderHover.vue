@@ -1,7 +1,7 @@
 <template>
     <div class="order_hover_wrapper" :class="{ 'active': order }" @click="$emit('closeOrder')">
         <div class="order_hover" :class="{ 'active': order }" @click.stop="">
-            <div class="border"></div>
+            <div class="bordered"></div>
             <IconsWideArrow class="arrow" @click="$emit('closeOrder')"></IconsWideArrow>
 
             <div class="left_part" v-if="order">
@@ -10,7 +10,7 @@
                     <div class="stats_info">
                         <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"
                             :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
-                        <span class="border">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
+                        <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений {{ order.response_count }}</span>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
             <div class="right_part" v-if="order">
                 <div class="price">
                     <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-                    <UIDevButton :active="true" @click="handleOrderRedirect">Откликнуться</UIDevButton>
+                    <UIDevButton active @click="handleOrderRedirect">Откликнуться</UIDevButton>
                 </div>
                 <div class="about_client" v-if="user">
                     <p>О клиенте</p>
@@ -151,7 +151,7 @@ watch(props, async () => {
         padding: 40px 16px 40px 40px;
         display: flex;
 
-        &>.border {
+        &>.bordered {
             width: 1px;
             background: white;
             height: 100%;
@@ -198,7 +198,7 @@ watch(props, async () => {
                     gap: 12px;
                     color: $text-secondary;
 
-                    .border {
+                    .bordered {
                         border-right: 1px solid $border-color;
                         padding-right: 12px;
                     }
