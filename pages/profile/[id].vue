@@ -61,7 +61,7 @@
                     </div>
                 </div>
             </div>
-            <div class="portfolio">
+            <div class="portfolio" v-if="portfolios.length">
                 <div class="header">
                     <p>Портфолио</p>
                 </div>
@@ -70,7 +70,7 @@
                         :other="true"></ProfilePortfolio>
                 </div>
             </div>
-            <div class="feedbacks">
+            <div class="feedbacks" v-if="portfolios.length">
                 <div class="header">
                     <p>Отзывы</p>
                 </div>

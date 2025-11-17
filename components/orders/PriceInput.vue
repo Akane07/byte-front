@@ -1,6 +1,6 @@
 <template>
     <div class="price_input_wrapper">
-        <input type="number" :value="modelValue" @change="handleChange($event.target.value)" @focus="$event.target.select()">
+        <input type="number" :value="modelValue" @input="handleChange($event.target.value)" @focus="$event.target.select()">
         <span>{{ type }}</span>
     </div>
 </template>
@@ -21,6 +21,8 @@ const type = computed(() => {
 });
 
 function handleChange(value: number) {
+    value = Number(String(value).replaceAll(',', '.').replaceAll('.', ''));
+
     if (+(value) < 0) {
         emit('update:modelValue', 0);
         return;

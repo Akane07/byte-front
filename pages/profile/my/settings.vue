@@ -63,7 +63,7 @@
                         </UIDevTextarea>
                     </div>
                     <div class="block">
-                        <p>Навыки</p>
+                        <p>Навыки (до 10)</p>
                         <ProfileSkills :skills="profile.skills" @save="saveUser" @delete="deleteSkill"></ProfileSkills>
                     </div>
                     <div class="block">
@@ -155,14 +155,16 @@ async function saveUser(skills?: string[]) {
     let skillsArray = (typeof skills === "object" && skills.length > 0) ? skills : [];
     skillsArray = (skillsArray.length ? skillsArray : (updateData.skills.length ? updateData.skills : userStore.user.skills))
 
+    if ((pass.value.password === pass.value.newPassword) && pass.value.password) {
+        await userStore.newPassword(pass.value.password, pass.value.newPassword)
+    } else if ((pass.value.password !== pass.value.newPassword) && pass.value.password) {
+        await notiStore.setNotification('Пароли не совпадают');
+    }
+
     await userStore.editMe({
         ...updateData,
         skills: skillsArray,
     });
-
-    if ((pass.value.password === pass.value.newPassword) && pass.value.password) {
-        await userStore.newPassword(pass.value.password, pass.value.newPassword)
-    }
 
     general.value = {
         nickname: userStore.user.nickname || '',

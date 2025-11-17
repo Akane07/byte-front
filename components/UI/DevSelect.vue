@@ -5,7 +5,7 @@
                 <input v-if="showMenu" v-model="input" type="text" ref="inputRef">
                 <p v-else>{{ selected }}</p>
             </div>
-            <IconsArrow class="pointer arrow" :class="{ active: showMenu }"></IconsArrow>
+            <IconsArrow class="arrow" :class="{ active: showMenu }"></IconsArrow>
         </div>
         <div v-if="showMenu" class="select_menu" :class="{ 'reverse': reverse }">
             <div v-for="el in filteredList" :key="el" class="element" :class="{ 'selected': selected === el }"
@@ -93,6 +93,14 @@ useClickOutside(selectRef, () => {
             outline: none;
             font-size: 16px;
             color: $text-main;
+        }
+
+        .arrow {
+            transition: 0.2s ease-in;
+
+            &.active {
+                transform: rotate(-180deg);
+            }
         }
     }
 

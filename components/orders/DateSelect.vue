@@ -47,7 +47,7 @@
             <div class="footer">
                 <p class="date">{{ from ? useUserCreated(from) : 'дата начала' }} - {{ to ? useUserCreated(to) : 'дата окончания' }}</p>
                 <div class="buttons">
-                    <button class="cancel">Отмена</button>
+                    <button class="cancel" @click="$emit('close')">Отмена</button>
                     <UIDevButton :active="true" @click="saveRange"
                         :disabled="(!from || !to) && (deadlines === 'custom')">Сохранить</UIDevButton>
                 </div>

@@ -40,11 +40,20 @@ export const useUserStore = defineStore('user', () => {
         return res;
     }
 
-    async function editMe(updateData: Partial<User>) {
-        const res = await postUser(updateData);
+async function editMe(updateData: Partial<User>) {
+    const trimmedData: Partial<User> = Object.fromEntries(
+        Object.entries(updateData).map(([key, value]) => {
+            if (typeof value === 'string') {
+                return [key, value.trim()];
+            }
+            return [key, value];
+        })
+    );
 
-        user.value = res;
-    }
+    const res = await postUser(trimmedData);
+
+    user.value = res;
+}
 
     async function newPassword(password: string, newPassword: string): Promise<boolean> {
         const res = await changePassword(password, newPassword);

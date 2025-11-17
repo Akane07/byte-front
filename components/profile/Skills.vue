@@ -42,6 +42,7 @@ const copySkills = ref(structuredClone(toRaw(props.skills)));
 const newSkill = shallowRef('');
 
 function handleAddSkill() {
+    newSkill.value = newSkill.value.trim();
     if (newSkill.value.length === 0) return;
     if (copySkills.value.length >= 10) return;
     copySkills.value.push(newSkill.value);

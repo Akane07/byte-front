@@ -1,9 +1,9 @@
 <template>
     <div class="nav-wrapper">
         <div class="nav">
-            <div class="byte" @click="navigateTo(`/orders`)">
-                <img src="../../public/logo.svg" alt="logo">
-                <span>FreelanceByte</span>
+            <div class="byte pointer" @click="navigateTo(`/orders`)">
+                <img class="pointer" src="../../public/logo.svg" alt="logo">
+                <span class="pointer">FreelanceByte</span>
             </div>
             <div v-if="!userStore.isAuth && userStore.checked" class="nav-buttons">
                 <NuxtLink to="/auth/login">
@@ -27,27 +27,39 @@
                     <div class="menu_wrapper">
                         <div class="menu-content">
                             <NuxtLink class="pointer link" @click="navigateTo('/profile/my')">Мой профиль</NuxtLink>
+                            <NuxtLink class="pointer link" @click="navigateTo('/orders/my')">Мои заказы/отклики
+                            </NuxtLink>
                             <NuxtLink class="pointer link" @click="navigateTo('/profile/my/settings')">Настройки
                             </NuxtLink>
                             <div class="border"></div>
                         </div>
-                        <div class="menu-content">
+                        <!-- <div class="menu-content">
                             <NuxtLink class="pointer link" @click="navigateTo('/orders/my')">Мои заказы/отклики</NuxtLink>
-                            <!-- <NuxtLink class="pointer">Мои услуги</NuxtLink> -->
+                            <NuxtLink class="pointer">Мои услуги</NuxtLink>
                             <NuxtLink class="pointer link" @click="navigateTo('/profile/my/portfolio')">Портфолио
                             </NuxtLink>
                             <div class="border"></div>
-                        </div>
+                        </div> -->
                         <div class="menu-content">
                             <NuxtLink class="pointer link" @click="navigateTo('/donates')">Донаты</NuxtLink>
                             <NuxtLink class="pointer link">Обратная связь</NuxtLink>
-                            <NuxtLink class="pointer link" @click="userStore.logout()">Выход</NuxtLink>
+                            <NuxtLink class="pointer link" @click="modal = true">Выход</NuxtLink>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+        <UIDevModal v-if="modal" title="Подтверждение" @close="modal = false">
+        <template #body>
+            <p class="confirm" style="color: white;">Вы уверены, что хотите выйти из своего аккаунта?</p>
+        </template>
+        <template #buttons>
+            <UIDevButton :active="false" @click.stop="modal = false">Отмена</UIDevButton>
+            <UIDevButton :active="true" @click.stop="userStore.logout()">Выйти</UIDevButton>
+        </template>
+    </UIDevModal>
 </template>
 
 
@@ -61,6 +73,7 @@ const userStore = useUserStore();
 
 const showMenu = shallowRef(false);
 const menuRef = ref<HTMLElement | null>(null);
+const modal = shallowRef(false);
 
 useClickOutside(menuRef, () => {
     showMenu.value = false;
@@ -123,9 +136,6 @@ span {
     user-select: none;
     position: relative;
 
-    .pointer {
-        cursor: pointer;
-    }
 
     .arrow {
         transform: rotate(0deg);
@@ -150,7 +160,7 @@ span {
         .menu_wrapper {
             width: 100%;
             border-radius: 6px;
-            padding: 24px 16px;
+            padding: 28px 16px;
             background: $input-auth;
             backdrop-filter: blur(80px);
             display: flex;
@@ -184,5 +194,9 @@ span {
             }
         }
     }
+}
+
+.pointer {
+    cursor: pointer;
 }
 </style>

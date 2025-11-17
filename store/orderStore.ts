@@ -56,7 +56,7 @@ export const useOrderStore = defineStore('order', () => {
         return res;
     }
 
-    async function getUserOrders(id: string) {
+    async function getUserOrders(id: string): Promise<Order[]> {
         const res = await getOrderByUserId(id);
 
         return res;
@@ -66,7 +66,7 @@ export const useOrderStore = defineStore('order', () => {
         const drafts = await getDrafts(user_id);
 
         if (drafts.length) {
-            myDrafts.value = drafts;
+            myDrafts.value = drafts.reverse();
         } else {
             myDrafts.value = [];
         }
@@ -75,7 +75,7 @@ export const useOrderStore = defineStore('order', () => {
     async function getResponses() {
         const res = await getMyResponses();
 
-        myResponses.value = res;
+        myResponses.value = res.reverse();
     }
 
     async function createOrder(order: Partial<Order>) {

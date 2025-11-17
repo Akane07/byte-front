@@ -77,32 +77,30 @@ async function handleLogin() {
     position: relative;
     margin-bottom: 100px;
     overflow: hidden;
-}
 
-.login-wrapper {
-    display: flex;
-    align-items: center;
-    // justify-content: end;
-    gap: 131px;
-    height: 100vh;
-    width: 100%;
-    max-width: 1440px;
-    overflow: hidden;
-}
+    .login-wrapper {
+        display: flex;
+        align-items: center;
+        // justify-content: end;
+        gap: 131px;
+        height: 100vh;
+        width: 100%;
+        max-width: 1440px;
+        overflow: hidden;
 
-.login-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 32px;
-    min-width: 359px;
-}
+        .login-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            gap: 32px;
+            min-width: 359px;
+        }
 
-.text-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
+        .text-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
 .menu-hero {
     font-weight: 600;
@@ -110,12 +108,12 @@ async function handleLogin() {
     color: $white;
 }
 
-.nav-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-}
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
 
 .menu-context {
     color: $text-secondary;
@@ -127,46 +125,46 @@ async function handleLogin() {
     font-size: 18px;
 }
 
-.log-and-recovery {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
+        .log-and-recovery {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-.google {
-    background: $input-auth;
-    display: flex;
-    padding: 12px 14px;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    align-self: start;
-}
+        .google {
+            background: $input-auth;
+            display: flex;
+            padding: 12px 14px;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            align-self: start;
+        }
 
-.google:hover {
-    opacity: 0.9;
-}
+        .google:hover {
+            opacity: 0.9;
+        }
 
-.google-icon {
-    border-right: 1px solid #3D3D49;
-    padding-right: 9px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
+        .google-icon {
+            border-right: 1px solid #3D3D49;
+            padding-right: 9px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
 
-.google-icon img {
-    cursor: pointer;
-}
+        .google-icon img {
+            cursor: pointer;
+        }
 
-.text-google {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    cursor: pointer;
-}
+        .text-google {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            cursor: pointer;
+        }
 
 .google-text {
     color: $white;

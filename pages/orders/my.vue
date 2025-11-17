@@ -101,14 +101,14 @@ async function updateResponses() {
 
 async function updateOrders() {
     if (!userStore.user?.id) return;
-    orderStore.myOrders = await orderStore.getUserOrders(userStore.user!.id);
+    orderStore.myOrders = (await orderStore.getUserOrders(userStore.user?.id)).reverse();
     await orderStore.getMyDrafts(userStore.user.id);
 }
 
 onMounted(async () => {
     await userStore.checkAuth();
     if (!userStore.user?.id) return;
-    orderStore.myOrders = await orderStore.getUserOrders(userStore.user?.id);
+    orderStore.myOrders = (await orderStore.getUserOrders(userStore.user?.id)).reverse();
     await orderStore.getResponses();
     await orderStore.getMyDrafts(userStore.user.id);
 })

@@ -12,11 +12,12 @@
                 <div class="search">
                     <div class="input">
                         <IconsSearch></IconsSearch>
-                        <input type="text" placeholder="Поиск">
+                        <input type="text" placeholder="Поиск" v-model="searchString">
                     </div>
                 </div>
                 <div class="users">
-                    <div class="user" v-for="chat in chats" :key="chat.name" @click="navigateTo(`/chat/${chat.userId}`)">
+                    <div class="user" v-for="chat in searchedChats" :key="chat.name"
+                        @click="navigateTo(`/chat/${chat.userId}`)" :class="{ active: $route.params.id === chat.userId }">
                         <img :src="baseURL + chat.avatar" alt="avatar">
                         <div class="info">
                             <p>{{ chat.name }}</p>
@@ -26,14 +27,7 @@
                     </div>
                 </div>
             </div>
-            <div class="chat">
-                <div class="head">
-                </div>
-                <div class="messages">
-                </div>
-                <div class="input">
-                </div>
-            </div>
+            <NuxtPage></NuxtPage>
         </div>
     </div>
 </template>
@@ -45,6 +39,11 @@ import { useUserStore } from '~/store/userStore';
 const userStore = useUserStore();
 
 const chats = ref<any[]>([]);
+const searchString = shallowRef('');
+
+const searchedChats = computed(() => {
+    return chats.value.filter((chat) => chat.name.toLowerCase().includes(searchString.value.toLowerCase()));
+})
 
 onMounted(async () => {
     await userStore.checkAuth();
@@ -196,99 +195,6 @@ onMounted(async () => {
             display: flex;
             flex-direction: column;
             width: 100%;
-
-            .head {
-                width: 100%;
-                display: flex;
-                gap: 8px;
-                padding: 14.5px 24px;
-                min-height: 73px;
-                border-bottom: 1px solid #333339;
-
-                .info {
-                    display: flex;
-                    gap: 16px;
-
-                    .name {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 4px;
-
-                        p {
-                            color: $text-main;
-                            font-weight: 600;
-                            font-size: 20px;
-                        }
-
-                        .online {
-                            display: flex;
-                            gap: 4px;
-                            align-items: center;
-
-                            span {
-                                color: $text-main;
-                                font-size: 12px;
-                                font-weight: 600;
-                            }
-
-                            .is_online {
-                                width: 10px;
-                                height: 10px;
-                                border-radius: 50%;
-                                background: #68D391;
-                            }
-
-                            .is_offline {
-                                width: 10px;
-                                height: 10px;
-                                border-radius: 50%;
-                                background: $text-red;
-                            }
-                        }
-                    }
-                }
-            }
-
-            .messages {
-                height: 100%;
-                width: 100%;
-                padding: 24px;
-                overflow-y: scroll;
-                scrollbar-width: none;
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-
-                .message_wrapper {
-                    width: 100%;
-                    display: flex;
-                    justify-content: end;
-
-                    &.left {
-                        justify-content: start;
-
-                        .message {
-                            background: $tag-secondary-color:
-                        }
-                    }
-
-                    .message {
-                        background: #8B60FA;
-                        border-radius: 6px;
-                        padding: 8px 16px;
-                        max-width: 45%;
-                        color: $white;
-                        font-size: 15px;
-                    }
-                }
-            }
-
-            .input {
-                min-height: 69px;
-                width: 100%;
-                padding: 12px 24px;
-                border-top: 1px solid #333339;
-            }
         }
     }
 }
