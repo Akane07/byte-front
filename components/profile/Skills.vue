@@ -148,12 +148,12 @@ watch(modalShow, () => {
 
     &:hover {
         border: 1px solid $border-secondary;
-        background: #323232;
+        background: $bg-input;
     }
 
     &:focus-within {
         border: 1px solid $border-secondary;
-        background: #323232;
+        background: $bg-input;
     }
 }
 

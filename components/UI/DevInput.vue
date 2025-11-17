@@ -59,12 +59,12 @@ const inputRef = ref<HTMLInputElement | null>(null);
 
     &:hover {
         border: 1px solid $border-secondary;
-        background: rgb(50, 50, 50);
+        background: $bg-input;
     }
 
     &:focus-within {
         border: 1px solid $border-secondary;
-        background: rgb(50, 50, 50);
+        background: $bg-input;
     }
 }
 </style>

@@ -1,3 +1,5 @@
+@import 'scrollbar';
+
 // Основные цвета
 $black: #000000;
 $white: #ffffff;
@@ -36,5 +38,6 @@ $active: #8b60fa;
 
 // цвет инпутов
 $input-auth: #18181c;
+$bg-input: #323232;
 $select-enabled: #8355fa;
 $select-hover: rgba(139, 96, 250, 0.102);

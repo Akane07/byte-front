@@ -1,8 +1,7 @@
 <template>
-    <div class="img_wrapper">
+    <div class="img_wrapper w-44 h-44 rounded-md p-0.5 relative">
         <img v-if="src?.includes('/uploads/avatars/')" :src="src" alt="avatar">
         <img v-else src="https://placehold.co/170x170" alt="avatar">
-
         <UIDevLoader class="image-loader" />
     </div>
 </template>
@@ -15,12 +14,7 @@ defineProps<{
 
 <style scoped lang="scss">
 .img_wrapper {
-    width: 176px;
-    height: 176px;
-    border-radius: 6px;
-    padding: 3px;
     background: linear-gradient(180deg, #FD9697 0%, #8455F9 100%);
-    position: relative;
 
     img {
         border-radius: 6px;

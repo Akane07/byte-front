@@ -289,30 +289,10 @@ onMounted(async () => {
                     gap: 24px;
                     overflow-x: auto;
                     scroll-snap-type: x mandatory;
-                    // scrollbar-width: none;
                     scroll-behavior: smooth;
                     padding-bottom: 12px;
 
-                    /* width */
-                    &::-webkit-scrollbar {
-                        height: 6px;
-                        border-radius: 6px;
-                    }
-
-                    /* Track */
-                    &::-webkit-scrollbar-track {
-                        background: $tag-color;
-                    }
-
-                    /* Handle */
-                    &::-webkit-scrollbar-thumb {
-                        background: #888;
-                    }
-
-                    /* Handle on hover */
-                    &::-webkit-scrollbar-thumb:hover {
-                        background: #555;
-                    }
+                    @include custom-scrollbar; 
                 }
             }
 

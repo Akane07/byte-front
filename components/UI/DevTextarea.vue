@@ -84,33 +84,14 @@ textarea {
 
     &:hover {
         border: 1px solid $border-secondary;
-        background: rgb(50, 50, 50);
+        background: $bg-input;
     }
 
     &:focus-within {
         border: 1px solid $border-secondary;
-        background: rgb(50, 50, 50);
+        background: $bg-input;
     }
 
-    /* width */
-    &::-webkit-scrollbar {
-        width: 6px;
-        border-radius: 6px;
-    }
-
-    /* Track */
-    &::-webkit-scrollbar-track {
-        background: $tag-color;
-    }
-
-    /* Handle */
-    &::-webkit-scrollbar-thumb {
-        background: #888;
-    }
-
-    /* Handle on hover */
-    &::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
+    @include custom-scrollbar;
 }
 </style>
