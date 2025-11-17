@@ -438,8 +438,6 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/styles/vars.scss";
-
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -453,7 +451,7 @@ onMounted(async () => {
         height: 80dvh;
         margin-top: 40px;
         border-radius: 6px;
-        background: #222228;
+        background: $bg-brand;
         z-index: 10;
 
         .chat {
@@ -479,7 +477,7 @@ onMounted(async () => {
                         gap: 4px;
 
                         p {
-                            color: #F1ECFF;
+                            color: $text-main;
                             font-weight: 600;
                             font-size: 20px;
                         }
@@ -490,7 +488,7 @@ onMounted(async () => {
                             align-items: center;
 
                             span {
-                                color: #F1ECFF;
+                                color: $text-main;
                                 font-size: 12px;
                                 font-weight: 600;
                             }
@@ -506,7 +504,7 @@ onMounted(async () => {
                                 width: 10px;
                                 height: 10px;
                                 border-radius: 50%;
-                                background: #FF6969;
+                                background: $text-red;
                             }
                         }
                     }
@@ -572,7 +570,7 @@ onMounted(async () => {
                     justify-content: end;
 
                     .time {
-                        color: #9E9E9F;
+                        color: $text-placeholder;
                         font-size: 10px;
                     }
 
@@ -580,7 +578,7 @@ onMounted(async () => {
                         justify-content: start;
 
                         .message {
-                            background: #494949;
+                            background: $tag-secondary-color:
                         }
 
                         .time {
@@ -593,7 +591,7 @@ onMounted(async () => {
                         .time {
                             width: 100%;
                             text-align: start;
-                            color: #ffffff;
+                            color: $white;
                         }
                     }
 
@@ -603,7 +601,7 @@ onMounted(async () => {
 
                         .message {
                             background: transparent;
-                            color: #9E9E9F;
+                            color: $text-placeholder;
                         }
                     }
 
@@ -612,7 +610,7 @@ onMounted(async () => {
                         border-radius: 6px;
                         padding: 8px 16px;
                         max-width: 45%;
-                        color: #FFFFFF;
+                        color: $white;
                         font-size: 15px;
                         display: flex;
                         flex-direction: column;
@@ -653,7 +651,7 @@ onMounted(async () => {
 
                             p {
                                 font-size: 14px;
-                                color: #FFFFFF;
+                                color: $white;
                             }
                         }
 
@@ -664,7 +662,7 @@ onMounted(async () => {
 
                             p {
                                 font-size: 14px;
-                                color: #FFFFFF;
+                                color: $white;
 
                                 span {
                                     font-weight: 600;
@@ -681,7 +679,7 @@ onMounted(async () => {
 
                             p {
                                 font-size: 14px;
-                                color: #FFFFFF;
+                                color: $white;
 
                                 span {
                                     font-weight: 600;
@@ -702,18 +700,18 @@ onMounted(async () => {
                                 outline: none;
                                 border-radius: 6px;
                                 padding: 12px 28px;
-                                color: #FFFFFF;
+                                color: $white;
                                 font-weight: 600;
                                 cursor: pointer;
                                 width: 100%;
                                 max-width: 180px;
 
                                 &.delete {
-                                    background: #FF6969;
+                                    background: $text-red;
                                 }
 
                                 &.view {
-                                    background: #8355FA;
+                                    background: $select-enabled
                                 }
                             }
                         }
@@ -748,7 +746,7 @@ onMounted(async () => {
                 .input_wrapper {
                     display: flex;
                     width: 100%;
-                    background: #494949;
+                    background: $tag-secondary-color:
                     border-radius: 6px;
                     padding: 10px 20px;
 
@@ -757,7 +755,7 @@ onMounted(async () => {
                         background: transparent;
                         border: none;
                         outline: none;
-                        color: #F1ECFF;
+                        color: $text-main;
                         font-size: 14px;
                     }
                 }
@@ -780,7 +778,7 @@ onMounted(async () => {
     height: 100%;
     padding: 32px;
     border-radius: 20px;
-    background: #222228;
+    background: $bg-brand;
     box-shadow: 0px 0px 15px 0px #FFFFFF1A;
     color: white;
 
@@ -803,7 +801,7 @@ onMounted(async () => {
             align-items: center;
             font-size: 12px;
             gap: 12px;
-            color: $text-color-secondary;
+            color: $text-secondary;
 
             .border {
                 border-right: 1px solid $border-color;
@@ -844,7 +842,7 @@ onMounted(async () => {
                 span {
                     font-weight: 500;
                     font-size: 12px;
-                    color: $text-color-secondary;
+                    color: $text-secondary;
                 }
             }
         }
@@ -866,7 +864,7 @@ onMounted(async () => {
 
             span {
                 background: $tag-color;
-                color: $text-color-secondary;
+                color: $text-secondary;
                 padding: 6px 14px;
                 border-radius: 6px;
                 font-size: 14px;
@@ -887,7 +885,7 @@ onMounted(async () => {
         p {
             font-weight: 600;
             font-size: 18px;
-            color: $active-button-color;
+            color: $active;
         }
     }
 
@@ -903,18 +901,18 @@ onMounted(async () => {
             outline: none;
             border-radius: 6px;
             padding: 12px 28px;
-            color: #FFFFFF;
+            color: $white;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
             max-width: 180px;
 
             &.delete {
-                background: #FF6969;
+                background: $text-red;
             }
 
             &.view {
-                background: #8355FA;
+                background: $select-enabled
             }
         }
     }

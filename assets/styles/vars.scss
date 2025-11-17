@@ -1,31 +1,28 @@
 // Основные цвета
-$background-color: #000000;
-$main-color: #222228;
-$second-color: #29292F;
+$black: #000000;
+$white: #ffffff;
+$bg-brand: #222228;
+$bg-secondary: #29292F;
 $border-color: #313139;
 $pagination-color: #F1F1F1;
 $tag-color: #2E2E2E;
 $tag-secondary-color: #494949;
 
 // Цвет текста
-$text-color-main: #F1ECFF;
-$text-color-secondary: #9E9E9E;
-$text-color-header: #C5C5C5;
-$text-link-color: #C9C9C9;
-$text-white: #fff;
+$text-main: #F1ECFF;
+$text-secondary: #9E9E9E;
+$text-header: #C5C5C5;
+$text-link: #C9C9C9;
 $text-red: #FF6969;
 $text-placeholder: #9E9E9F;
 
 // цвет кнопок
-$button-color-gradient: linear-gradient(92.51deg, #FF9898 0.48%, #8054FF 100%);
-$active-button-color: #8B60FA;
-$secondary-button-color: #9E9E9F;
-$transparent-button: transparent;
+$bg-button-gradient: linear-gradient(92.51deg, #FF9898 0.48%, #8054FF 100%);
+$active: #8B60FA;
 
 // цвет инпутов
 $input-auth: #18181C; 
-$select-disabled: #313139;
 $select-enabled: #8355FA;
-$select-hover: rgba(139, 96, 250, 0.1);
+$select-hover: rgba(139, 96, 250, 0.102);
 
 // кароче тут нужно задать отдельные блоки типо текстовые переменные, переменные фона итд. и каждое название к сожалению должно быть понятным

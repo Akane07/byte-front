@@ -19,14 +19,14 @@ defineProps<{
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/vars.scss';
+
 
 .dev-nav-button {
     padding: 2px;
     border: none;
     border-radius: 5px;
-    background: $button-color-gradient;
-    color: $text-color-main;
+    background: $bg-button-gradient;
+    color: $text-main;
     cursor: pointer;
     width: min-content;
     white-space: nowrap;
@@ -43,13 +43,13 @@ defineProps<{
     }
 
     .stroke {
-        background: $main-color;
+        background: $bg-brand;
         cursor: pointer;
 
         span {
             display: flex;
             align-items: center;
-            background: $button-color-gradient;
+            background: $bg-button-gradient;
             color: transparent;
             background-clip: text;
             cursor: pointer;
@@ -57,11 +57,11 @@ defineProps<{
     }
 
     &.secondary {
-        background: $secondary-button-color;
+        background: $text-placeholder;
 
         .stroke {
             span {
-                background: $secondary-button-color;
+                background: $text-placeholder;
                 color: transparent;
                 background-clip: text;
                 cursor: pointer;

@@ -135,7 +135,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/styles/vars.scss';
+
 
 .wrapper {
     width: 100%;
@@ -156,7 +156,7 @@ onMounted(async () => {
         width: 100%;
         max-width: 1440px;
         margin-top: 40px;
-        background: $main-color;
+        background: $bg-brand;
         border-radius: 20px;
         padding: 64px 0 0 0;
 
@@ -197,7 +197,7 @@ onMounted(async () => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: $active-button-color;
+                background: $active;
                 cursor: pointer;
                 padding: 2px;
 
@@ -206,7 +206,7 @@ onMounted(async () => {
                 }
 
                 &.liked {
-                    background: $button-color-gradient;
+                    background: $bg-button-gradient;
 
                     .like_wrapper {
                         width: 100%;
@@ -233,7 +233,7 @@ onMounted(async () => {
 
                 span {
                     font-size: 14px;
-                    color: $text-color-secondary;
+                    color: $text-secondary;
                     text-align: center;
                 }
 
@@ -301,7 +301,7 @@ onMounted(async () => {
 
                     /* Track */
                     &::-webkit-scrollbar-track {
-                        background: #2E2E2E;
+                        background: $tag-color
                     }
 
                     /* Handle */
@@ -342,7 +342,7 @@ onMounted(async () => {
 
                     .value {
                         width: 100%;
-                        color: $text-color-secondary;
+                        color: $text-secondary;
                         font-size: 12px;
                         padding: 12px 28px;
                         border-radius: 6px;

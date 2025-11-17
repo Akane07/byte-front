@@ -59,7 +59,7 @@ async function handleRegister() {
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/vars.scss';
+
 
 .registration-wrapper {
     display: flex;
@@ -88,7 +88,7 @@ async function handleRegister() {
 .menu-hero {
     font-weight: 600;
     font-size: 48px;
-    color: #fff;
+    color: $white;
 }
 
 .nav-menu {
@@ -99,7 +99,7 @@ async function handleRegister() {
 }
 
 .menu-context {
-    color: $text-color-secondary;
+    color: $text-secondary;
     display: inline-block;
 }
 
@@ -109,7 +109,7 @@ async function handleRegister() {
 }
 
 .typed-text {
-    color: $text-color-secondary;
+    color: $text-secondary;
     font-size: 18px;
 }
 
@@ -152,7 +152,7 @@ async function handleRegister() {
 }
 
 .google-text {
-    color: #fff;
+    color: $white;
     font-size: 14px;
     letter-spacing: 0%;
     cursor: pointer;
@@ -160,7 +160,7 @@ async function handleRegister() {
 
 .log {
     font-size: 10px;
-    color: $text-color-secondary;
+    color: $text-secondary;
     cursor: pointer;
 }
 

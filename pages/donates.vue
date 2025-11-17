@@ -143,7 +143,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
 
                     span {
                         font-size: 18px;
-                        color: #9E9E9E;
+                        color: $text-secondary;
                     }
 
                     ul {
@@ -153,7 +153,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
                         gap: 6px;
                         list-style-image: url('../assets/images/star.png');
                         font-size: 18px;
-                        color: #9E9E9E;
+                        color: $text-secondary;
                     }
                 }
             }
@@ -184,7 +184,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
 
                     span {
                         font-size: 18px;
-                        color: #9E9E9E;
+                        color: $text-secondary;
                     }
                 }
             }
@@ -208,7 +208,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
 
                     span {
                         font-size: 18px;
-                        color: #9E9E9E;
+                        color: $text-secondary;
                     }
                 }
 
@@ -281,13 +281,13 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
     .outer {
         width: 678px;
         height: 678px;
-        border: 1px solid #222228;
+        border: 1px solid $bg-brand;
     }
 
     .one {
         width: 510px;
         height: 510px;
-        border: 1px solid #222228;
+        border: 1px solid $bg-brand;
 
         .heart {
             position: absolute;
@@ -299,7 +299,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
     .two {
         width: 380px;
         height: 380px;
-        border: 1px solid #222228;
+        border: 1px solid $bg-brand;
 
         .card {
             position: absolute;
@@ -335,13 +335,13 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
     .inner {
         width: 260px;
         height: 260px;
-        border: 1px solid #222228;
+        border: 1px solid $bg-brand;
     }
 
     .center {
         width: 130px;
         height: 130px;
-        background: #18181C;
+        background: $input-auth;
         display: flex;
         align-items: center;
         justify-content: center;

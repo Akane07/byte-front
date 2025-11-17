@@ -81,7 +81,7 @@ useClickOutside(menuRef, () => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .nav-wrapper {
     width: 100%;
@@ -104,13 +104,13 @@ useClickOutside(menuRef, () => {
 
 .link {
     text-decoration: none;
-    color: #9E9E9E;
+    color: $text-secondary;
     cursor: pointer;
 }
 
 .link-second {
     text-decoration: none;
-    color: #fff;
+    color: $white;
     cursor: pointer;
 }
 
@@ -122,7 +122,7 @@ useClickOutside(menuRef, () => {
 }
 
 span {
-    color: #fff;
+    color: $white;
     font-weight: 700;
     font-size: 32px;
     text-align: center;
@@ -161,7 +161,7 @@ span {
             width: 100%;
             border-radius: 6px;
             padding: 28px 16px;
-            background: #18181C;
+            background: $input-auth;
             backdrop-filter: blur(80px);
             display: flex;
             flex-direction: column;
@@ -182,7 +182,7 @@ span {
             }
 
             .link {
-                color: #C5C5C5;
+                color: $text-header;
                 font-weight: 600;
                 font-size: 14px;
                 line-height: 13px;

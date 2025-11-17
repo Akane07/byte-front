@@ -12,8 +12,6 @@ const props = defineProps<{
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/vars.scss';
-
 button {
     cursor: pointer;
     display: flex;
@@ -25,18 +23,18 @@ button {
 
 .dev-button {
     padding: 12px 28px;
-    border: 1px solid #fff;
+    border: 1px solid $white;
     border-radius: 5px;
-    color: #ffffff;
-    background: $transparent-button;
+    color: $white;
+    background: transparent;
 }
 
 .dev-button-active {
     padding: 12px 28px;
     border: none;
     border-radius: 5px;
-    color: #ffffff;
-    background: $active-button-color;
+    color: $white;
+    background: $active;
 }
 
 button:disabled {

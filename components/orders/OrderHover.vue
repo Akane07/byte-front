@@ -124,7 +124,7 @@ watch(props, async () => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .order_hover_wrapper {
     position: fixed;
@@ -175,7 +175,7 @@ watch(props, async () => {
 
         .left_part {
             width: 100%;
-            color: $text-color-main;
+            color: $text-main;
 
             .main_info {
                 margin-top: 32px;
@@ -196,7 +196,7 @@ watch(props, async () => {
                     align-items: center;
                     font-size: 12px;
                     gap: 12px;
-                    color: $text-color-secondary;
+                    color: $text-secondary;
 
                     .border {
                         border-right: 1px solid $border-color;
@@ -237,7 +237,7 @@ watch(props, async () => {
                         span {
                             font-weight: 500;
                             font-size: 12px;
-                            color: $text-color-secondary;
+                            color: $text-secondary;
                         }
                     }
                 }
@@ -259,7 +259,7 @@ watch(props, async () => {
 
                     span {
                         background: $tag-color;
-                        color: $text-color-secondary;
+                        color: $text-secondary;
                         padding: 6px 14px;
                         border-radius: 6px;
                         font-size: 14px;
@@ -270,7 +270,7 @@ watch(props, async () => {
             &>p {
                 padding-top: 12px;
                 font-size: 12px;
-                color: $text-color-secondary;
+                color: $text-secondary;
             }
         }
 
@@ -292,7 +292,7 @@ watch(props, async () => {
                 p {
                     font-weight: 600;
                     font-size: 16px;
-                    color: $active-button-color;
+                    color: $active;
                 }
             }
 
@@ -314,13 +314,13 @@ watch(props, async () => {
 
                     p {
                         font-weight: 600;
-                        color: $text-color-secondary;
+                        color: $text-secondary;
                         font-size: 13px;
                     }
 
                     span {
                         font-weight: 500;
-                        color: $text-color-secondary;
+                        color: $text-secondary;
                         font-size: 11px;
                     }
                 }
@@ -342,7 +342,7 @@ watch(props, async () => {
                     border-radius: 6px;
                     padding: 12px;
                     font-size: 10px;
-                    color: $text-color-secondary;
+                    color: $text-secondary;
                     overflow: hidden;
                     position: relative;
 
@@ -357,7 +357,7 @@ watch(props, async () => {
                 }
 
                 &>span {
-                    color: $active-button-color;
+                    color: $active;
                     font-weight: 600;
                     font-size: 12px;
                     cursor: pointer;

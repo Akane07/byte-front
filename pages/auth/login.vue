@@ -65,7 +65,7 @@ async function handleLogin() {
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/vars.scss';
+
 
 .wrapper {
     width: 100%;
@@ -102,11 +102,11 @@ async function handleLogin() {
             gap: 16px;
         }
 
-        .menu-hero {
-            font-weight: 600;
-            font-size: 48px;
-            color: #fff;
-        }
+.menu-hero {
+    font-weight: 600;
+    font-size: 48px;
+    color: $white;
+}
 
         .nav-menu {
             display: flex;
@@ -115,15 +115,15 @@ async function handleLogin() {
             width: 100%;
         }
 
-        .menu-context {
-            color: $text-color-secondary;
-            display: inline-block;
-        }
+.menu-context {
+    color: $text-secondary;
+    display: inline-block;
+}
 
-        .typed-text {
-            color: $text-color-secondary;
-            font-size: 18px;
-        }
+.typed-text {
+    color: $text-secondary;
+    font-size: 18px;
+}
 
         .log-and-recovery {
             display: flex;
@@ -166,31 +166,28 @@ async function handleLogin() {
             cursor: pointer;
         }
 
-        .google-text {
-            color: #fff;
-            font-size: 14px;
-            letter-spacing: 0%;
-            cursor: pointer;
-        }
-
-        .log {
-            font-size: 10px;
-            color: $text-color-secondary;
-            cursor: pointer;
-        }
-
-        .recovery-text {
-            color: $text-color-secondary;
-            font-size: 14px;
-        }
-
-        .recovery {
-            color: #fff;
-            cursor: pointer;
-        }
-    }
+.google-text {
+    color: $white;
+    font-size: 14px;
+    letter-spacing: 0%;
+    cursor: pointer;
 }
 
+.log {
+    font-size: 10px;
+    color: $text-secondary;
+    cursor: pointer;
+}
+
+.recovery-text {
+    color: $text-secondary;
+    font-size: 14px;
+}
+
+.recovery {
+    color: $white;
+    cursor: pointer;
+}
 
 @media (max-width: 1250px) {
     .login-menu {

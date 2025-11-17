@@ -209,7 +209,7 @@ onMounted(() => {
 
 .date_wrapper {
     box-shadow: 0px 6px 15px 0px #FFFFFF1A;
-    background: #2E2E2E;
+    background: $tag-color
     border-radius: 6px;
     padding: 20px;
     display: flex;
@@ -287,26 +287,26 @@ onMounted(() => {
                     align-items: center;
                     justify-content: center;
                     cursor: pointer;
-                    color: #9E9E9F;
+                    color: $text-placeholder;
                 }
 
                 .day-name {
-                    color: #9E9E9F;
+                    color: $text-placeholder;
                     padding: 10px 18px;
                     margin-bottom: 16px;
                 }
 
                 .other-month {
-                    color: #9E9E9F;
+                    color: $text-placeholder;
                 }
 
                 .weekend {
-                    color: #FF6969;
+                    color: $text-red;
                 }
 
                 .selected-from,
                 .selected-to {
-                    background-color: #8355FA;
+                    background-color: $select-enabled
                     color: white;
                 }
 
@@ -339,7 +339,7 @@ onMounted(() => {
         gap: 64px;
 
         .date {
-            color: #9E9E9F;
+            color: $text-placeholder;
             font-size: 14px;
             white-space: nowrap;
         }
@@ -350,7 +350,7 @@ onMounted(() => {
             gap: 16px;
 
             .cancel {
-                color: #FF6969;
+                color: $text-red;
                 background: transparent;
                 border: none;
                 outline: none;

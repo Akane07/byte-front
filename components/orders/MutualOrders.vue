@@ -42,7 +42,7 @@ const userStore = useUserStore();
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .order_card {
     width: 100%;
@@ -96,7 +96,7 @@ const userStore = useUserStore();
             }
 
             span {
-                color: $text-color-main;
+                color: $text-main;
                 font-weight: 500;
                 font-size: 14px;
                 cursor: pointer;
@@ -107,7 +107,7 @@ const userStore = useUserStore();
             display: flex;
             gap: 12px;
             align-items: center;
-            color: $secondary-button-color;
+            color: $text-placeholder;
             font-size: 12px;
             cursor: pointer;
 
@@ -139,7 +139,7 @@ const userStore = useUserStore();
                 }
 
                 &.delete {
-                    color: #FF6969;
+                    color: $text-red;
                     border: none;
                 }
             }
@@ -153,7 +153,7 @@ const userStore = useUserStore();
 
             span {
                 background: $tag-secondary-color;
-                color: $text-color-secondary;
+                color: $text-secondary;
                 padding: 6px 14px;
                 border-radius: 6px;
                 font-size: 14px;

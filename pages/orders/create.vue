@@ -15,7 +15,7 @@
         </div>
         <div class="right_part">
           <div class="block">
-            <p>Напишите название для своего заказа<span style="color: #FF6969">*</span></p>
+            <p>Напишите название для своего заказа<span style="color: $text-red">*</span></p>
             <UIDevInput v-model="newOrder.title" type="text"
               placeholder="Например, Front-end разработчик или Web-designer"></UIDevInput>
           </div>
@@ -49,7 +49,7 @@
         </div>
         <div class="right_part">
           <div class="block">
-            <p>Категория заказа<span style="color: #FF6969">*</span></p>
+            <p>Категория заказа<span style="color: $text-red">*</span></p>
             <UIDevSelect style="width: 100%" :list="categoryStore.mapCategories" :selected="newOrder.category"
               @select="handleSelect"></UIDevSelect>
           </div>
@@ -69,7 +69,7 @@
             <div class="tags">
               <div v-for="tag in filteredSkills" :key="tag" class="tag" @click="addSkill(tag)">
                 {{ tag }}
-                <IconsPlus color="#9E9E9F" style="transform: scale(1.2)"></IconsPlus>
+                <IconsPlus color="$text-placeholder" style="transform: scale(1.2)"></IconsPlus>
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@
                 <IconsCalendar style="transform: scale(1.4);"></IconsCalendar>
                 <div class="text">
                   <p>{{ deadline }}</p>
-                  <span>Продолжительность проекта<span style="color: #FF6969">*</span></span>
+                  <span>Продолжительность проекта<span style="color: $text-red">*</span></span>
                 </div>
               </div>
               <div class="checkbox" @click="modal = true">
@@ -179,7 +179,7 @@
         </div>
         <div class="right_part">
           <div class="block">
-            <p>Подробно опишите, что нужно сделать<span style="color: #FF6969">*</span></p>
+            <p>Подробно опишите, что нужно сделать<span style="color: $text-red">*</span></p>
             <UIDevTextarea v-model="newOrder.description" placeholder="Описание вашего заказа" maxlength="2000">
             </UIDevTextarea>
           </div>
@@ -386,8 +386,6 @@ await categoryStore.getAllCategories();
 </script>
 
 <style lang="scss" scoped>
-@import "../../assets/styles/vars.scss";
-
 .wrapper {
   width: 100%;
   min-height: 100dvh;
@@ -430,17 +428,17 @@ await categoryStore.getAllCategories();
 
         .step {
           font-size: 16px;
-          color: $text-color-secondary;
+          color: $text-secondary;
         }
 
         h2 {
           font-size: 32px;
-          color: $text-color-main;
+          color: $text-main;
         }
 
         p {
           font-size: 14px;
-          color: $text-color-secondary;
+          color: $text-secondary;
         }
       }
 
@@ -474,7 +472,7 @@ await categoryStore.getAllCategories();
             gap: 8px;
             list-style-type: disc;
             padding-left: 20px;
-            color: $text-color-secondary;
+            color: $text-secondary;
           }
         }
       }
@@ -498,7 +496,7 @@ await categoryStore.getAllCategories();
             gap: 4px;
             border-radius: 6px;
             background: $tag-color;
-            color: $text-color-secondary;
+            color: $text-secondary;
             padding: 8px 12px;
             font-size: 12px;
             cursor: pointer;
@@ -566,13 +564,13 @@ await categoryStore.getAllCategories();
               gap: 4px;
 
               p {
-                color: $text-color-main;
+                color: $text-main;
                 font-size: 14px;
                 font-weight: 600;
               }
 
               span {
-                color: $text-color-secondary;
+                color: $text-secondary;
                 font-size: 12px;
                 font-weight: 500;
               }
@@ -586,7 +584,7 @@ await categoryStore.getAllCategories();
             width: 32px;
             height: 32px;
             border-radius: 6px;
-            border: 2px solid $active-button-color;
+            border: 2px solid $active;
             cursor: pointer;
           }
         }
@@ -629,7 +627,7 @@ await categoryStore.getAllCategories();
                 .circle {
                   width: 20px;
                   height: 20px;
-                  background: $active-button-color;
+                  background: $active;
                   border-radius: 100%;
                   cursor: pointer;
                 }
@@ -639,16 +637,16 @@ await categoryStore.getAllCategories();
             p {
               font-weight: 600;
               font-size: 16px;
-              color: $text-color-main;
+              color: $text-main;
               cursor: pointer;
             }
 
             &.active {
-              border: 1px solid $active-button-color;
+              border: 1px solid $active;
             }
 
             &:hover {
-              border: 1px solid $active-button-color;
+              border: 1px solid $active;
             }
           }
         }
@@ -656,7 +654,7 @@ await categoryStore.getAllCategories();
         .tip {
           font-size: 14px;
           font-weight: 500;
-          color: $text-color-secondary;
+          color: $text-secondary;
         }
 
         .input_block {
@@ -676,7 +674,7 @@ await categoryStore.getAllCategories();
         .contract {
           font-weight: 500;
           font-size: 14px;
-          color: $active-button-color;
+          color: $active;
           cursor: pointer;
         }
       }
@@ -699,7 +697,7 @@ await categoryStore.getAllCategories();
             gap: 8px;
             list-style-type: disc;
             padding-left: 20px;
-            color: $text-color-secondary;
+            color: $text-secondary;
           }
 
         }
@@ -722,12 +720,12 @@ await categoryStore.getAllCategories();
       left: 0;
       width: 100%;
       height: 1px;
-      background: #313139;
+      background: $border-color;
 
       .line {
         width: 20%;
         height: 1px;
-        background: #ffffff;
+        background: $white;
         transition: width 0.5s ease-in-out;
       }
     }
@@ -746,7 +744,7 @@ await categoryStore.getAllCategories();
           border: none;
           outline: none;
           background: transparent;
-          color: $active-button-color;
+          color: $active;
           padding: 12px 28px;
           cursor: pointer;
         }

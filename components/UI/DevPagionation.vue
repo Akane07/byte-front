@@ -77,7 +77,7 @@ function generateSmartPagination(current: number, total: number): (number | stri
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .pagination_wrapper {
     max-width: 500px;

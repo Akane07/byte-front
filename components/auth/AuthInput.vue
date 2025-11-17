@@ -22,8 +22,6 @@ defineEmits<{
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
-
 $border-thickness: 1px;
 $animation-duration: 0.2s;
 
@@ -50,7 +48,7 @@ $animation-duration: 0.2s;
 
 .border {
     position: absolute;
-    background-color: #fff;
+    background-color: $white;
     pointer-events: none;
 }
 

@@ -28,7 +28,7 @@ const inputRef = ref<HTMLInputElement | null>(null);
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .input {
     width: 100%;
@@ -43,7 +43,7 @@ const inputRef = ref<HTMLInputElement | null>(null);
         background: transparent;
         border: none;
         outline: none;
-        color: $text-color-main;
+        color: $text-main;
         font-size: 16px;
         width: 100%;
 

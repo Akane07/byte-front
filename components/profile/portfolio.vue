@@ -41,7 +41,7 @@ async function handleDelete() {
 </script>
 
 <style scoped lang="scss">
-@import '../../assets/styles/vars.scss';
+
 
 .work {
     width: 250px;
@@ -49,7 +49,7 @@ async function handleDelete() {
     height: 180px;
     background: transparent;
     border-radius: 6px;
-    border: 1.5px solid $active-button-color;
+    border: 1.5px solid $active;
     overflow: hidden;
     position: relative;
     cursor: pointer;
@@ -125,7 +125,7 @@ async function handleDelete() {
         .gradient {
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, rgba(107, 99, 99, 0.08) 2.74%, #000000 100%);
+            background: linear-gradient(180deg, rgba(107, 99, 99, 0.08) 2.74%, $black 100%);
         }
     }
 

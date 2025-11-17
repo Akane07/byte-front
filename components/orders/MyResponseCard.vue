@@ -61,14 +61,14 @@ async function handleDelete() {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .order_card {
     width: 100%;
     padding: 16px 40px 16px 16px;
     border-radius: 8px;
-    background: $second-color;
-    box-shadow: 1px 1px 0px 0px #00000029;
+    background: $bg-secondary;
+    box-shadow: 1px 1px 0px 0px #00000029;;
     display: flex;
     gap: 20px;
     cursor: pointer;
@@ -86,7 +86,7 @@ async function handleDelete() {
 
         p {
             font-weight: 600;
-            color: $active-button-color;
+            color: $active;
             transition: color 0.3s ease-in-out;
             text-align: center;
         }
@@ -116,7 +116,7 @@ async function handleDelete() {
             }
 
             span {
-                color: $text-color-main;
+                color: $text-main;
                 font-weight: 500;
                 font-size: 14px;
                 cursor: pointer;
@@ -127,7 +127,7 @@ async function handleDelete() {
             display: flex;
             gap: 16px;
             align-items: center;
-            color: $secondary-button-color;
+            color: $text-placeholder;
             font-size: 12px;
             cursor: pointer;
 
@@ -158,7 +158,7 @@ async function handleDelete() {
                 }
 
                 &.delete {
-                    color: #FF6969;
+                    color: $text-red;
                     border: none;
                 }
             }
@@ -172,7 +172,7 @@ async function handleDelete() {
 
             span {
                 background: $tag-secondary-color;
-                color: $text-color-secondary;
+                color: $text-secondary;
                 padding: 6px 14px;
                 border-radius: 6px;
                 font-size: 14px;

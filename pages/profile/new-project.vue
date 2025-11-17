@@ -8,17 +8,17 @@
         <div class="portfolio">
             <div class="left_part">
                 <div class="block">
-                    <p>Название проекта<span style="color: #FF6969">*</span></p>
+                    <p>Название проекта<span style="color: $text-red">*</span></p>
                     <UIDevInput v-model="portfolio.title" type="text"
                         placeholder="Введите краткое, но понятное название" maxlength="40"></UIDevInput>
                 </div>
                 <div class="block">
-                    <p>Ваша роль<span style="color: #FF6969">*</span></p>
+                    <p>Ваша роль<span style="color: $text-red">*</span></p>
                     <UIDevInput v-model="portfolio.role" type="text"
                         placeholder="Например, Front-end разработчик или Web-designer" maxlength="40"></UIDevInput>
                 </div>
                 <div class="block">
-                    <p>Описание проекта<span style="color: #FF6969">*</span></p>
+                    <p>Описание проекта<span style="color: $text-red">*</span></p>
                     <UIDevTextarea v-model="portfolio.description"
                         placeholder="Например, Front-end разработчик или Web-designer" maxlength="1000"></UIDevTextarea>
                 </div>
@@ -69,7 +69,7 @@
                             <IconsPaperclip class="icon"></IconsPaperclip>
                         </div>
                         <p>
-                            Добавьте фото или видео к проекту<span style="color: #FF6969">*</span> <br />
+                            Добавьте фото или видео к проекту<span style="color: $text-red">*</span> <br />
                             Первое фото будет обложкой для проекта
                         </p>
                     </div>
@@ -182,7 +182,7 @@ function saveSkills(skills: string[]) {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .wrapper {
     width: 100%;
@@ -201,7 +201,7 @@ function saveSkills(skills: string[]) {
     .head {
         font-size: 24px;
         font-weight: 500;
-        color: $text-color-main;
+        color: $text-main;
         width: 100%;
         max-width: 1440px;
         display: flex;
@@ -246,7 +246,7 @@ function saveSkills(skills: string[]) {
         gap: 32px;
 
         .file_input {
-            border: 2px dashed $active-button-color;
+            border: 2px dashed $active;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -269,7 +269,7 @@ function saveSkills(skills: string[]) {
                     .icon {
                         width: 42px;
                         height: 42px;
-                        border: 1px solid $secondary-button-color;
+                        border: 1px solid $text-placeholder;
                         border-radius: 6px;
                         padding: 8px;
                     }
@@ -277,7 +277,7 @@ function saveSkills(skills: string[]) {
 
                 p {
                     font-size: 14px;
-                    color: $secondary-button-color;
+                    color: $text-placeholder;
                     text-align: center;
                 }
             }
@@ -293,7 +293,7 @@ function saveSkills(skills: string[]) {
         .file {
             width: 100%;
             max-height: 500px;
-            border: 2px solid $active-button-color;
+            border: 2px solid $active;
             border-radius: 6px;
             position: relative;
 
@@ -344,7 +344,7 @@ function saveSkills(skills: string[]) {
                 .gradient {
                     width: 100%;
                     height: 100%;
-                    background: linear-gradient(180deg, rgba(107, 99, 99, 0.08) 2.74%, #000000 100%);
+                    background: linear-gradient(180deg, rgba(107, 99, 99, 0.08) 2.74%, $black 100%);
                 }
             }
 

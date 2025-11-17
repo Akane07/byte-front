@@ -32,10 +32,8 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-@import '../assets/styles/vars.scss';
-
 .home {
-    background-color: #000000;
+    background-color: $black;
     width: 100%;
     height: 100vh;
     position: relative;
@@ -54,7 +52,7 @@ onMounted(async () => {
             flex-direction: column;
             align-items: center;
             gap: 30px;
-            color: #fff;
+            color: $white;
             text-align: center;
             margin-top: 260px;
 
@@ -70,7 +68,7 @@ onMounted(async () => {
             p {
                 font-size: 18px;
                 line-height: 28px;
-                color: #9E9E9E;
+                color: $text-secondary;
                 z-index: 3;
             }
         }
@@ -94,7 +92,7 @@ onMounted(async () => {
 
         .circles {
             .circle:nth-child(1) {
-                background: radial-gradient(50% 50% at 50% 50%, #222228 0%, rgba(34, 34, 40, 0) 100%);
+                background: radial-gradient(50% 50% at 50% 50%, $bg-brand 0%, rgba(34, 34, 40, 0) 100%);
                 border-radius: 50%;
                 width: 500px;
                 height: 500px;

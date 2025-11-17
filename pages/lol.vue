@@ -56,7 +56,7 @@
     .outer {
         width: 678px;
         height: 678px;
-        border: 1px solid #222228;
+        border: 1px solid $bg-brand;
 
         .rotation_wrapper {
             position: absolute;
@@ -79,7 +79,7 @@
     .one {
         width: 510px;
         height: 510px;
-        border: 1px solid #222228;
+        border: 1px solid $bg-brand;
 
         .rotation_wrapper {
             position: absolute;
@@ -107,7 +107,7 @@
     .two {
         width: 380px;
         height: 380px;
-        border: 1px solid #222228;
+        border: 1px solid $bg-brand;
 
         .rotation_wrapper {
             position: absolute;
@@ -135,7 +135,7 @@
     .inner {
         width: 260px;
         height: 260px;
-        border: 1px solid #222228;
+        border: 1px solid $bg-brand;
 
         .rotation_wrapper {
             position: absolute;
@@ -156,7 +156,7 @@
     .center {
         width: 130px;
         height: 130px;
-        background: #18181C;
+        background: $input-auth;
         display: flex;
         align-items: center;
         justify-content: center;

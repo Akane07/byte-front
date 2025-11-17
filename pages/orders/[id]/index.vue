@@ -221,7 +221,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/styles/vars.scss';
+
 
 .wrapper {
     display: flex;
@@ -233,7 +233,7 @@ onMounted(async () => {
         margin-top: 40px;
         width: 100%;
         max-width: 1300px;
-        color: $text-color-main;
+        color: $text-main;
         background: $input-auth;
         padding: 40px 40px 0 40px;
         border-radius: 20px;
@@ -266,7 +266,7 @@ onMounted(async () => {
                     align-items: center;
                     font-size: 12px;
                     gap: 12px;
-                    color: $text-color-secondary;
+                    color: $text-secondary;
 
                     .border {
                         border-right: 1px solid $border-color;
@@ -307,7 +307,7 @@ onMounted(async () => {
                         span {
                             font-weight: 500;
                             font-size: 12px;
-                            color: $text-color-secondary;
+                            color: $text-secondary;
                         }
                     }
                 }
@@ -329,7 +329,7 @@ onMounted(async () => {
 
                     span {
                         background: $tag-color;
-                        color: $text-color-secondary;
+                        color: $text-secondary;
                         padding: 6px 14px;
                         border-radius: 6px;
                         font-size: 14px;
@@ -350,14 +350,14 @@ onMounted(async () => {
                 p {
                     font-weight: 600;
                     font-size: 18px;
-                    color: $active-button-color;
+                    color: $active;
                 }
             }
 
             &>p {
                 padding-top: 12px;
                 font-size: 12px;
-                color: $text-color-secondary;
+                color: $text-secondary;
                 margin-bottom: 60px;
             }
         }
@@ -384,13 +384,13 @@ onMounted(async () => {
 
                 span {
                     font-size: 12px;
-                    color: $text-color-secondary;
+                    color: $text-secondary;
                 }
 
                 p {
                     font-weight: 500;
                     font-size: 14px;
-                    color: $text-color-main;
+                    color: $text-main;
                     padding-bottom: 8px;
                 }
             }
@@ -411,7 +411,7 @@ onMounted(async () => {
 
                 .delete {
                     width: 160px;
-                    background: #FF6969;
+                    background: $text-red;
                     border-radius: 6px;
                     padding: 12px 28px;
                     color: white;

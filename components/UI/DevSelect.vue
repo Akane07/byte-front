@@ -62,7 +62,7 @@ useClickOutside(selectRef, () => {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/vars.scss';
+
 
 .select_wrapper {
     padding: 12px;
@@ -92,7 +92,7 @@ useClickOutside(selectRef, () => {
             border: none;
             outline: none;
             font-size: 16px;
-            color: $text-color-main;
+            color: $text-main;
         }
 
         .arrow {
@@ -140,7 +140,7 @@ useClickOutside(selectRef, () => {
 
         /* Track */
         &::-webkit-scrollbar-track {
-            background: #2E2E2E;
+            background: $tag-color
         }
 
         /* Handle */
