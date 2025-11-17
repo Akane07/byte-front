@@ -56,13 +56,7 @@
                 <div class="portfolio_wrapper" v-if="portfolios">
                     <div class="other_portfolio">
                         <ProfilePortfolio v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id"
-                            :other="userStore.user.id !== user.id">
-                        </ProfilePortfolio>
-                        <ProfilePortfolio v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id"
-                            :other="userStore.user.id !== user.id">
-                        </ProfilePortfolio>
-                        <ProfilePortfolio v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id"
-                            :other="userStore.user.id !== user.id">
+                            :other="true">
                         </ProfilePortfolio>
                     </div>
                 </div>
@@ -234,6 +228,7 @@ onMounted(async () => {
                 &>p {
                     font-weight: 600;
                     font-size: 24px;
+                    text-align: center;
                 }
 
                 span {

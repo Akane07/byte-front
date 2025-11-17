@@ -21,7 +21,7 @@
                         </div>
                         <div class="stat">
                             <IconsSun></IconsSun>
-                            <span>Был в сети {{ useOrderCreated(userStore.user.last_seen) }}</span>
+                            <span>В сети</span>
                         </div>
                     </div>
                 </div>

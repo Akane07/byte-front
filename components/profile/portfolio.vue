@@ -1,6 +1,10 @@
 <template>
     <div class="work">
-        <img :src="baseURL + portfolio.images[0]" alt="photo">
+        <div class="image">
+            <img :src="baseURL + portfolio.images[0]" alt="photo">
+
+            <UIDevLoader class="image-loader" />
+        </div>
         <div class="hover" @click.stop="navigateTo(`/profile/portfolio/${portfolio.id}`)">
             <div class="buttons" v-if="!other">
                 <div class="button" @click.stop="handleDelete">
@@ -52,10 +56,25 @@ async function handleDelete() {
     scroll-snap-align: start;
     user-select: none;
 
+    .image {
+        width: 100%;
+        height: 100%;
+
+        .image-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+    }
+
     img {
         object-fit: cover;
         width: 100%;
         height: 100%;
+        z-index: 1;
+        position: relative;
     }
 
     .hover {
@@ -66,6 +85,7 @@ async function handleDelete() {
         height: 100%;
         opacity: 0;
         transition: opacity 0.2s ease-in;
+        z-index: 2;
 
         .buttons {
             display: flex;

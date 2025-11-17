@@ -12,7 +12,8 @@
                 </div>
                 <div class="orders_list" v-if="activeOrders.length">
                     <OrdersMutualOrders v-for="order in activeOrders" :key="order.id" :order="order"
-                        :user_performer="order.performer === userStore.user?.id" ></OrdersMutualOrders>
+                        :user_performer="order.performer === userStore.user?.id" @finish-order="handlefinishOrder">
+                    </OrdersMutualOrders>
                 </div>
                 <div class="orders_list" v-else>
                     <p>У вас нет активных заказов с этим пользователем</p>
@@ -40,6 +41,14 @@ const userStore = useUserStore();
 
 const activeOrders = ref<Order[]>([]);
 
+async function handlefinishOrder(order: Order) {
+    socket.emit('postResponse', {
+        senderId: userStore.user!.id,
+        receiverId: order.performer,
+        orderId: order.id,
+    });
+}
+
 onMounted(async () => {
     await userStore.checkAuth();
     if (!userStore.user?.id) return;
@@ -51,7 +60,7 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-@import '../../../assets/styles/vars.scss';
+@import '../../assets/styles/vars.scss';
 
 .wrapper {
     width: 100%;

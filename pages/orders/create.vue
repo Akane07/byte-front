@@ -54,7 +54,7 @@
               @select="handleSelect"></UIDevSelect>
           </div>
           <div class="block">
-            <p>Добавьте навыки или напишите свои</p>
+            <p>Добавьте навыки или напишите свои (до 10)</p>
             <div class="skills_block" @click="handleFocus">
               <div v-for="(skill, index) in newOrder.skills" :key="skill" class="skill">
                 <span>{{ skill }}</span>
@@ -156,18 +156,9 @@
           </div>
           <span class="tip">Установите цену за заказ и заплатите в конце, или вы можете разделить заказ на этапы и
             платить по мере выполнения каждого этапа.</span>
-          <div class="input_block" v-if="(newOrder.price_type === 'fixed') || (newOrder.price_type === 'contract')">
+          <div class="input_block">
             <p>Цена для вашего заказа</p>
             <OrdersPriceInput v-model="newOrder.price"></OrdersPriceInput>
-          </div>
-          <div class="input_block_wrapper" v-else-if="newOrder.price_type === 'hourly'">
-            <div class="input_block">
-              <p>Цена для вашего заказа</p>
-              <OrdersPriceInput v-model="newOrder.price.from"></OrdersPriceInput>
-            </div>
-            <div class="input_block">
-              <OrdersPriceInput v-model="newOrder.price.to"></OrdersPriceInput>
-            </div>
           </div>
           <p class="contract" @click="handleChangePriceType('contract')">Установить договорную стоимость</p>
         </div>
@@ -239,10 +230,7 @@ const newSkill = shallowRef("");
 const newOrder = ref({
   title: "",
   description: "",
-  price: 0 as number | {
-    from: number;
-    to: number;
-  },
+  price: 0,
   price_type: "fixed",
   type: "one-time",
   for_experts: false,
@@ -373,17 +361,6 @@ function handleFocus() {
 }
 
 function handleChangePriceType(type: 'fixed' | 'hourly' | 'contract') {
-  if ((type === 'fixed') || (type === 'contract')) {
-    newOrder.value.price = 0;
-  }
-
-  if (type === 'hourly') {
-    newOrder.value.price = {
-      from: 0,
-      to: 0
-    }
-  }
-
   newOrder.value.price_type = type;
 }
 

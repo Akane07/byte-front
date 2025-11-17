@@ -96,6 +96,7 @@ definePageMeta({
     middleware: ['auth'],
 });
 
+const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
@@ -183,7 +184,7 @@ async function uploadFiles() {
         await portfolioStore.createPortfolio(formData);
     }
 
-    navigateTo('/profile/my');
+    router.back();
 }
 
 function deleteSkill(index: number) {

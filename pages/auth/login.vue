@@ -77,119 +77,120 @@ async function handleLogin() {
     position: relative;
     margin-bottom: 100px;
     overflow: hidden;
+
+    .login-wrapper {
+        display: flex;
+        align-items: center;
+        // justify-content: end;
+        gap: 131px;
+        height: 100vh;
+        width: 100%;
+        max-width: 1440px;
+        overflow: hidden;
+
+        .login-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            gap: 32px;
+            min-width: 359px;
+        }
+
+        .text-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .menu-hero {
+            font-weight: 600;
+            font-size: 48px;
+            color: #fff;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .menu-context {
+            color: $text-color-secondary;
+            display: inline-block;
+        }
+
+        .typed-text {
+            color: $text-color-secondary;
+            font-size: 18px;
+        }
+
+        .log-and-recovery {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .google {
+            background: $input-auth;
+            display: flex;
+            padding: 12px 14px;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            align-self: start;
+        }
+
+        .google:hover {
+            opacity: 0.9;
+        }
+
+        .google-icon {
+            border-right: 1px solid #3D3D49;
+            padding-right: 9px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .google-icon img {
+            cursor: pointer;
+        }
+
+        .text-google {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            cursor: pointer;
+        }
+
+        .google-text {
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 0%;
+            cursor: pointer;
+        }
+
+        .log {
+            font-size: 10px;
+            color: $text-color-secondary;
+            cursor: pointer;
+        }
+
+        .recovery-text {
+            color: $text-color-secondary;
+            font-size: 14px;
+        }
+
+        .recovery {
+            color: #fff;
+            cursor: pointer;
+        }
+    }
 }
 
-.login-wrapper {
-    display: flex;
-    align-items: center;
-    // justify-content: end;
-    gap: 131px;
-    height: 100vh;
-    width: 100%;
-    max-width: 1440px;
-    overflow: hidden;
-}
-
-.login-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 32px;
-    min-width: 359px;
-}
-
-.text-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.menu-hero {
-    font-weight: 600;
-    font-size: 48px;
-    color: #fff;
-}
-
-.nav-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-}
-
-.menu-context {
-    color: $text-color-secondary;
-    display: inline-block;
-}
-
-.typed-text {
-    color: $text-color-secondary;
-    font-size: 18px;
-}
-
-.log-and-recovery {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.google {
-    background: $input-auth;
-    display: flex;
-    padding: 12px 14px;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    cursor: pointer;
-    border-radius: 5px;
-    align-self: start;
-}
-
-.google:hover {
-    opacity: 0.9;
-}
-
-.google-icon {
-    border-right: 1px solid #3D3D49;
-    padding-right: 9px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-.google-icon img {
-    cursor: pointer;
-}
-
-.text-google {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    cursor: pointer;
-}
-
-.google-text {
-    color: #fff;
-    font-size: 14px;
-    letter-spacing: 0%;
-    cursor: pointer;
-}
-
-.log {
-    font-size: 10px;
-    color: $text-color-secondary;
-    cursor: pointer;
-}
-
-.recovery-text {
-    color: $text-color-secondary;
-    font-size: 14px;
-}
-
-.recovery {
-    color: #fff;
-    cursor: pointer;
-}
 
 @media (max-width: 1250px) {
     .login-menu {

@@ -29,7 +29,7 @@
                     <OrdersOrderCard v-for="order in orderStore.orders" :key="order.id" :order="order"
                         @showOrder="showOrder"></OrdersOrderCard>
                 </div>
-                <div class="pagionation">
+                <div class="pagionation" v-if="orderStore.total > 10">
                     <UIDevPagionation :total="orderStore.total" :currentPage="orderStore.page" @change="getOrders">
                     </UIDevPagionation>
                 </div>

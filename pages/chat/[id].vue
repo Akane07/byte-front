@@ -1,208 +1,182 @@
 <template>
-    <UIDevNavMenu></UIDevNavMenu>
-    <UIBackground></UIBackground>
-
-    <div class="wrapper">
-        <div class="chat_wrapper">
-            <div class="menu">
-                <div class="head">
-                    <p>Чаты</p>
-                    <span>{{ chats.length }}</span>
-                </div>
-                <div class="search">
-                    <div class="input">
-                        <IconsSearch></IconsSearch>
-                        <input type="text" placeholder="Поиск">
-                    </div>
-                </div>
-                <div class="users">
-                    <div class="user" v-for="chat in chats" :key="chat.name"
-                        :class="chat.userId === user?.id ? 'active' : ''" @click="navigateTo(`/chat/${chat.userId}`)">
-                        <img :src="baseURL + chat.avatar" alt="avatar">
-                        <div class="info">
-                            <p>{{ chat.name }}</p>
-                            <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>
-                        </div>
-                        <span>{{ useTimeAgo(chat.lastMessageDate) }}</span>
+    <div class="chat" v-if="renderChat">
+        <div class="head">
+            <div class="info" v-if="user">
+                <UIUserAvatar :src="baseURL + user.avatar" @click="navigateTo(`/profile/${user.id}`)"
+                    style="cursor: pointer;">
+                </UIUserAvatar>
+                <div class="name">
+                    <p @click="navigateTo(`/profile/${user.id}`)" style="cursor: pointer;">{{ user?.name }}</p>
+                    <div class="online">
+                        <div v-if="isOnline" class="is_online"></div>
+                        <div v-else class="is_offline"></div>
+                        <span v-if="isOnline">Online</span>
+                        <span v-else>{{ useOrderCreated(user.last_seen) }}</span>
                     </div>
                 </div>
             </div>
-            <div class="chat">
-                <div class="head">
-                    <div class="info" v-if="user">
-                        <UIUserAvatar :src="baseURL + user.avatar" @click="navigateTo(`/profile/${user.id}`)">
-                        </UIUserAvatar>
-                        <div class="name">
-                            <p @click="navigateTo(`/profile/${user.id}`)">{{ user?.name }}</p>
-                            <div class="online">
-                                <div v-if="isOnline" class="is_online"></div>
-                                <div v-else class="is_offline"></div>
-                                <span v-if="isOnline">Online</span>
-                                <span v-else>{{ useOrderCreated(user.last_seen) }}</span>
-                            </div>
-                        </div>
+            <div class="buttons" v-if="user">
+                <button class="view" @click="navigateTo(`/mutual/${user.id}`)">
+                    <IconsSuggest></IconsSuggest>
+                    Активные заказы ({{ ordersBetweenUsers.length }})
+                </button>
+                <button class="request" @click="navigateTo(`/orders/suggest?id=${user.id}`)">
+                    <IconsOrder></IconsOrder>
+                    Предложить заказ
+                </button>
+            </div>
+        </div>
+        <div class="messages" ref="messagesRef">
+            <template v-if="user">
+                <div v-for="msg in messages" :key="msg.id" class="message_wrapper"
+                    :class="[msg.senderId !== user.id ? 'right' : 'left', msg.status === 'server' ? 'server' : '']">
+                    <div v-if="!msg.is_suggest && msg.status !== 'response' && !msg.responseId" class="message">
+                        <p>{{ msg.text }}</p>
+                        <img v-if="msg.mediaType === 'image' && msg.status !== 'server'" :src="msg.mediaUrl"
+                            width="200" />
+                        <video v-if="msg.mediaType === 'video' && msg.status !== 'server'" :src="msg.mediaUrl"
+                            width="200" controls />
+                        <span class="time" v-if="msg.status !== 'server'">{{ useMessageCreated(msg.createdAt)
+                        }}</span>
                     </div>
-                    <div class="buttons" v-if="user">
-                        <button class="view" @click="navigateTo(`/chat/mutual/${user.id}`)">
+                    <div class="response" v-else-if="msg.status === 'response' && msg.senderId === userStore.user?.id">
+                        <!-- Предложение заказа от отправителя -->
+                        <div class="header">
                             <IconsSuggest></IconsSuggest>
-                            Активные заказы ({{ ordersBetweenUsers.length }})
-                        </button>
-                        <button class="request" @click="navigateTo(`/orders/suggest?id=${user.id}`)">
-                            <IconsOrder></IconsOrder>
-                            Предложить заказ
-                        </button>
-                    </div>
-                </div>
-                <div class="messages" ref="messagesRef">
-                    <template v-if="user">
-                        <div v-for="msg in messages" :key="msg.id" class="message_wrapper"
-                            :class="[msg.senderId !== user.id ? 'right' : 'left', msg.status === 'server' ? 'server' : '']">
-                            <div v-if="!msg.is_suggest && msg.status !== 'response' && !msg.responseId" class="message">
-                                <p>{{ msg.text }}</p>
-                                <img v-if="msg.mediaType === 'image' && msg.status !== 'server'" :src="msg.mediaUrl"
-                                    width="200" />
-                                <video v-if="msg.mediaType === 'video' && msg.status !== 'server'" :src="msg.mediaUrl"
-                                    width="200" controls />
-                                <span class="time" v-if="msg.status !== 'server'">{{ useMessageCreated(msg.createdAt)
-                                }}</span>
-                            </div>
-                            <div class="response"
-                                v-else-if="msg.status === 'response' && msg.senderId === userStore.user?.id">
-                                <!-- Предложение заказа от отправителя -->
-                                <div class="header">
-                                    <IconsSuggest></IconsSuggest>
-                                    <p>Отклик от {{ userStore.user?.nickname }}</p>
-                                </div>
-                                <div class="description">
-                                    <p>{{responsesInChat.find(res => res.id === msg.responseId)?.description}}</p>
-                                </div>
-                                <div class="deadlines">
-                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
-                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.deadline_date) }}</span></p>
-                                </div>
-                                <div class="amount">
-                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
-                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.price) }}</span></p>
-                                </div>
-                                <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
-                                    <button class="delete"
-                                        @click="handleDeleteResponse(msg.responseId, msg.orderId, msg.id)">Удалить
-                                        отклик</button>
-                                </div>
-                            </div>
-                            <div class="response" v-else-if="msg.status === 'response'">
-                                <!-- Предложение заказа от получателя -->
-                                <div class="header">
-                                    <IconsSuggest></IconsSuggest>
-                                    <p>Отклик от {{ user.nickname }}</p>
-                                </div>
-                                <div class="description">
-                                    <p>{{responsesInChat.find(res => res.id === msg.responseId)?.description}}</p>
-                                </div>
-                                <div class="deadlines">
-                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
-                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.deadline_date) }}</span></p>
-                                </div>
-                                <div class="amount">
-                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
-                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.price) }}</span></p>
-                                </div>
-                                <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
-                                    <button class="view" @click="openModal(msg.orderId, msg.id)">Принять</button>
-                                    <button class="delete" @click="rejectSuggest(msg.id)">Отклонить</button>
-                                </div>
-                            </div>
-                            <div class="response" v-else-if="(msg.status !== 'response') && msg.responseId">
-                                <!-- Предложение заказа от получателя -->
-                                <div class="header">
-                                    <IconsSuggest></IconsSuggest>
-                                    <p>Отклик от {{ user.nickname }}</p>
-                                </div>
-                                <div class="description">
-                                    <p>{{responsesInChat.find(res => res.id === msg.responseId)?.description}}</p>
-                                </div>
-                                <div class="deadlines">
-                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
-                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.deadline_date) }}</span></p>
-                                </div>
-                                <div class="amount">
-                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
-                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.price) }}</span></p>
-                                </div>
-                            </div>
-                            <div v-else-if="msg.is_suggest && msg.senderId === userStore.user?.id" class="suggest">
-                                <!-- Предложение заказа от отправителя -->
-                                <div class="header">
-                                    <IconsSuggest></IconsSuggest>
-                                    <p>Предложение от {{ userStore.user?.nickname }}</p>
-                                </div>
-                                <div class="description">
-                                    <p>{{ordersInChat.find(order => order.id === msg.orderId)?.description}}</p>
-                                </div>
-                                <div class="deadlines">
-                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
-                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.deadline_date) }}</span></p>
-                                </div>
-                                <div class="amount">
-                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
-                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.price) }}</span></p>
-                                </div>
-                                <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
-                                    <button class="delete" @click="deleteSuggest(msg.id)">Отозвать</button>
-                                </div>
-                            </div>
-                            <div v-else class="suggest">
-                                <!-- Предложение заказа от получателя -->
-                                <div class="header">
-                                    <IconsSuggest></IconsSuggest>
-                                    <p>Предложение от {{ user.nickname }}</p>
-                                </div>
-                                <div class="description">
-                                    <p>{{ordersInChat.find(order => order.id === msg.orderId)?.description}}</p>
-                                </div>
-                                <div class="deadlines">
-                                    <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
-                                        === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.deadline_date) }}</span></p>
-                                </div>
-                                <div class="amount">
-                                    <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
-                                        msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
-                                            msg.orderId)?.price) }}</span></p>
-                                </div>
-                                <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
-                                    <button class="view" @click="openModal(msg.orderId, msg.id)">Просмотреть</button>
-                                    <button class="delete" @click="rejectSuggest(msg.id)">Отклонить</button>
-                                </div>
-                            </div>
+                            <p>Отклик от {{ userStore.user?.nickname }}</p>
                         </div>
-                    </template>
-                </div>
-                <div class="input">
-                    <div class="file">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M8.88558 3.36262C11.8283 0.545794 16.5864 0.545794 19.5291 3.36262C22.4903 6.19714 22.4903 10.807 19.5291 13.6415L11.581 21.2495C9.49097 23.2502 6.11532 23.2502 4.02525 21.2495C1.91669 19.2312 1.91669 15.9446 4.02525 13.9263L11.859 6.42771C13.0964 5.24324 15.0896 5.24325 16.327 6.42771C17.5829 7.62989 17.5829 9.59316 16.327 10.7953L8.43612 18.3486C8.13689 18.635 7.66213 18.6247 7.37571 18.3254C7.08929 18.0262 7.09967 17.5515 7.39889 17.265L15.2898 9.71175C15.9286 9.10021 15.9286 8.12285 15.2898 7.5113C14.6324 6.88205 13.5536 6.88205 12.8962 7.5113L5.06248 15.0098C3.57095 16.4376 3.57095 18.7382 5.06248 20.1659C6.57251 21.6114 9.03377 21.6114 10.5438 20.1659L18.4919 12.5579C20.836 10.314 20.836 6.6901 18.4919 4.4462C16.1292 2.1846 12.2855 2.1846 9.9228 4.4462L3.51861 10.5764C3.21939 10.8628 2.74463 10.8524 2.45821 10.5532C2.17179 10.254 2.18216 9.77924 2.48139 9.49281L8.88558 3.36262Z"
-                                fill="#494949" />
-                        </svg>
-                        <input type="file" accept="image/*, video/*" @change="file = $event.target.files[0]">
+                        <div class="description">
+                            <p>{{responsesInChat.find(res => res.id === msg.responseId)?.description}}</p>
+                        </div>
+                        <div class="deadlines">
+                            <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.deadline_date)}}</span></p>
+                        </div>
+                        <div class="amount">
+                            <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.price)}}</span></p>
+                        </div>
+                        <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
+                            <button class="delete"
+                                @click="handleDeleteResponse(msg.responseId, msg.orderId, msg.id)">Удалить
+                                отклик</button>
+                        </div>
                     </div>
-                    <div class="input_wrapper">
-                        <input type="text" v-model="text" @keyup.enter="sendMessage">
-                        <IconsSend @click="sendMessage"></IconsSend>
+                    <div class="response" v-else-if="msg.status === 'response'">
+                        <!-- Предложение заказа от получателя -->
+                        <div class="header">
+                            <IconsSuggest></IconsSuggest>
+                            <p>Отклик от {{ user.nickname }}</p>
+                        </div>
+                        <div class="description">
+                            <p>{{responsesInChat.find(res => res.id === msg.responseId)?.description}}</p>
+                        </div>
+                        <div class="deadlines">
+                            <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.deadline_date)}}</span></p>
+                        </div>
+                        <div class="amount">
+                            <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.price)}}</span></p>
+                        </div>
+                        <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
+                            <button class="view" @click="openModal(msg.orderId, msg.id)">Принять</button>
+                            <button class="delete" @click="rejectSuggest(msg.id)">Отклонить</button>
+                        </div>
+                    </div>
+                    <div class="response" v-else-if="(msg.status !== 'response') && msg.responseId">
+                        <!-- Предложение заказа от получателя -->
+                        <div class="header">
+                            <IconsSuggest></IconsSuggest>
+                            <p>Отклик от {{ user.nickname }}</p>
+                        </div>
+                        <div class="description">
+                            <p>{{responsesInChat.find(res => res.id === msg.responseId)?.description}}</p>
+                        </div>
+                        <div class="deadlines">
+                            <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.deadline_date)}}</span></p>
+                        </div>
+                        <div class="amount">
+                            <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.price)}}</span></p>
+                        </div>
+                    </div>
+                    <div v-else-if="msg.is_suggest && msg.senderId === userStore.user?.id" class="suggest">
+                        <!-- Предложение заказа от отправителя -->
+                        <div class="header">
+                            <IconsSuggest></IconsSuggest>
+                            <p>Предложение от {{ userStore.user?.nickname }}</p>
+                        </div>
+                        <div class="description">
+                            <p>{{ordersInChat.find(order => order.id === msg.orderId)?.description}}</p>
+                        </div>
+                        <div class="deadlines">
+                            <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.deadline_date)}}</span></p>
+                        </div>
+                        <div class="amount">
+                            <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.price)}}</span></p>
+                        </div>
+                        <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
+                            <button class="delete" @click="deleteSuggest(msg.id)">Отозвать</button>
+                        </div>
+                    </div>
+                    <div v-else class="suggest">
+                        <!-- Предложение заказа от получателя -->
+                        <div class="header">
+                            <IconsSuggest></IconsSuggest>
+                            <p>Предложение от {{ user.nickname }}</p>
+                        </div>
+                        <div class="description">
+                            <p>{{ordersInChat.find(order => order.id === msg.orderId)?.description}}</p>
+                        </div>
+                        <div class="deadlines">
+                            <p>Срок выполнения: <span>{{useOrderDeadlines(ordersInChat.find(order => order.id
+                                === msg.orderId)?.deadlines, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.deadline_date)}}</span></p>
+                        </div>
+                        <div class="amount">
+                            <p>Сумма оплаты: <span>{{useOrderPrice(ordersInChat.find(order => order.id ===
+                                msg.orderId)?.price_type, ordersInChat.find(order => order.id ===
+                                    msg.orderId)?.price)}}</span></p>
+                        </div>
+                        <div class="buttons" v-if="msg.status !== 'rejected' && msg.status !== 'accepted'">
+                            <button class="view" @click="openModal(msg.orderId, msg.id)">Просмотреть</button>
+                            <button class="delete" @click="rejectSuggest(msg.id)">Отклонить</button>
+                        </div>
                     </div>
                 </div>
+            </template>
+        </div>
+        <div class="input">
+            <div class="file">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M8.88558 3.36262C11.8283 0.545794 16.5864 0.545794 19.5291 3.36262C22.4903 6.19714 22.4903 10.807 19.5291 13.6415L11.581 21.2495C9.49097 23.2502 6.11532 23.2502 4.02525 21.2495C1.91669 19.2312 1.91669 15.9446 4.02525 13.9263L11.859 6.42771C13.0964 5.24324 15.0896 5.24325 16.327 6.42771C17.5829 7.62989 17.5829 9.59316 16.327 10.7953L8.43612 18.3486C8.13689 18.635 7.66213 18.6247 7.37571 18.3254C7.08929 18.0262 7.09967 17.5515 7.39889 17.265L15.2898 9.71175C15.9286 9.10021 15.9286 8.12285 15.2898 7.5113C14.6324 6.88205 13.5536 6.88205 12.8962 7.5113L5.06248 15.0098C3.57095 16.4376 3.57095 18.7382 5.06248 20.1659C6.57251 21.6114 9.03377 21.6114 10.5438 20.1659L18.4919 12.5579C20.836 10.314 20.836 6.6901 18.4919 4.4462C16.1292 2.1846 12.2855 2.1846 9.9228 4.4462L3.51861 10.5764C3.21939 10.8628 2.74463 10.8524 2.45821 10.5532C2.17179 10.254 2.18216 9.77924 2.48139 9.49281L8.88558 3.36262Z"
+                        fill="#494949" />
+                </svg>
+                <input type="file" accept="image/*, video/*" @change="file = $event.target.files[0]">
+            </div>
+            <div class="input_wrapper">
+                <input type="text" v-model="text" @keyup.enter="sendMessage">
+                <IconsSend @click="sendMessage"></IconsSend>
             </div>
         </div>
     </div>
+    <div class="chat center" v-else>
+        <UIDevLoader />
+    </div>
+
 
     <UIDevCustomModal v-if="modalAccept && order" @close="modalAccept = false">
         <div class="left_part">
@@ -272,9 +246,9 @@ const socket = io('http://localhost:3002', {
 const userStore = useUserStore();
 const orderStore = useOrderStore();
 
+const renderChat = shallowRef(false);
 const modalAccept = shallowRef(false);
 const messagesRef = ref<HTMLDivElement | null>(null);
-const chats = ref<any[]>([]);
 const messages = ref<any[]>([]);
 const user = ref<User | null>(null);
 const text = shallowRef('');
@@ -428,7 +402,6 @@ watch(messages, () => {
 
 onMounted(async () => {
     await userStore.checkAuth();
-    chats.value = (await api.get('/chat/all')).data;
     user.value = await userStore.getUserId(route.params.id as string);
     const res = await api.get(`/chat?user=${route.params.id as string}`);
     messages.value = res.data;
@@ -453,9 +426,14 @@ onMounted(async () => {
         messages.value[index].status = 'rejected';
     });
 
-    nextTick(() => {
-        scrollToBottom();
-    });
+
+    setTimeout(() => {
+        renderChat.value = true;
+
+        nextTick(() => {
+            scrollToBottom();
+        });
+    }, 300);
 })
 </script>
 
@@ -477,128 +455,6 @@ onMounted(async () => {
         border-radius: 6px;
         background: #222228;
         z-index: 10;
-
-        .menu {
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #333339;
-            width: 100%;
-            max-width: 350px;
-
-            .head {
-                width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                padding: 24px;
-                border-bottom: 1px solid #333339;
-
-                &>p {
-                    font-weight: 600;
-                    font-size: 20px;
-                    color: #F1ECFF;
-                }
-
-                &>span {
-                    padding: 2px 8px;
-                    border-radius: 24px;
-                    background: #EDF2F7;
-                    color: #000000;
-                    font-size: 12px;
-                    font-weight: 600;
-                }
-            }
-
-            .search {
-                padding: 12px 24px;
-                width: 100%;
-
-                .input {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    padding: 10px 20px;
-                    border-radius: 12px;
-                    background: #494949;
-
-                    input {
-                        width: 100%;
-                        background: transparent;
-                        border: none;
-                        outline: none;
-                        color: #F1ECFF;
-                        font-size: 14px;
-
-                        &::placeholder {
-                            color: #929292;
-                            ;
-                        }
-                    }
-                }
-            }
-
-            .users {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                width: 100%;
-                padding: 0 16px;
-                overflow-y: scroll;
-                scrollbar-width: none;
-
-                .user {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    padding: 16px;
-                    cursor: pointer;
-
-                    img {
-                        width: 50px;
-                        height: 50px;
-                        border-radius: 6px;
-                        cursor: pointer;
-                    }
-
-                    .info {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 4px;
-                        width: 100%;
-                        cursor: pointer;
-
-                        p {
-                            font-weight: 600;
-                            font-size: 14px;
-                            color: #F1ECFF;
-                            cursor: pointer;
-                        }
-
-                        &>span {
-                            font-size: 12px;
-                            color: #9E9E9F;
-                            cursor: pointer;
-                        }
-                    }
-
-                    &>span {
-                        color: rgb(255, 255, 255, 0.3);
-                        font-size: 12px;
-                        font-weight: 600;
-                        height: 100%;
-                        padding-top: 8px;
-                        cursor: pointer;
-                    }
-
-                    &.active {
-                        border-radius: 6px;
-                        background: rgba(131, 85, 250, 0.06);
-                        cursor: pointer;
-                    }
-                }
-            }
-        }
 
         .chat {
             display: flex;
@@ -905,6 +761,13 @@ onMounted(async () => {
                         font-size: 14px;
                     }
                 }
+            }
+
+            &.center {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
             }
         }
     }
