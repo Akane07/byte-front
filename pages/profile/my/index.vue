@@ -84,7 +84,7 @@
             <div class="portfolio">
                 <div class="header">
                     <p>Портфолио</p>
-                    <UIDevButton :active="false" style="border-color: $select-enabled color: $select-enabled"
+                    <UIDevButton :active="false" style="border-color: $select-enabled; color: $select-enabled;"
                         @click="navigateTo('/profile/new-project')">
                         <IconsPlus color="#8355FA" style="transform: scale(1.2);"></IconsPlus>
                         Добавить проект в портфолио

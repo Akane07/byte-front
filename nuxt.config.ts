@@ -4,7 +4,8 @@ import { fileURLToPath, URL } from "node:url";
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", ],
+  css: ["~/assets/styles/main.css"],
   app: {
     head: {
       title: "Freelance Byte",
@@ -39,6 +40,11 @@ export default defineNuxtConfig({
           replacement: fileURLToPath(new URL("./", import.meta.url)),
         },
       ],
+    },
+  },
+  postcss: {
+    plugins: {
+      "@tailwindcss/postcss": {},
     },
   },
 });

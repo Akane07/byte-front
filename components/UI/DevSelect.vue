@@ -140,7 +140,7 @@ useClickOutside(selectRef, () => {
 
         /* Track */
         &::-webkit-scrollbar-track {
-            background: $tag-color
+            background: $tag-color;
         }
 
         /* Handle */

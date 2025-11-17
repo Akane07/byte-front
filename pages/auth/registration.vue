@@ -127,7 +127,7 @@ async function handleRegister() {
     justify-content: center;
     gap: 12px;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 6px;
 }
 
 .google:hover {

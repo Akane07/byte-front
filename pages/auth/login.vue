@@ -1,207 +1,217 @@
 <template>
-    <div class="wrapper">
-        <div class="login-wrapper">
-            <div class="login-menu">
-                <div class="text-menu">
-                    <span class="menu-hero">Вход</span>
-                    <span class="menu-context typed-wrapper">
-                        <span class="typed-text">Добро пожаловать</span>
-                    </span>
-                </div>
-                <div class="nav-menu">
-                    <DevAuthInput v-model="loginData.email" placeholder="Ваша почта" type="text" />
-                    <DevAuthInput v-model="loginData.password" placeholder="Пароль" type="password" />
-                    <DevNavButton @click="handleLogin">Войти</DevNavButton>
-                </div>
-                <div class="log-and-recovery">
-                    <div class="google">
-                        <div class="google-icon">
-                            <img src="../../assets/icons/Google.svg" alt="">
-                        </div>
-                        <div class="text-google">
-                            <span class="log">Войти с помощью</span>
-                            <span class="google-text">Google</span>
-                        </div>
-                    </div>
-                    <span class="recovery-text">Забыли пароль? <NuxtLink to="/auth/recovery" class="recovery">
-                            Восстановить
-                        </NuxtLink></span>
-                </div>
-            </div>
-            <DevAuthBoard :recovery="false"></DevAuthBoard>
+  <div class="wrapper">
+    <div class="login-wrapper">
+      <div class="login-menu">
+        <div class="text-menu">
+          <span class="menu-hero">Вход</span>
+          <span class="menu-context typed-wrapper">
+            <span class="typed-text">Добро пожаловать</span>
+          </span>
         </div>
+        <div class="nav-menu">
+          <DevAuthInput
+            v-model="loginData.email"
+            placeholder="Ваша почта"
+            type="text"
+          />
+          <DevAuthInput
+            v-model="loginData.password"
+            placeholder="Пароль"
+            type="password"
+          />
+          <DevNavButton @click="handleLogin">Войти</DevNavButton>
+        </div>
+        <div class="log-and-recovery">
+          <div class="google">
+            <div class="google-icon">
+              <img src="../../assets/icons/Google.svg" alt="" />
+            </div>
+            <div class="text-google">
+              <span class="log">Войти с помощью</span>
+              <span class="google-text">Google</span>
+            </div>
+          </div>
+          <span class="recovery-text"
+            >Забыли пароль?
+            <NuxtLink to="/auth/recovery" class="recovery">
+              Восстановить
+            </NuxtLink></span
+          >
+        </div>
+      </div>
+      <DevAuthBoard :recovery="false"></DevAuthBoard>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import DevAuthInput from '~/components/auth/AuthInput.vue';
-import DevNavButton from '~/components/UI/DevNavButton.vue';
-import DevAuthBoard from '~/components/auth/AuthBoard.vue';
-import { login } from '~/api/auth-api';
-import { setToken } from '~/api';
-import { useUserStore } from '~/store/userStore';
+import DevAuthInput from "~/components/auth/AuthInput.vue";
+import DevNavButton from "~/components/UI/DevNavButton.vue";
+import DevAuthBoard from "~/components/auth/AuthBoard.vue";
+import { login } from "~/api/auth-api";
+import { setToken } from "~/api";
+import { useUserStore } from "~/store/userStore";
 
 definePageMeta({
-    middleware: ['auth'],
+  middleware: ["auth"],
 });
 
 const userStore = useUserStore();
 
 const loginData = ref({
-    email: '',
-    password: '',
+  email: "",
+  password: "",
 });
 
 async function handleLogin() {
-    const res = await login(loginData.value);
+  const res = await login(loginData.value);
 
-    if (res.access_token) {
-        localStorage.setItem('byte-accessToken', res.access_token);
-        setToken(res.access_token);
-        await userStore.checkAuth();
-        navigateTo("/orders");
-    }
+  if (res.access_token) {
+    localStorage.setItem("byte-accessToken", res.access_token);
+    setToken(res.access_token);
+    await userStore.checkAuth();
+    navigateTo("/orders");
+  }
 }
 </script>
 
 <style scoped lang="scss">
-
-
 .wrapper {
-    width: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  position: relative;
+  margin-bottom: 100px;
+  overflow: hidden;
+
+  .login-wrapper {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-    z-index: 100;
-    position: relative;
-    margin-bottom: 100px;
+    gap: 131px;
+    height: 100vh;
+    width: 100%;
+    max-width: 1440px;
     overflow: hidden;
 
-    .login-wrapper {
-        display: flex;
-        align-items: center;
-        // justify-content: end;
-        gap: 131px;
-        height: 100vh;
-        width: 100%;
-        max-width: 1440px;
-        overflow: hidden;
+    .login-menu {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      gap: 32px;
+      min-width: 359px;
+    }
 
-        .login-menu {
-            display: flex;
-            flex-direction: column;
-            align-items: start;
-            gap: 32px;
-            min-width: 359px;
-        }
-
-        .text-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-.menu-hero {
-    font-weight: 600;
-    font-size: 48px;
-    color: $white;
+    .text-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
 }
 
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            width: 100%;
-        }
+.menu-hero {
+  font-weight: 600;
+  font-size: 48px;
+  color: $white;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
 
 .menu-context {
-    color: $text-secondary;
-    display: inline-block;
+  color: $text-secondary;
+  display: inline-block;
 }
 
 .typed-text {
-    color: $text-secondary;
-    font-size: 18px;
+  color: $text-secondary;
+  font-size: 18px;
 }
 
-        .log-and-recovery {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
+.log-and-recovery {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-        .google {
-            background: $input-auth;
-            display: flex;
-            padding: 12px 14px;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            cursor: pointer;
-            border-radius: 5px;
-            align-self: start;
-        }
+.google {
+  background: $input-auth;
+  display: flex;
+  padding: 12px 14px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  align-self: start;
+}
 
-        .google:hover {
-            opacity: 0.9;
-        }
+.google:hover {
+  opacity: 0.9;
+}
 
-        .google-icon {
-            border-right: 1px solid #3D3D49;
-            padding-right: 9px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
+.google-icon {
+  border-right: 1px solid #3d3d49;
+  padding-right: 9px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
 
-        .google-icon img {
-            cursor: pointer;
-        }
+.google-icon img {
+  cursor: pointer;
+}
 
-        .text-google {
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-            cursor: pointer;
-        }
+.text-google {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  cursor: pointer;
+}
 
 .google-text {
-    color: $white;
-    font-size: 14px;
-    letter-spacing: 0%;
-    cursor: pointer;
+  color: $white;
+  font-size: 14px;
+  letter-spacing: 0%;
+  cursor: pointer;
 }
 
 .log {
-    font-size: 10px;
-    color: $text-secondary;
-    cursor: pointer;
+  font-size: 10px;
+  color: $text-secondary;
+  cursor: pointer;
 }
 
 .recovery-text {
-    color: $text-secondary;
-    font-size: 14px;
+  color: $text-secondary;
+  font-size: 14px;
 }
 
 .recovery {
-    color: $white;
-    cursor: pointer;
+  color: $white;
+  cursor: pointer;
 }
 
 @media (max-width: 1250px) {
-    .login-menu {
-        margin-left: 26px;
-    }
+  .login-menu {
+    margin-left: 26px;
+  }
 
-    .login-wrapper {
-        gap: 50px;
-    }
+  .login-wrapper {
+    gap: 50px;
+  }
 }
 
 @media (max-width: 1100px) {
-    .login-wrapper {
-        justify-content: center;
-    }
+  .login-wrapper {
+    justify-content: center;
+  }
 }
 </style>

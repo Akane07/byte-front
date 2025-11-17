@@ -6,7 +6,6 @@
 </template>
 
 <script setup lang="ts">
-import "~/assets/styles/main.css";
 import { setToken } from "./api";
 import { useUserStore } from "./store/userStore";
 import { useOrderStore } from '~/store/orderStore';

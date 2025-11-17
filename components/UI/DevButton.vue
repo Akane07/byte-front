@@ -1,44 +1,38 @@
 <template>
-    <button :class='active === true ? "dev-button-active" : "dev-button"' :disabled="disabled">
-        <slot></slot>
-    </button>
+  <button
+    class="flex gap-2 cursor-pointer align-center justify-center whitespace-nowrap py-3 px-6"
+    :class="active === true ? 'active' : 'dev'"
+    :disabled="disabled"
+  >
+    <slot></slot>
+  </button>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-    active: boolean,
-    disabled?: boolean
-}>()
+defineProps<{
+  active: boolean;
+  disabled?: boolean;
+}>();
 </script>
 
 <style scoped lang="scss">
 button {
-    cursor: pointer;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
+  border-radius: 6px;
+  color: $white;
 }
 
-.dev-button {
-    padding: 12px 28px;
-    border: 1px solid $white;
-    border-radius: 5px;
-    color: $white;
-    background: transparent;
+.dev {
+  border: 1px solid $white;
+  background: transparent;
 }
 
-.dev-button-active {
-    padding: 12px 28px;
-    border: none;
-    border-radius: 5px;
-    color: $white;
-    background: $active;
+.active {
+  border: none;
+  background: $active;
 }
 
 button:disabled {
-    opacity: 0.8;
-    cursor: not-allowed;
+  opacity: 0.8;
+  cursor: not-allowed;
 }
 </style>

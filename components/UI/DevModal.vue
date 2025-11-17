@@ -53,7 +53,7 @@ onMounted(() => {
     z-index: 1000000000;
 
     .modal {
-        background: $tag-color
+        background: $tag-color;
         border-radius: 6px;
         padding: 22px;
         box-shadow: 0px 6px 15px 0px rgba(255, 255, 255, 0.1);

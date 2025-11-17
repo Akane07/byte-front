@@ -38,11 +38,11 @@ $animation-duration: 0.2s;
         padding: 12px 28px;
         font-size: 14px;
         letter-spacing: 0%;
-        border-radius: 5px;
+        border-radius: 6px;
         background: $input-auth;
         border: none;
         outline: none;
-        color: $text-white;
+        color: $white;
     }
 }
 

@@ -209,7 +209,7 @@ onMounted(() => {
 
 .date_wrapper {
     box-shadow: 0px 6px 15px 0px #FFFFFF1A;
-    background: $tag-color
+    background: $tag-color;
     border-radius: 6px;
     padding: 20px;
     display: flex;
@@ -306,7 +306,7 @@ onMounted(() => {
 
                 .selected-from,
                 .selected-to {
-                    background-color: $select-enabled
+                    background-color: $select-enabled;
                     color: white;
                 }
 

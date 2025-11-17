@@ -97,7 +97,7 @@ watch(modalShow, () => {
         border: none;
         outline: none;
         background: transparent;
-        color: $select-enabled
+        color: $select-enabled;
         font-size: 16px;
         align-self: flex-start;
         cursor: pointer;
@@ -118,7 +118,7 @@ watch(modalShow, () => {
     gap: 12px;
     border-radius: 6px;
     border: 1px solid #3C3B3B;
-    background: $tag-color
+    background: $tag-color;
     transition: 0.2s ease-in;
 
     .skill {

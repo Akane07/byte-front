@@ -24,7 +24,7 @@ defineProps<{
 .dev-nav-button {
     padding: 2px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     background: $bg-button-gradient;
     color: $text-main;
     cursor: pointer;
@@ -38,7 +38,7 @@ defineProps<{
         width: 100%;
         height: 100%;
         padding: 12px 28px;
-        border-radius: 5px;
+        border-radius: 6px;
         cursor: pointer;
     }
 
