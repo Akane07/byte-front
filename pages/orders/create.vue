@@ -14,11 +14,14 @@
           </p>
         </div>
         <div class="right_part">
-          <div class="block">
-            <p>Напишите название для своего заказа<span style="color: $text-red">*</span></p>
-            <UIDevInput v-model="newOrder.title" type="text"
-              placeholder="Например, Front-end разработчик или Web-designer"></UIDevInput>
-          </div>
+          <UIDevInput
+            v-model="newOrder.title"
+            type="text"
+            label="Напишите название для своего заказа"
+            placeholder="Например, создание адаптивного сайта"
+            :rules="rules.notEmpty"
+            required
+          ></UIDevInput>
           <div class="description">
             <p>Примеры названий</p>
             <ul>
@@ -50,26 +53,52 @@
         <div class="right_part">
           <div class="block">
             <p>Категория заказа<span style="color: $text-red">*</span></p>
-            <UIDevSelect style="width: 100%" :list="categoryStore.mapCategories" :selected="newOrder.category"
-              @select="handleSelect"></UIDevSelect>
+            <UIDevSelect
+              style="width: 100%"
+              :list="categoryStore.mapCategories"
+              :selected="newOrder.category"
+              @select="handleSelect"
+            ></UIDevSelect>
           </div>
           <div class="block">
             <p>Добавьте навыки или напишите свои (до 10)</p>
             <div class="skills_block" @click="handleFocus">
-              <div v-for="(skill, index) in newOrder.skills" :key="skill" class="skill">
+              <div
+                v-for="(skill, index) in newOrder.skills"
+                :key="skill"
+                class="skill"
+              >
                 <span>{{ skill }}</span>
-                <IconsCross style="transform: scale(0.8)" class="cursor" @click="deleteSkill(index)">
+                <IconsCross
+                  style="transform: scale(0.8)"
+                  class="cursor"
+                  @click="deleteSkill(index)"
+                >
                 </IconsCross>
               </div>
-              <input v-model="newSkill" ref="inputRef" type="text" @keyup.enter="handleAddSkill" maxlength="20" />
+              <input
+                v-model="newSkill"
+                ref="inputRef"
+                type="text"
+                @keyup.enter="handleAddSkill"
+                maxlength="20"
+              />
             </div>
           </div>
           <div class="block">
             <p>Популярные навыки</p>
             <div class="tags">
-              <div v-for="tag in filteredSkills" :key="tag" class="tag" @click="addSkill(tag)">
+              <div
+                v-for="tag in filteredSkills"
+                :key="tag"
+                class="tag"
+                @click="addSkill(tag)"
+              >
                 {{ tag }}
-                <IconsPlus color="$text-placeholder" style="transform: scale(1.2)"></IconsPlus>
+                <IconsPlus
+                  color="$text-placeholder"
+                  style="transform: scale(1.2)"
+                ></IconsPlus>
               </div>
             </div>
           </div>
@@ -85,39 +114,66 @@
           <div class="block">
             <div class="custom_checkbox">
               <div class="text_wrapper">
-                <IconsCalendar style="transform: scale(1.4);"></IconsCalendar>
+                <IconsCalendar style="transform: scale(1.4)"></IconsCalendar>
                 <div class="text">
                   <p>{{ deadline }}</p>
-                  <span>Продолжительность проекта<span style="color: $text-red">*</span></span>
+                  <span
+                    >Продолжительность проекта<span style="color: $text-red"
+                      >*</span
+                    ></span
+                  >
                 </div>
               </div>
               <div class="checkbox" @click="modal = true">
-                <IconsBluePencil style="transform: scale(1.5);"></IconsBluePencil>
+                <IconsBluePencil
+                  style="transform: scale(1.5)"
+                ></IconsBluePencil>
               </div>
             </div>
             <div class="custom_checkbox">
               <div class="text_wrapper">
-                <IconsExpert style="transform: scale(1.4);"></IconsExpert>
+                <IconsExpert style="transform: scale(1.4)"></IconsExpert>
                 <div class="text">
                   <p>Эксперт</p>
-                  <span>Я готов платить более высокую ставку самым опытным фрилансерам</span>
+                  <span
+                    >Я готов платить более высокую ставку самым опытным
+                    фрилансерам</span
+                  >
                 </div>
               </div>
-              <div @click="newOrder.for_experts = !newOrder.for_experts" class="checkbox">
-                <IconsBluePencil v-if="newOrder.for_experts" style="transform: scale(1.5);"></IconsBluePencil>
+              <div
+                @click="newOrder.for_experts = !newOrder.for_experts"
+                class="checkbox"
+              >
+                <IconsBluePencil
+                  v-if="newOrder.for_experts"
+                  style="transform: scale(1.5)"
+                ></IconsBluePencil>
               </div>
             </div>
             <div class="custom_checkbox">
               <div class="text_wrapper">
-                <IconsExpert style="transform: scale(1.4);"></IconsExpert>
+                <IconsExpert style="transform: scale(1.4)"></IconsExpert>
                 <div class="text">
                   <p>Долгосрочное сотрудничество</p>
-                  <span>Я ищу работника на долгий срок, а не одноразовый проект</span>
+                  <span
+                    >Я ищу работника на долгий срок, а не одноразовый
+                    проект</span
+                  >
                 </div>
               </div>
-              <div @click="newOrder.type === 'one-time' ? (newOrder.type = 'reusable') : (newOrder.type = 'one-time')"
-                class="checkbox">
-                <IconsBluePencil v-if="newOrder.type === 'reusable'" style="transform: scale(1.5);"></IconsBluePencil>
+              <div
+                @click="
+                  newOrder.type === 'one-time'
+                    ? (newOrder.type = 'reusable')
+                    : (newOrder.type = 'one-time')
+                "
+                class="checkbox"
+              >
+                <IconsBluePencil
+                  v-if="newOrder.type === 'reusable'"
+                  style="transform: scale(1.5)"
+                ></IconsBluePencil>
               </div>
             </div>
           </div>
@@ -127,40 +183,55 @@
         <div class="left_part">
           <span class="step">4/5 Оплата</span>
           <h2>Напишите, сколько вы готовы заплатить за свой заказ</h2>
-          <p>
-            Это поможет вам подобрать таланты в вашем ценовом диапазоне.
-          </p>
+          <p>Это поможет вам подобрать таланты в вашем ценовом диапазоне.</p>
         </div>
         <div class="right_part">
           <div class="price_block">
-            <div class="price" :class="{ 'active': newOrder.price_type === 'fixed' }"
-              @click="handleChangePriceType('fixed')">
+            <div
+              class="price"
+              :class="{ active: newOrder.price_type === 'fixed' }"
+              @click="handleChangePriceType('fixed')"
+            >
               <div class="checkbox">
                 <IconsReceipt></IconsReceipt>
                 <div class="checkbox_wrapper">
-                  <div class="circle" v-if="newOrder.price_type === 'fixed'"></div>
+                  <div
+                    class="circle"
+                    v-if="newOrder.price_type === 'fixed'"
+                  ></div>
                 </div>
               </div>
               <p>Фиксированная цена</p>
             </div>
-            <div class="price" :class="{ 'active': newOrder.price_type === 'hourly' }"
-              @click="handleChangePriceType('hourly')">
+            <div
+              class="price"
+              :class="{ active: newOrder.price_type === 'hourly' }"
+              @click="handleChangePriceType('hourly')"
+            >
               <div class="checkbox">
                 <IconsBigClock></IconsBigClock>
                 <div class="checkbox_wrapper">
-                  <div class="circle" v-if="newOrder.price_type === 'hourly'"></div>
+                  <div
+                    class="circle"
+                    v-if="newOrder.price_type === 'hourly'"
+                  ></div>
                 </div>
               </div>
               <p>Почасовая ставка</p>
             </div>
           </div>
-          <span class="tip">Установите цену за заказ и заплатите в конце, или вы можете разделить заказ на этапы и
-            платить по мере выполнения каждого этапа.</span>
+          <span class="tip"
+            >Установите цену за заказ и заплатите в конце, или вы можете
+            разделить заказ на этапы и платить по мере выполнения каждого
+            этапа.</span
+          >
           <div class="input_block">
             <p>Цена для вашего заказа</p>
             <OrdersPriceInput v-model="newOrder.price"></OrdersPriceInput>
           </div>
-          <p class="contract" @click="handleChangePriceType('contract')">Установить договорную стоимость</p>
+          <p class="contract" @click="handleChangePriceType('contract')">
+            Установить договорную стоимость
+          </p>
         </div>
       </div>
       <div class="step_block fifth">
@@ -173,14 +244,25 @@
               <li>Четкие ожидания относительно вашей задачи и результатов</li>
               <li>Навыки, необходимые для вашей работы</li>
               <li>Хорошее общение</li>
-              <li>Подробная информация о том, как вам или вашей команде нравится работать</li>
+              <li>
+                Подробная информация о том, как вам или вашей команде нравится
+                работать
+              </li>
             </ul>
           </div>
         </div>
         <div class="right_part">
           <div class="block">
-            <p>Подробно опишите, что нужно сделать<span style="color: $text-red">*</span></p>
-            <UIDevTextarea v-model="newOrder.description" placeholder="Описание вашего заказа" maxlength="2000">
+            <p>
+              Подробно опишите, что нужно сделать<span style="color: $text-red"
+                >*</span
+              >
+            </p>
+            <UIDevTextarea
+              v-model="newOrder.description"
+              placeholder="Описание вашего заказа"
+              maxlength="2000"
+            >
             </UIDevTextarea>
           </div>
         </div>
@@ -194,26 +276,36 @@
       <div class="actions">
         <UIDevButton class="next" @click="prevStep">Назад</UIDevButton>
         <div class="right">
-          <button class="draft" @click="saveAsDraft">Сохранить как черновик</button>
-          <UIDevButton class="next" type="active" @click="nextStep">{{ step === 5 ? 'Опубликовать' : 'Далее' }}
+          <button class="draft" @click="saveAsDraft">
+            Сохранить как черновик
+          </button>
+          <UIDevButton class="next" type="active" @click="nextStep"
+            >{{ step === 5 ? "Опубликовать" : "Далее" }}
           </UIDevButton>
         </div>
       </div>
     </div>
   </div>
 
-  <OrdersDateSelect v-if="modal" @close="modal = false" @save="handleDeadlines" :deadline="newOrder.deadlines"
-    :from="newOrder.deadline_date.from" :to="newOrder.deadline_date.to"></OrdersDateSelect>
+  <OrdersDateSelect
+    v-if="modal"
+    @close="modal = false"
+    @save="handleDeadlines"
+    :deadline="newOrder.deadlines"
+    :from="newOrder.deadline_date.from"
+    :to="newOrder.deadline_date.to"
+  ></OrdersDateSelect>
 </template>
 
 <script setup lang="ts">
 import { IconsCalendar } from "#components";
+import { rules } from "~/shared/utils/rules";
 import { useCategory } from "~/store/categoryStore";
 import { useNotifications } from "~/store/notiStore";
 import { useOrderStore } from "~/store/orderStore";
 
 definePageMeta({
-    middleware: ['auth'],
+  middleware: ["auth"],
 });
 
 const router = useRouter();
@@ -234,10 +326,16 @@ const newOrder = ref({
   price_type: "fixed",
   type: "one-time",
   for_experts: false,
-  deadlines: "contract" as 'less-week' | 'more-week' | 'less-month' | 'more-month' | 'contract' | 'custom',
+  deadlines: "contract" as
+    | "less-week"
+    | "more-week"
+    | "less-month"
+    | "more-month"
+    | "contract"
+    | "custom",
   deadline_date: {
-    from: '',
-    to: ''
+    from: "",
+    to: "",
   },
   skills: [] as string[],
   category: "",
@@ -246,20 +344,22 @@ const newOrder = ref({
 
 const deadline = computed(() => {
   switch (newOrder.value.deadlines) {
-    case 'less-week':
-      return 'Менее 1 недели';
-    case 'more-week':
-      return 'Более 1 недели';
-    case 'less-month':
-      return 'Менее 1 месяца';
-    case 'more-month':
-      return 'Более 1 месяца';
-    case 'contract':
-      return 'По договоренности';
-    case 'custom':
-      return `${useUserCreated(newOrder.value.deadline_date.from)} - ${useUserCreated(newOrder.value.deadline_date.to)}`;
+    case "less-week":
+      return "Менее 1 недели";
+    case "more-week":
+      return "Более 1 недели";
+    case "less-month":
+      return "Менее 1 месяца";
+    case "more-month":
+      return "Более 1 месяца";
+    case "contract":
+      return "По договоренности";
+    case "custom":
+      return `${useUserCreated(
+        newOrder.value.deadline_date.from
+      )} - ${useUserCreated(newOrder.value.deadline_date.to)}`;
   }
-})
+});
 
 const filteredSkills = computed(() => {
   return categoryStore.skills.filter(
@@ -304,7 +404,10 @@ async function nextStep() {
       }
       return;
     case 4:
-      if (newOrder.value.price_type === 'contract' || (newOrder.value.price_type && newOrder.value.price)) {
+      if (
+        newOrder.value.price_type === "contract" ||
+        (newOrder.value.price_type && newOrder.value.price)
+      ) {
         newOrder.value.draft = true;
         step.value = 5;
         scrollTo();
@@ -314,19 +417,19 @@ async function nextStep() {
     case 5:
       newOrder.value.draft = false;
       await orderStore.createOrder(newOrder.value as any);
-      notifications.setNotification('Заказ успешно опубликован!')
-      navigateTo('/orders/my');
+      notifications.setNotification("Заказ успешно опубликован!");
+      navigateTo("/orders/my");
   }
 }
 
 async function saveAsDraft() {
-  if ((step.value > 1) || newOrder.value.title) {
+  if (step.value > 1 || newOrder.value.title) {
     newOrder.value.draft = true;
     await orderStore.createOrder(newOrder.value as any);
-    await notifications.setNotification('Черновик сохранен!');
+    await notifications.setNotification("Черновик сохранен!");
     router.back();
   } else {
-    await notifications.setNotification('Нельзя сохранить пустой заказ');
+    await notifications.setNotification("Нельзя сохранить пустой заказ");
   }
 }
 
@@ -360,17 +463,26 @@ function handleFocus() {
   inputRef.value?.focus();
 }
 
-function handleChangePriceType(type: 'fixed' | 'hourly' | 'contract') {
+function handleChangePriceType(type: "fixed" | "hourly" | "contract") {
   newOrder.value.price_type = type;
 }
 
-function handleDeadlines(date: "contract" | "less-week" | "more-week" | "less-month" | "more-month" | "custom" | { from: string, to: string }) {
-  if (typeof date === 'string') {
+function handleDeadlines(
+  date:
+    | "contract"
+    | "less-week"
+    | "more-week"
+    | "less-month"
+    | "more-month"
+    | "custom"
+    | { from: string; to: string }
+) {
+  if (typeof date === "string") {
     newOrder.value.deadlines = date;
-    newOrder.value.deadline_date.from = '';
-    newOrder.value.deadline_date.to = '';
+    newOrder.value.deadline_date.from = "";
+    newOrder.value.deadline_date.to = "";
   } else {
-    newOrder.value.deadlines = 'custom';
+    newOrder.value.deadlines = "custom";
     newOrder.value.deadline_date.from = date.from;
     newOrder.value.deadline_date.to = date.to;
   }
@@ -699,7 +811,6 @@ await categoryStore.getAllCategories();
             padding-left: 20px;
             color: $text-secondary;
           }
-
         }
       }
     }
