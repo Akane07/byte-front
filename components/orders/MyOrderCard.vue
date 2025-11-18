@@ -74,7 +74,7 @@
       <UIDevButton @click.stop="modal = false"
         >Отмена</UIDevButton
       >
-      <UIDevButton active @click.stop="handleDelete"
+      <UIDevButton type="active" @click.stop="handleDelete"
         >Удалить</UIDevButton
       >
     </template>

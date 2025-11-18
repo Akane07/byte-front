@@ -82,7 +82,7 @@
             </div>
         </div>
         <div class="footer">
-            <UIDevButton active :disabled="!isValid" @click="uploadFiles">Опубликовать</UIDevButton>
+            <UIDevButton type="active" :disabled="!isValid" @click="uploadFiles">Опубликовать</UIDevButton>
         </div>
     </div>
 </template>
@@ -252,7 +252,7 @@ onMounted(async () => {
         display: flex;
         gap: 32px;
         max-width: 1440px;
-        margin-top: 40px;
+        margin-top: 32px;
     }
 
     .left_part {

@@ -47,7 +47,7 @@
         </div>
         <div class="bordered"></div>
         <div class="right_part">
-          <UIDevButton active @click="navigateTo('/profile/my/settings')">
+          <UIDevButton type="active" @click="navigateTo('/profile/my/settings')">
             <IconsSettings></IconsSettings>
             Настройки профиля
           </UIDevButton>

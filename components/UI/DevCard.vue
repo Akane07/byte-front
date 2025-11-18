@@ -8,7 +8,7 @@
 .card {
   color: $white;
   max-width: 1440px;
-  margin-top: 40px;
+  margin-top: 32px;
   background: $bg-brand;
 }
 </style>

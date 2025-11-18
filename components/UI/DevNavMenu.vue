@@ -50,7 +50,7 @@
         </template>
         <template #buttons>
             <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton active @click.stop="userStore.logout()">Выйти</UIDevButton>
+            <UIDevButton type="active" @click.stop="userStore.logout()">Выйти</UIDevButton>
         </template>
     </UIDevModal>
 </template>

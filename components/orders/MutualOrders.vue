@@ -17,8 +17,8 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton active style="min-width: 155px; background: #38A169;" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">Перейти в чат</UIDevButton>
-            <UIDevButton active style="min-width: 155px; background: #38A169;" v-if="user_performer" @click="$emit('finishOrder', order)">Завершить заказ</UIDevButton>
+            <UIDevButton type="active" style="min-width: 155px; background: #38A169;" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">Перейти в чат</UIDevButton>
+            <UIDevButton type="active" style="min-width: 155px; background: #38A169;" v-if="user_performer" @click="$emit('finishOrder', order)">Завершить заказ</UIDevButton>
         </div>
     </div>
 </template>

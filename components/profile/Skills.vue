@@ -1,10 +1,7 @@
 <template>
     <div class="skills_wrapper">
         <div class="skills">
-            <div v-for="(skill, index) in skills" :key="skill" class="skill">
-                <span>{{ skill }}</span>
-                <IconsCross style="transform: scale(.8);" class="cursor" @click="$emit('delete', index)"></IconsCross>
-            </div>
+            <DevChip v-for="(skill, index) in skills" :key="skill" :text="skill" removable @delete="$emit('delete', index)"></DevChip>
         </div>
         <button @click="modalShow = !modalShow">Добавить навык</button>
     </div>
@@ -13,20 +10,20 @@
         <template #body>
             <p class="skills_p">Навыки</p>
             <div class="skills_block" @click="handleFocus">
-                <div v-for="(skill, index) in copySkills" :key="skill" class="skill">
-                    <span>{{ skill }}</span>
-                    <IconsCross style="transform: scale(.8);" class="cursor" @click="deleteSkill(index)"></IconsCross>
-                </div>
+                <DevChip v-for="(skill, index) in copySkills" :key="skill" :text="skill" removable :hover="false" @delete="deleteSkill(index)"></DevChip>
+
                 <input v-model="newSkill" ref="inputRef" type="text" @keyup.enter="handleAddSkill" maxlength="20">
             </div>
         </template>
         <template #buttons>
-            <UIDevButton active @click="$emit('save', copySkills); modalShow = false;">Сохранить</UIDevButton>
+            <UIDevButton type="active" @click="$emit('save', copySkills); modalShow = false;">Сохранить</UIDevButton>
         </template>
     </UIDevModal>
 </template>
 
 <script setup lang="ts">
+import DevChip from '../UI/DevChip.vue';
+
 const props = defineProps<{
     skills: string[]
 }>();
@@ -80,22 +77,6 @@ watch(modalShow, () => {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-
-        .skill {
-            border-radius: 6px;
-            padding: 6px 14px;
-            background: $tag-color;
-            font-size: 14px;
-            color: $text-placeholder;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.3s ease;
-
-            &:hover {
-                background: $tag-hover;
-            }
-        }
     }
 
     button {

@@ -209,7 +209,7 @@
                 <UIDevButton class="next" @click="prevStep">Назад</UIDevButton>
                 <div class="right">
                     <button class="draft" @click="saveAsDraft">Сохранить как черновик</button>
-                    <UIDevButton class="next" active @click="nextStep">{{ step === 5 ? 'Сохранить' : 'Далее'
+                    <UIDevButton class="next" type="active" @click="nextStep">{{ step === 5 ? 'Сохранить' : 'Далее'
                         }}</UIDevButton>
                 </div>
             </div>

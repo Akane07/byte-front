@@ -7,21 +7,12 @@
         </div>
         <div class="portfolio">
             <div class="left_part">
-                <div class="block">
-                    <p>Название проекта<span style="color: $text-red">*</span></p>
-                    <UIDevInput v-model="portfolio.title" type="text"
-                        placeholder="Введите краткое, но понятное название" maxlength="40"></UIDevInput>
-                </div>
-                <div class="block">
-                    <p>Ваша роль<span style="color: $text-red">*</span></p>
-                    <UIDevInput v-model="portfolio.role" type="text"
-                        placeholder="Например, Front-end разработчик или Web-designer" maxlength="40"></UIDevInput>
-                </div>
-                <div class="block">
-                    <p>Описание проекта<span style="color: $text-red">*</span></p>
-                    <UIDevTextarea v-model="portfolio.description"
-                        placeholder="Например, Front-end разработчик или Web-designer" maxlength="1000"></UIDevTextarea>
-                </div>
+                    <UIDevInput v-model="portfolio.title" label="Название проекта" type="text"
+                        placeholder="Введите краткое, но понятное название" maxlength="40" :rules="rules.notEmpty" required></UIDevInput>
+                    <UIDevInput v-model="portfolio.role" label="Ваша роль" type="text"
+                        placeholder="Например, Front-end разработчик или Web-designer" maxlength="40" :rules="rules.notEmpty" required></UIDevInput>
+                    <UIDevTextarea v-model="portfolio.description" label="Описание проекта"
+                        placeholder="Например, Front-end разработчик или Web-designer" maxlength="1000" :rules="rules.notEmpty" required></UIDevTextarea>
                 <div class="block">
                     <p>Навыки</p>
                     <ProfileSkills :skills="portfolio.skills" @save="saveSkills" @delete="deleteSkill"></ProfileSkills>
@@ -79,12 +70,13 @@
             </div>
         </div>
         <div class="footer">
-            <UIDevButton active :disabled="!isValid" @click="uploadFiles">Опубликовать</UIDevButton>
+            <UIDevButton type="active" :disabled="!isValid" @click="uploadFiles">Опубликовать</UIDevButton>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { rules } from '~/shared/utils/rules';
 import { usePortfolioStore } from '../../store/portfolioStore';
 
 definePageMeta({
@@ -219,7 +211,7 @@ function saveSkills(skills: string[]) {
         display: flex;
         gap: 32px;
         max-width: 1440px;
-        margin-top: 40px;
+        margin-top: 32px;
     }
 
     .left_part {

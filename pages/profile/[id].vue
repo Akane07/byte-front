@@ -33,7 +33,7 @@
                 </div>
                 <div class="bordered"></div>
                 <div class="right_part">
-                    <UIDevButton active @click="navigateTo(`/chat/${user.id}`)">
+                    <UIDevButton type="active" @click="navigateTo(`/chat/${user.id}`)">
                         Отправить сообщение
                     </UIDevButton>
                     <div class="user_stats">
@@ -127,7 +127,7 @@ onMounted(async () => {
         gap: 40px;
         width: 100%;
         max-width: 1440px;
-        margin-top: 40px;
+        margin-top: 32px;
         background: $bg-brand;
         border-radius: 20px;
         padding: 64px 42px;

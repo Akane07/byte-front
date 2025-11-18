@@ -1,4 +1,5 @@
 @import 'scrollbar';
+@import 'input';
 
 // Основные цвета
 $black: #000000;
@@ -36,6 +37,7 @@ $bg-gradient: radial-gradient(
     rgba(135, 38, 183, 0) 100%
   );
 $active: #8b60fa;
+$bg-button-delete: rgba(255, 105, 105, 0.1);
 
 // цвет инпутов
 $input-auth: #18181c;

@@ -2,7 +2,7 @@
   <UIDevNavMenu></UIDevNavMenu>
   <UIBackground></UIBackground>
 
-  <div class="flex flex-col items-center w-full">
+  <div class="flex flex-col items-center w-full pt-8">
     <div class="chat_wrapper flex w-full mt-10 rounded-md z-10">
       <div class="menu flex flex-col w-full">
         <div class="head flex items-center justify-center gap-2 p-6 w-full">

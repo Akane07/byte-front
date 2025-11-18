@@ -14,7 +14,7 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(response.price_type, response.price) }}</p>
-            <UIDevButton v-if="response.viewed" active @click.stop="">Просмотрено</UIDevButton>
+            <UIDevButton v-if="response.viewed" type="active" @click.stop="">Просмотрено</UIDevButton>
             <UIDevButton v-if="!response.viewed" @click.stop="">Не просмотрено</UIDevButton>
         </div>
     </div>
@@ -25,7 +25,7 @@
         </template>
         <template #buttons>
             <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton active @click.stop="handleDelete">Удалить</UIDevButton>
+            <UIDevButton type="active" @click.stop="handleDelete">Удалить</UIDevButton>
         </template>
     </UIDevModal>
 </template>

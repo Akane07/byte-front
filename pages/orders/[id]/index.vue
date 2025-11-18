@@ -80,7 +80,7 @@
                     <UIDevTextarea v-model="response.description" style="width: 100%;" maxlength="2000"></UIDevTextarea>
                 </div>
                 <div class="actions">
-                    <UIDevButton style="align-self: flex-start;" active @click="handleEditResponse">Подтвердить
+                    <UIDevButton style="align-self: flex-start;" type="active" @click="handleEditResponse">Подтвердить
                     </UIDevButton>
                     <button class="delete" @click="edit = false">Отменить</button>
                 </div>
@@ -94,7 +94,7 @@
         </template>
         <template #buttons>
             <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton active @click.stop="handleDelete">Удалить</UIDevButton>
+            <UIDevButton type="active" @click.stop="handleDelete">Удалить</UIDevButton>
         </template>
     </UIDevModal>
 </template>
@@ -230,7 +230,7 @@ onMounted(async () => {
     padding: 0 30px;
 
     .order_response {
-        margin-top: 40px;
+        margin-top: 32px;
         width: 100%;
         max-width: 1300px;
         color: $text-main;

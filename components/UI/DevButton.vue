@@ -1,7 +1,7 @@
 <template>
   <button
     class="flex gap-2 cursor-pointer items-center justify-center whitespace-nowrap py-3 px-6"
-    :class="active ? 'active' : 'dev'"
+    :class="type"
     :disabled="disabled"
   >
     <slot></slot>
@@ -9,18 +9,25 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  active?: boolean;
-  disabled?: boolean;
-}>();
+withDefaults(
+  defineProps<{
+    type?: "active" | "secondary" | "cancel";
+    disabled?: boolean;
+  }>(),
+  {
+    type: "secondary",
+  }
+);
 </script>
 
 <style scoped lang="scss">
 button {
+  outline: none;
   border-radius: 6px;
   color: $white;
   opacity: 1;
   transition: all 0.3s ease;
+  white-space: nowrap;
 
   &:hover {
     opacity: 0.8;
@@ -31,7 +38,7 @@ button {
   }
 }
 
-.dev {
+.secondary {
   border: 1px solid $white;
   background: transparent;
 }
@@ -39,6 +46,16 @@ button {
 .active {
   border: none;
   background: $active;
+}
+
+.cancel {
+  border: none;
+  background: transparent;
+  color: $text-red;
+
+  &:hover {
+    background: $bg-button-delete;
+  }
 }
 
 button:disabled {

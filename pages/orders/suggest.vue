@@ -87,7 +87,7 @@ onMounted(async () => {
     display: flex;
     width: 100%;
     max-width: 1440px;
-    margin-top: 40px;
+    margin-top: 32px;
 
     .orders {
         width: 100%;
@@ -127,7 +127,7 @@ onMounted(async () => {
                 font-size: 24px;
                 font-weight: 600;
                 text-align: center;
-                margin-top: 40px;
+                margin-top: 32px;
             }
         }
     }

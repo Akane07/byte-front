@@ -155,7 +155,7 @@ onMounted(async () => {
         gap: 48px;
         width: 100%;
         max-width: 1440px;
-        margin-top: 40px;
+        margin-top: 32px;
         background: $bg-brand;
         border-radius: 20px;
         padding: 64px 0 0 0;

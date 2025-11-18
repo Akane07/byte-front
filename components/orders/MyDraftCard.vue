@@ -27,7 +27,7 @@
         </template>
         <template #buttons>
             <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton active @click.stop="handleDelete">Удалить</UIDevButton>
+            <UIDevButton type="active" @click.stop="handleDelete">Удалить</UIDevButton>
         </template>
     </UIDevModal>
 </template>
