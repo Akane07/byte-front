@@ -17,7 +17,7 @@
         <span class="bordered"
           >Опубликовано {{ useOrderCreated(order.created_at) }}</span
         >
-        <span class="bordered">Предложений {{ order.response_count }}</span>
+        <span class="bordered">Предложений: {{ order.response_count }}</span>
         <button
           class="bordered edit"
           @click="navigateTo(`/orders/${order.id}/edit`)"

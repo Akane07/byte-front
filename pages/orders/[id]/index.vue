@@ -15,7 +15,7 @@
                         <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"
                             :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
                         <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
-                        <span>Предложений {{ order.response_count }}</span>
+                        <span>Предложений: {{ order.response_count }}</span>
                     </div>
                 </div>
                 <div class="description">

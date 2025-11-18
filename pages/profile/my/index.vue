@@ -3,7 +3,7 @@
   <UIBackground></UIBackground>
 
   <div class="wrapper">
-    <div class="profile" v-if="userStore.user">
+    <DevCard v-if="userStore.user">
       <div class="main_info">
         <div class="left_part">
           <div class="avatar">
@@ -108,7 +108,7 @@
         </div>
       </div>
       <div class="portfolio">
-        <div class="header">
+        <div class="flex justify-between items-center">
           <p>Портфолио</p>
           <UIDevButton
             class="add-button"
@@ -130,15 +130,16 @@
         </div>
       </div>
       <div class="feedbacks">
-        <div class="header">
+        <div class="flex justify-between items-center">
           <p>Отзывы</p>
         </div>
       </div>
-    </div>
+    </DevCard>
   </div>
 </template>
 
 <script setup lang="ts">
+import DevCard from "~/components/UI/DevCard.vue";
 import { baseURL } from "~/shared/api";
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
@@ -176,200 +177,182 @@ onMounted(async () => {
   position: relative;
   margin-bottom: 100px;
 
-  .profile {
-    color: $white;
+  .main_info {
     display: flex;
-    flex-direction: column;
-    gap: 40px;
-    width: 100%;
-    max-width: 1440px;
-    margin-top: 40px;
-    background: $bg-brand;
-    border-radius: 20px;
-    padding: 64px 42px;
+    gap: 24px;
+    border-bottom: 1px solid $border-color;
 
-    .main_info {
+    .bordered {
+      width: 1px;
+      height: inherit;
+      background: $border-color;
+    }
+
+    .left_part {
       display: flex;
-      gap: 24px;
-      border-bottom: 1px solid $border-color;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 230px;
+      padding-bottom: 18px;
 
-      .bordered {
-        width: 1px;
-        height: inherit;
-        background: $border-color;
+      .avatar {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
       }
 
-      .left_part {
+      .stats {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        color: $text-secondary;
+        font-size: 14px;
+
+        .stat {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+        }
+      }
+    }
+
+    .middle_part {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 18px;
+      width: 100%;
+
+      .name {
+        font-weight: 600;
+        color: $active;
+        font-size: 24px;
+      }
+
+      .speciality {
+        font-weight: 500;
+        font-size: 22px;
+      }
+
+      span {
+        margin-top: 12px;
+        font-size: 14px;
+        color: $text-secondary;
+      }
+
+      .skills {
+        padding-top: 12px;
+        margin-top: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .skill {
+          border-radius: 6px;
+          padding: 6px 14px;
+          background: $tag-color;
+          font-size: 14px;
+          color: $text-placeholder;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+      }
+    }
+
+    .right_part {
+      width: 100%;
+      max-width: 230px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      padding-bottom: 18px;
+      padding-top: 12px;
+
+      .user_stats {
         display: flex;
         flex-direction: column;
         gap: 16px;
-        min-width: 230px;
-        padding-bottom: 18px;
 
-        .avatar {
+        .average {
           display: flex;
-          flex-direction: column;
+          align-items: center;
           gap: 12px;
+          font-size: 14px;
+
+          .star {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            gap: 8px;
+          }
         }
 
         .stats {
           display: flex;
           flex-direction: column;
           gap: 8px;
-          color: $text-secondary;
-          font-size: 14px;
 
           .stat {
             display: flex;
-            gap: 8px;
-            align-items: center;
-          }
-        }
-      }
-
-      .middle_part {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        padding-bottom: 18px;
-        width: 100%;
-
-        .name {
-          font-weight: 600;
-          color: $active;
-          font-size: 24px;
-        }
-
-        .speciality {
-          font-weight: 500;
-          font-size: 22px;
-        }
-
-        span {
-          margin-top: 12px;
-          font-size: 14px;
-          color: $text-secondary;
-        }
-
-        .skills {
-          padding-top: 12px;
-          margin-top: auto;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-
-          .skill {
-            border-radius: 6px;
-            padding: 6px 14px;
-            background: $tag-color;
-            font-size: 14px;
-            color: $text-placeholder;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 8px;
+
+            span {
+              color: $select-enabled;
+              font-weight: 500;
+            }
           }
         }
-      }
 
-      .right_part {
-        width: 100%;
-        max-width: 230px;
-        display: flex;
-        flex-direction: column;
-        gap: 32px;
-        padding-bottom: 18px;
-        padding-top: 12px;
-
-        .user_stats {
+        .links {
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 12px;
 
-          .average {
+          .link {
             display: flex;
             align-items: center;
             gap: 12px;
+            font-weight: 500;
             font-size: 14px;
+            color: #bebec2;
+            cursor: pointer;
 
-            .star {
-              font-weight: 600;
-              display: flex;
-              align-items: center;
-              font-size: 14px;
-              gap: 8px;
-            }
-          }
-
-          .stats {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-
-            .stat {
-              display: flex;
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              gap: 8px;
-
-              span {
-                color: $select-enabled;
-                font-weight: 500;
-              }
-            }
-          }
-
-          .links {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-
-            .link {
-              display: flex;
-              align-items: center;
-              gap: 12px;
-              font-weight: 500;
-              font-size: 14px;
-              color: #bebec2;
+            P {
               cursor: pointer;
-
-              P {
-                cursor: pointer;
-              }
             }
           }
         }
       }
     }
+  }
 
-    .portfolio,
-    .feedbacks {
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
+  .portfolio,
+  .feedbacks {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 
-      .header {
-        display: flex;
-        justify-content: space-between;
-
-        p {
-          font-weight: 500;
-          font-size: 22px;
-        }
-
-        .add-button {
-          border-color: $select-enabled;
-          color: $select-enabled;
-        }
-      }
+    p {
+      font-weight: 500;
+      font-size: 22px;
     }
 
-    .portfolio {
-      .portfolio_blocks {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 24px;
-      }
+    .add-button {
+      border-color: $select-enabled;
+      color: $select-enabled;
+    }
+  }
+
+  .portfolio {
+    .portfolio_blocks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
     }
   }
 }

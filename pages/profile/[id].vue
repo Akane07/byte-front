@@ -70,7 +70,7 @@
                         :other="true"></ProfilePortfolio>
                 </div>
             </div>
-            <div class="feedbacks" v-if="portfolios.length">
+            <div class="feedbacks" v-if="feedbacks.length">
                 <div class="header">
                     <p>Отзывы</p>
                 </div>
@@ -95,6 +95,7 @@ const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
 
 const portfolios = ref<Portfolio[]>([]);
+const feedbacks = ref([]);
 const user = ref<User | null>(null);
 
 const id = route.params.id as string;

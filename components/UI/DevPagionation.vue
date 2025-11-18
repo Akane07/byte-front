@@ -33,10 +33,8 @@ defineEmits<{
 const pages = computed(() => generateSmartPagination(props.currentPage, props.total));
 
 function generateSmartPagination(current: number, total: number): (number | string)[] {
-    console.log(current, total);
     const pages: (number | string)[] = [];
 
-    // Если всего 6 страниц или меньше — показываем все
     if (total <= 6) {
         for (let i = 1; i <= total; i++) {
             pages.push(i);
@@ -44,9 +42,6 @@ function generateSmartPagination(current: number, total: number): (number | stri
         return pages;
     }
 
-    const endPages = [total - 1, total];
-
-    // Если мы в последних 3 страницах — показываем только последние
     if (current >= total - 2) {
         for (let i = total - 3; i <= total; i++) {
             if (i > 0) pages.push(i);
@@ -54,8 +49,6 @@ function generateSmartPagination(current: number, total: number): (number | stri
         return pages;
     }
 
-    // В остальных случаях:
-    // Добавляем текущую и предыдущие (если есть)
     const start = Math.max(1, current - 1);
     const mid = Math.min(current + 1, total - 2);
 
@@ -63,12 +56,10 @@ function generateSmartPagination(current: number, total: number): (number | stri
         pages.push(i);
     }
 
-    // Добавляем троеточие, если дальше есть разрыв
     if (mid < total - 2) {
         pages.push('...');
     }
 
-    // Добавляем последние 2 страницы
     pages.push(total - 1);
     pages.push(total);
 

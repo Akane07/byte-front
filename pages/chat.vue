@@ -1,201 +1,140 @@
 <template>
-    <UIDevNavMenu></UIDevNavMenu>
-    <UIBackground></UIBackground>
+  <UIDevNavMenu></UIDevNavMenu>
+  <UIBackground></UIBackground>
 
-    <div class="wrapper">
-        <div class="chat_wrapper">
-            <div class="menu">
-                <div class="head">
-                    <p>Чаты</p>
-                    <span>{{ chats.length }}</span>
-                </div>
-                <div class="search">
-                    <div class="input">
-                        <IconsSearch></IconsSearch>
-                        <input type="text" placeholder="Поиск" v-model="searchString">
-                    </div>
-                </div>
-                <div class="users">
-                    <div class="user" v-for="chat in searchedChats" :key="chat.name"
-                        @click="navigateTo(`/chat/${chat.userId}`)" :class="{ active: $route.params.id === chat.userId }">
-                        <img :src="baseURL + chat.avatar" alt="avatar">
-                        <div class="info">
-                            <p>{{ chat.name }}</p>
-                            <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>
-                        </div>
-                        <span>{{ useTimeAgo(chat.lastMessageDate) }}</span>
-                    </div>
-                </div>
-            </div>
-            <NuxtPage></NuxtPage>
+  <div class="flex flex-col items-center w-full">
+    <div class="chat_wrapper flex w-full mt-10 rounded-md z-10">
+      <div class="menu flex flex-col w-full">
+        <div class="head flex items-center justify-center gap-2 p-6 w-full">
+          <p>Чаты</p>
+          <span class="px-2 py-0.5 rounded-3xl">{{ chats.length }}</span>
         </div>
+        <div class="px-6 py-3 w-full">
+          <div class="input flex items-center gap-2.5 px-5 py-2.5 rounded-xl">
+            <IconsSearch></IconsSearch>
+            <input type="text" placeholder="Поиск" v-model="searchString" />
+          </div>
+        </div>
+        <div class="users flex flex-col gap-2 w-full px-4 overflow-y-scroll">
+          <div
+            class="user flex items-center gap-4 p-4 cursor-pointer"
+            v-for="chat in searchedChats"
+            :key="chat.name"
+            @click="navigateTo(`/chat/${chat.userId}`)"
+            :class="{ active: $route.params.id === chat.userId }"
+          >
+            <img :src="baseURL + chat.avatar" alt="avatar" class="rounded-md w-12 h-12" />
+            <div class="info flex flex-col gap-1 w-full">
+              <p>{{ chat.name }}</p>
+              <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>
+            </div>
+            <span>{{ useTimeAgo(chat.lastMessageDate) }}</span>
+          </div>
+        </div>
+      </div>
+      <NuxtPage></NuxtPage>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { api, baseURL } from '~/shared/api';
-import { useUserStore } from '~/store/userStore';
+import { api, baseURL } from "~/shared/api";
+import { useUserStore } from "~/store/userStore";
 
 const userStore = useUserStore();
 
 const chats = ref<any[]>([]);
-const searchString = shallowRef('');
+const searchString = shallowRef("");
 
 const searchedChats = computed(() => {
-    return chats.value.filter((chat) => chat.name.toLowerCase().includes(searchString.value.toLowerCase()));
-})
+  return chats.value.filter((chat) =>
+    chat.name.toLowerCase().includes(searchString.value.toLowerCase())
+  );
+});
 
 onMounted(async () => {
-    await userStore.checkAuth();
+  await userStore.checkAuth();
 
-    chats.value = (await api.get('/chat/all')).data;
-})
+  chats.value = (await api.get("/chat/all")).data;
+});
 </script>
 
 <style lang="scss" scoped>
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+.chat_wrapper {
+  max-width: 1440px;
+  height: 80dvh;
+  background: $bg-brand;
 
-    .chat_wrapper {
-        display: flex;
-        width: 100%;
-        max-width: 1440px;
-        height: 80dvh;
-        margin-top: 40px;
-        border-radius: 6px;
-        background: $bg-brand;
-        z-index: 10;
+  .menu {
+    border-right: 1px solid $chat-border;
+    max-width: 350px;
+    min-width: 350px;
 
-        .menu {
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #333339;
-            width: 100%;
-            max-width: 350px;
+    .head {
+      border-bottom: 1px solid $chat-border;
 
-            .head {
-                width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                padding: 24px;
-                border-bottom: 1px solid #333339;
+      & > p {
+        font-weight: 600;
+        font-size: 20px;
+        color: $text-main;
+      }
 
-                &>p {
-                    font-weight: 600;
-                    font-size: 20px;
-                    color: $text-main;
-                }
-
-                &>span {
-                    padding: 2px 8px;
-                    border-radius: 24px;
-                    background: #EDF2F7;
-                    color: $black;
-                    font-size: 12px;
-                    font-weight: 600;
-                }
-            }
-
-            .search {
-                padding: 12px 24px;
-                width: 100%;
-
-                .input {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    padding: 10px 20px;
-                    border-radius: 12px;
-                    background: $tag-secondary-color;
-
-                    input {
-                        width: 100%;
-                        background: transparent;
-                        border: none;
-                        outline: none;
-                        color: $text-main;
-                        font-size: 14px;
-
-                        &::placeholder {
-                            color: #929292;
-                            ;
-                        }
-                    }
-                }
-            }
-
-            .users {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                width: 100%;
-                padding: 0 16px;
-                overflow-y: scroll;
-                scrollbar-width: none;
-
-                .user {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    padding: 16px;
-                    cursor: pointer;
-
-                    img {
-                        width: 50px;
-                        height: 50px;
-                        border-radius: 6px;
-                        cursor: pointer;
-                    }
-
-                    .info {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 4px;
-                        width: 100%;
-                        cursor: pointer;
-
-                        p {
-                            font-weight: 600;
-                            font-size: 14px;
-                            color: $text-main;
-                            cursor: pointer;
-                        }
-
-                        &>span {
-                            font-size: 12px;
-                            color: $text-placeholder;
-                            cursor: pointer;
-                        }
-                    }
-
-                    &>span {
-                        color: rgb(255, 255, 255, 0.3);
-                        font-size: 12px;
-                        font-weight: 600;
-                        height: 100%;
-                        padding-top: 8px;
-                        cursor: pointer;
-                    }
-
-                    &.active {
-                        border-radius: 6px;
-                        background: rgba(131, 85, 250, 0.06);
-                        cursor: pointer;
-                    }
-                }
-            }
-        }
-
-        .chat {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
+      & > span {
+        background: #edf2f7;
+        color: $black;
+        font-size: 12px;
+        font-weight: 600;
+      }
     }
+
+    .input {
+      background: $tag-secondary-color;
+
+      input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: $text-main;
+        font-size: 14px;
+
+        &::placeholder {
+          color: #929292;
+        }
+      }
+    }
+
+    .users {
+      scrollbar-width: none;
+
+      .user {
+        .info {
+          p {
+            font-weight: 600;
+            font-size: 14px;
+            color: $text-main;
+          }
+
+          & > span {
+            font-size: 12px;
+            color: $text-placeholder;
+          }
+        }
+
+        & > span {
+          color: rgb(255, 255, 255, 0.3);
+          font-size: 12px;
+          font-weight: 600;
+          height: 100%;
+          padding-top: 8px;
+        }
+
+        &.active {
+          border-radius: 6px;
+          background: rgba(131, 85, 250, 0.06);
+        }
+      }
+    }
+  }
 }
 </style>

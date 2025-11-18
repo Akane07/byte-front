@@ -34,7 +34,6 @@ watch(props, () => {
 })
 
 onMounted(() => {
-    console.log(props.modelValue, 'props');
     if (!textareaRef.value) return;
     if (!mirrorRef.value) return;
 

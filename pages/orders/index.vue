@@ -3,7 +3,7 @@
     <UIBackground></UIBackground>
 
     <div class="wrapper">
-        <div class="content orders_wrapper">
+        <div class="orders_wrapper">
             <div class="filters">
                 <p>Найти проект</p>
                 <div class="filters_block">
@@ -118,8 +118,6 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-
-
 .wrapper {
     width: 100%;
     display: flex;
@@ -198,7 +196,7 @@ onMounted(async () => {
         .orders_header {
             display: flex;
             justify-content: space-between;
-            padding: 0 30px;
+            padding: 0 16px;
 
             .orders_buttons {
                 display: flex;

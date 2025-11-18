@@ -22,7 +22,7 @@
             <span class="bordered"
               >Опубликовано {{ useOrderCreated(order.created_at) }}</span
             >
-            <span>Предложений {{ order.response_count }}</span>
+            <span>Предложений: {{ order.response_count }}</span>
           </div>
         </div>
         <div class="description">
@@ -328,7 +328,7 @@ watch(props, async () => {
       display: flex;
       flex-direction: column;
       gap: 48px;
-      padding: 32px 16px;
+      padding: 32px 0 32px 16px;
 
       .price {
         display: flex;
