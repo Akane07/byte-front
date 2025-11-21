@@ -23,7 +23,7 @@
             @click="navigateTo(`/chat/${chat.userId}`)"
             :class="{ active: $route.params.id === chat.userId }"
           >
-            <img :src="baseURL + chat.avatar" alt="avatar" class="rounded-md w-12 h-12" />
+            <img :src="makeURL(chat.avatar)" alt="avatar" class="rounded-md w-12 h-12" />
             <div class="info flex flex-col gap-1 w-full">
               <p>{{ chat.name }}</p>
               <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>
@@ -38,7 +38,8 @@
 </template>
 
 <script setup lang="ts">
-import { api, baseURL } from "~/shared/api";
+import { api } from "~/shared/api";
+import { makeURL } from "~/shared/utils/helpers";
 import { useUserStore } from "~/store/userStore";
 
 const userStore = useUserStore();

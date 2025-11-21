@@ -17,7 +17,7 @@
           <div class="stats_info">
             <UIUserAvatar
               @click="navigateTo(`/profile/${order.user_id}`)"
-              :src="baseURL + userStore.user?.avatar"
+              :src="makeURL(userStore.user?.avatar)"
             ></UIUserAvatar>
             <span class="bordered"
               >Опубликовано {{ useOrderCreated(order.created_at) }}</span
@@ -105,9 +105,10 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL, frontURL } from "~/shared/api";
+import { frontURL } from "~/shared/api";
 import type { Order } from "~/shared/api/order-api";
 import type { User } from "~/shared/api/user-api";
+import { makeURL } from "~/shared/utils/helpers";
 import { useOrderStore } from "~/store/orderStore";
 import { useScroll } from "~/store/scrollStore";
 import { useUserStore } from "~/store/userStore";

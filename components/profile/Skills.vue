@@ -1,29 +1,30 @@
 <template>
-    <div class="skills_wrapper">
-        <div class="skills">
-            <DevChip v-for="(skill, index) in skills" :key="skill" :text="skill" removable @delete="$emit('delete', index)"></DevChip>
+    <div class="flex flex-col gap-3">
+        <div class="flex flex-wrap gap-2">
+            <UIDevChip v-for="(skill, index) in skills" :key="skill" :text="skill" removable
+                @delete="$emit('delete', index)"></UIDevChip>
         </div>
-        <button @click="modalShow = !modalShow">Добавить навык</button>
+        <button class="add-button self-start cursor-pointer bg-transparent border-none outline-none"
+            @click="showModal = !showModal">Добавить навык</button>
     </div>
 
-    <UIDevModal v-if="modalShow" title="Какими навыками вы обладаете?" @close="modalShow = false">
+    <UIDevModal v-if="showModal" title="Какими навыками вы обладаете?" @close="showModal = false">
         <template #body>
-            <p class="skills_p">Навыки</p>
-            <div class="skills_block" @click="handleFocus">
-                <DevChip v-for="(skill, index) in copySkills" :key="skill" :text="skill" removable :hover="false" @delete="deleteSkill(index)"></DevChip>
-
-                <input v-model="newSkill" ref="inputRef" type="text" @keyup.enter="handleAddSkill" maxlength="20">
+            <p class="mb-3">Навыки</p>
+            <div class="skills w-[500px] flex flex-wrap gap-3 rounded-md p-4" @click="handleFocus">
+                <UIDevChip v-for="(skill, index) in copySkills" :key="skill" :text="skill" removable :hover="false"
+                    @delete="deleteSkill(index)"></UIDevChip>
+                <input ref="inputRef" v-model="newSkill" class="cursor-pointer bg-transparent border-none outline-none"
+                    type="text" maxlength="20" @keyup.enter="handleAddSkill">
             </div>
         </template>
         <template #buttons>
-            <UIDevButton type="active" @click="$emit('save', copySkills); modalShow = false;">Сохранить</UIDevButton>
+            <UIDevButton type="active" @click="$emit('save', copySkills); showModal = false;">Сохранить</UIDevButton>
         </template>
     </UIDevModal>
 </template>
 
 <script setup lang="ts">
-import DevChip from '../UI/DevChip.vue';
-
 const props = defineProps<{
     skills: string[]
 }>();
@@ -34,7 +35,7 @@ defineEmits<{
 }>();
 
 const inputRef = ref<HTMLInputElement | null>(null);
-const modalShow = shallowRef(false);
+const showModal = shallowRef(false);
 const copySkills = ref(structuredClone(toRaw(props.skills)));
 const newSkill = shallowRef('');
 
@@ -60,85 +61,34 @@ watch(props, () => {
     deep: true
 });
 
-watch(modalShow, () => {
+watch(showModal, () => {
     copySkills.value = structuredClone(toRaw(props.skills));
 });
 </script>
 
 <style lang="scss" scoped>
-
-
-.skills_wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .skills {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    button {
-        border: none;
-        outline: none;
-        background: transparent;
-        color: $select-enabled;
-        font-size: 16px;
-        align-self: flex-start;
-        cursor: pointer;
-    }
+.add-button {
+    color: $select-enabled;
 }
 
-.skills_p {
+p {
     color: #BEBEC2;
-    margin-bottom: 12px;
-    font-weight: 12px;
 }
 
-.skills_block {
-    padding: 16px;
-    width: 500px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    border-radius: 6px;
+.skills {
     border: 1px solid $tag-hover;
     background: $tag-color;
     transition: 0.2s ease-in;
 
-    .skill {
-        border-radius: 6px;
-        padding: 6px 14px;
-        background: $tag-hover;
-        font-size: 14px;
-        color: $text-placeholder;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
     input {
-        border: none;
-        outline: none;
-        background: transparent;
-        cursor: pointer;
         color: $text-placeholder;
         font-size: 14px;
     }
 
-    &:hover {
-        border: 1px solid $border-secondary;
-        background: $bg-input;
-    }
-
+    &:hover,
     &:focus-within {
         border: 1px solid $border-secondary;
         background: $bg-input;
     }
-}
-
-.cursor {
-    cursor: pointer;
 }
 </style>

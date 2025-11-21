@@ -5,9 +5,9 @@
     <div class="wrapper">
         <div class="portfolio" v-if="portfolio && user && userStore.user">
             <div class="images">
-                <video v-if="portfolio.video" :src="baseURL + portfolio.video" controls
+                <video v-if="portfolio.video" :src="makeURL(portfolio.video)" controls
                     style="max-width: 100%; height: auto;"></video>
-                <img class="image" v-for="image in portfolio.images" :key="image" :src="baseURL + image" alt="">
+                <img class="image" v-for="image in portfolio.images" :key="image" :src="makeURL(image)" alt="">
             </div>
             <div class="info">
                 <div v-if="!portfolio.liked_by.includes(userStore.user.id)" class="like_button" @click="ratePortfolio">
@@ -39,7 +39,7 @@
             </div>
             <div class="footer">
                 <div class="user">
-                    <UIUserAvatar size="56px" :src="baseURL + user?.avatar"></UIUserAvatar>
+                    <UIUserAvatar size="56px" :src="makeURL(user?.avatar)"></UIUserAvatar>
                     <div class="name">
                         <p>{{ user?.nickname || 'Без имени' }}</p>
                         <UIDevButton v-if="user?.id === userStore.user?.id" active
@@ -85,6 +85,7 @@
 import { baseURL } from '~/shared/api';
 import { likePortfolio, viewPortfolio, type Portfolio } from "~/shared/api/portfolio-api";
 import type { User } from '~/shared/api/user-api';
+import { makeURL } from '~/shared/utils/helpers';
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
 

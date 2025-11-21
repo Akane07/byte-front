@@ -3,7 +3,7 @@
     <div class="head">
       <div class="info" v-if="user">
         <UIUserAvatar
-          :src="baseURL + user.avatar"
+          :src="makeURL(user.avatar)"
           @click="navigateTo(`/profile/${user.id}`)"
           style="cursor: pointer"
         >
@@ -371,7 +371,7 @@
         <div class="stats_info">
           <UIUserAvatar
             @click="navigateTo(`/profile/${order.user_id}`)"
-            :src="baseURL + userStore.user?.avatar"
+            :src="makeURL(userStore.user?.avatar)"
           >
           </UIUserAvatar>
           <span class="bordered"
@@ -426,7 +426,7 @@
 
 <script setup lang="ts">
 import { io } from "socket.io-client";
-import { api, baseURL } from "~/shared/api";
+import { api } from "~/shared/api";
 import {
   deleteResponse,
   getOrdersBetweenUsers,
@@ -434,6 +434,7 @@ import {
   type Order,
 } from "~/shared/api/order-api";
 import type { User } from "~/shared/api/user-api";
+import { makeURL } from "~/shared/utils/helpers";
 import { useOrderStore } from "~/store/orderStore";
 import { useUserStore } from "~/store/userStore";
 

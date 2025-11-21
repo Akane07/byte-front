@@ -30,8 +30,8 @@
                         @showOrder="showOrder"></OrdersOrderCard>
                 </div>
                 <div class="pagionation" v-if="orderStore.total > 10">
-                    <UIDevPagionation :total="orderStore.total" :currentPage="orderStore.page" @change="getOrders">
-                    </UIDevPagionation>
+                    <UIDevPagination :total="orderStore.total" :currentPage="orderStore.page" @change="getOrders">
+                    </UIDevPagination>
                 </div>
             </div>
         </div>

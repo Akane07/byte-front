@@ -8,7 +8,7 @@
         <div class="left_part">
           <div class="avatar">
             <UIProfileAvatar
-              :src="baseURL + userStore.user?.avatar"
+              :src="makeURL(userStore.user?.avatar)"
             ></UIProfileAvatar>
             <p>{{ userStore.user.nickname || "без ника" }}</p>
           </div>
@@ -134,7 +134,8 @@
 
 <script setup lang="ts">
 import DevCard from "~/components/UI/DevCard.vue";
-import { baseURL } from "~/shared/api";
+import { makeURL } from "~/shared/utils/helpers";
+
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
 

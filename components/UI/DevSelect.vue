@@ -1,25 +1,20 @@
 <template>
   <div class="flex flex-col gap-3">
     <p v-if="label">{{ label }}</p>
-    <div class="select_wrapper" ref="selectRef">
-      <div class="select_input" @click.stop="handleShowMenu">
-        <div class="output">
-          <input v-if="showMenu" v-model="input" type="text" ref="inputRef" />
+    <div class="select_wrapper relative select-none" ref="selectRef">
+      <div class="flex items-center justify-between w-full h-[19px] cursor-pointer" @click.stop="handleShowMenu">
+        <div class="cursor-pointer">
+          <input ref="inputRef" v-if="showMenu" v-model="input" class="select_input" type="text" />
           <p v-else>{{ selected }}</p>
         </div>
         <IconsArrow class="arrow" :class="{ active: showMenu }"></IconsArrow>
       </div>
-      <div v-if="showMenu" class="select_menu" :class="{ reverse: reverse }">
-        <div
-          v-for="el in filteredList"
-          :key="el"
-          class="element px-4 py-3"
-          :class="{ selected: selected === el }"
+      <div v-if="showMenu" class="select_menu w-full absolute top-12.5 left-0 max-h-[250px] overflow-y-scroll cursor-pointer z-100 rounded-md" :class="{ reverse: reverse }">
+        <div v-for="el in filteredList" :key="el" class="element px-4 py-3" :class="{ selected: selected === el }"
           @click="
             $emit('select', el);
-            showMenu = false;
-          "
-        >
+          showMenu = false;
+          ">
           {{ el }}
         </div>
       </div>
@@ -39,9 +34,10 @@ defineEmits<{
 }>();
 
 const selectRef = ref<HTMLDivElement | null>(null);
-const showMenu = shallowRef(false);
-const input = shallowRef("");
 const inputRef = ref<HTMLInputElement | null>(null);
+const showMenu = shallowRef(false);
+
+const input = shallowRef("");
 const reverse = shallowRef(false);
 
 const filteredList = computed(() => {
@@ -79,51 +75,22 @@ useClickOutside(selectRef, () => {
 .select_wrapper {
   @include shell;
 
-  position: relative;
-  user-select: none;
-
   .select_input {
-    display: flex;
-    width: 100%;
-    height: 19px;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
+    width: 350px;
+    @include input;
+  }
 
-    .output {
-      cursor: pointer;
-    }
+  .arrow {
+    transition: 0.2s ease-in;
 
-    input {
-      width: 350px;
-      background: transparent;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      color: $text-main;
-    }
-
-    .arrow {
-      transition: 0.2s ease-in;
-
-      &.active {
-        transform: rotate(-180deg);
-      }
+    &.active {
+      transform: rotate(-180deg);
     }
   }
 
   .select_menu {
-    width: 100%;
-    position: absolute;
-    top: 50px;
-    left: 0;
     background: $tag-color;
-    border-radius: 6px;
     box-shadow: 0px 6px 15px 0px $shadow;
-    max-height: 250px;
-    overflow-y: scroll;
-    cursor: pointer;
-    z-index: 100;
 
     .element {
       color: $text-placeholder;
@@ -140,16 +107,6 @@ useClickOutside(selectRef, () => {
     }
 
     @include custom-scrollbar;
-  }
-
-  &:hover {
-    border: 1px solid $border-secondary;
-    background: $bg-input;
-  }
-
-  &:focus-within {
-    border: 1px solid $border-secondary;
-    background: $bg-input;
   }
 }
 </style>

@@ -1,14 +1,15 @@
 <template>
-    <div class="modal_wrapper" @click="$emit('close')">
-        <div class="modal" @click.stop="">
-            <div class="header">
+    <div class="modal_wrapper flex items-center justify-center w-full h-full fixed top-0 left-0"
+        @click="$emit('close')">
+        <div class="modal flex flex-col gap-5.5 rounded-md p-5.5" @click.stop>
+            <div class="header flex items-center justify-between">
                 <p v-if="title">{{ title }}</p>
-                <IconsCross class="cross" @click="$emit('close')"></IconsCross>
+                <IconsCross class="cursor-pointer ml-40" @click="$emit('close')"></IconsCross>
             </div>
-            <div class="body">
+            <div>
                 <slot name="body"></slot>
             </div>
-            <div class="buttons">
+            <div class="flex justify-end ga-3 mt-3">
                 <slot name="buttons"></slot>
             </div>
         </div>
@@ -33,55 +34,22 @@ scroll.showScroll = false;
 onUnmounted(() => {
     scroll.showScroll = true;
 });
-
-onMounted(() => {
-    scroll.showScroll = false;
-})
 </script>
 
 <style lang="scss" scoped>
 .modal_wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
     background: rgba(0, 0, 0, 0.3);
     z-index: 1000000000;
 
     .modal {
         background: $tag-color;
-        border-radius: 6px;
-        padding: 22px;
         box-shadow: 0px 6px 15px 0px $shadow;
-        display: flex;
-        flex-direction: column;
-        gap: 22px;
 
         .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
             p {
                 color: $white;
                 font-weight: 600;
             }
-
-            .cross {
-                margin-left: 140px;
-                cursor: pointer;
-            }
-        }
-
-        .buttons {
-            margin-top: 12px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
         }
     }
 }

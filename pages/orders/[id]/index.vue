@@ -13,7 +13,7 @@
                     <p>{{ order?.title }}</p>
                     <div class="stats_info">
                         <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"
-                            :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
+                            :src="makeURL(userStore.user?.avatar)"></UIUserAvatar>
                         <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений: {{ order.response_count }}</span>
                     </div>
@@ -57,7 +57,7 @@
             <div class="right_part" v-if="response.id && !edit && userStore.user">
                 <p>Ваше предложение</p>
                 <div class="block">
-                    <UIUserAvatar :src="baseURL + userStore.user?.avatar"
+                    <UIUserAvatar :src="makeURL(userStore.user?.avatar)"
                         @click="navigateTo(`/profile/${userStore.user.id}`)"></UIUserAvatar>
                     <span>Отклик от {{ useUserCreated(response.created_at) }}</span>
                 </div>
@@ -72,7 +72,7 @@
             <div class="right_part" v-if="response.id && edit && userStore.user">
                 <p>Ваше предложение</p>
                 <div class="block">
-                    <UIUserAvatar :src="baseURL + userStore.user?.avatar"
+                    <UIUserAvatar :src="makeURL(userStore.user?.avatar)"
                         @click="navigateTo(`/profile/${userStore.user.id}`)"></UIUserAvatar>
                     <span>Отклик от {{ useUserCreated(response.created_at) }}</span>
                 </div>
@@ -103,6 +103,7 @@
 import { io } from 'socket.io-client';
 import { baseURL } from '~/shared/api';
 import { deleteResponse, editResponse, type Order } from '~/shared/api/order-api';
+import { makeURL } from '~/shared/utils/helpers';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
 

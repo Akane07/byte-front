@@ -48,7 +48,7 @@
       <div class="right_part">
         <div v-if="video" class="file">
           <video
-            :src="baseURL + video"
+            :src="makeURL(video)"
             v-if="video.includes('/uploads/files/')"
             controls
             style="max-width: 100%; height: auto"
@@ -75,7 +75,7 @@
         </div>
         <div v-for="(file, index) in photos" :key="file" class="file">
           <img
-            :src="baseURL + file"
+            :src="makeURL(file)"
             alt="photo"
             v-if="file.includes('/uploads/files/')"
           />
@@ -131,7 +131,8 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from "~/shared/api";
+
+import { makeURL } from "~/shared/utils/helpers";
 import { rules } from "~/shared/utils/rules";
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";

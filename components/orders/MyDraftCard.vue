@@ -10,7 +10,7 @@
             </div>
             <div class="stats_info">
                 <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"
-                    :src="baseURL + userStore.user?.avatar"></UIUserAvatar>
+                    :src="makeURL(userStore.user?.avatar)"></UIUserAvatar>
                     <span class="bordered">От {{ useUserCreated(order.created_at) }}</span>
                 <button class="bordered delete" @click.stop="modal = true">Удалить черновик</button>
             </div>
@@ -33,8 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from '~/shared/api';
 import { deleteOrder, type Order } from '~/shared/api/order-api';
+import { makeURL } from '~/shared/utils/helpers';
 import { useNotifications } from '~/store/notiStore';
 import { useUserStore } from '~/store/userStore';
 

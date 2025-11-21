@@ -74,7 +74,7 @@
             <div class="photo_wrapper">
               <img
                 v-if="userStore.user?.avatar"
-                :src="baseURL + userStore.user.avatar"
+                :src="makeURL(userStore.user.avatar)"
                 alt="avatar"
               />
               <p v-else>Нажмите, чтобы загрузить фото</p>
@@ -150,8 +150,9 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from "~/shared/api";
+
 import { getCountries, setAvatar } from "~/shared/api/user-api";
+import { makeURL } from "~/shared/utils/helpers";
 import { rules } from "~/shared/utils/rules";
 import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";

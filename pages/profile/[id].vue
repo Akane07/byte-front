@@ -7,7 +7,7 @@
             <div class="main_info">
                 <div class="left_part">
                     <div class="avatar">
-                        <UIProfileAvatar :src="baseURL + user?.avatar"></UIProfileAvatar>
+                        <UIProfileAvatar :src="makeURL(user?.avatar)"></UIProfileAvatar>
                         <p>{{ user.nickname || 'без ника' }}</p>
                     </div>
                     <div class="stats">
@@ -85,6 +85,7 @@ import type { User } from '~/shared/api/user-api';
 import { useUserStore } from '~/store/userStore';
 import type { Portfolio } from '~/shared/api/portfolio-api';
 import { usePortfolioStore } from '~/store/portfolioStore';
+import { makeURL } from '~/shared/utils/helpers';
 
 definePageMeta({
     middleware: ['auth'],
