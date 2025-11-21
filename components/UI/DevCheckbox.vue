@@ -5,7 +5,7 @@
     @click="$emit('update:modelValue', !modelValue)"
   >
     <div class="select flex items-center justify-center cursor-pointer w-6 h-6 min-w-6 min-h-6 rounded-md">
-      <div class="checked cursor-pointer rounded-sm w-4 h-4"></div>
+      <div class="checked cursor-pointer rounded-sm w-4.5 h-4.5"></div>
     </div>
     <span class="cursor-pointer">
       <slot></slot>

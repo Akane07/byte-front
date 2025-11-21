@@ -41,8 +41,6 @@ const props = defineProps<{
 
 <style scoped lang="scss">
 .icons-grid {
-    // position: absolute;
-
     height: 100vh;
     width: 50%;
     display: flex;

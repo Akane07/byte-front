@@ -138,8 +138,6 @@ onMounted(async () => {
 
     .filters {
         width: 25%;
-        height: fit-content;
-        background: $bg-brand;
         padding: 46px 20px;
         border-radius: 20px 0 0 20px;
         display: flex;
@@ -183,7 +181,6 @@ onMounted(async () => {
     .orders {
         width: 75%;
         height: fit-content;
-        background: $bg-brand;
         padding: 46px 20px;
         border-radius: 0 20px 20px 20px;
         border-left: 1px solid $border-color;

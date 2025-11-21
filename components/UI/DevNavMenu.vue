@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center justify-center w-full h-20 px-15 py-0">
+    <div class="nav flex items-center justify-center w-full h-20 px-15 py-0">
         <div class="w-full max-w-360 h-11 flex items-center justify-between z-1000">
             <div class="flex items-center justify-center gap-2 cursor-pointer" @click="navigateTo(`/orders`)">
                 <img src="../../public/logo.svg" alt="logo">
@@ -60,6 +60,7 @@
     </UIDevModal>
 </template>
 
+
 <script setup lang="ts">
 import DevNavButton from './DevNavButton.vue';
 import DevButton from './DevButton.vue';
@@ -78,6 +79,11 @@ useClickOutside(menuRef, () => {
 </script>
 
 <style lang="scss" scoped>
+.nav {
+    background: #DEDEDE08;
+    // backdrop-filter: blur(80px);
+}
+
 .byte {
     color: $white;
     font-weight: 700;

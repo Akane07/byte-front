@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="flex flex-row justify-evenly w-full h-full fixed top-0 left-0">
+    <!-- <div class="flex flex-row justify-evenly w-full h-full fixed top-0 left-0">
       <div v-for="i in 16" :key="i" class="line h-full"></div>
-    </div>
-    <div class="circles">
+    </div> -->
+    <!-- <div class="circles">
       <div class="absolute circle"></div>
       <IconsCircle class="absolute circle"></IconsCircle>
       <IconsCircle class="absolute circle"></IconsCircle>
       <IconsCircle class="absolute circle"></IconsCircle>
-    </div>
+    </div> -->
   </div>
 </template>
 

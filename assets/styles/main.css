@@ -40,11 +40,11 @@
 * {
     /* margin: 0; */
     box-sizing: border-box;
-    font-family: Montserrat;
+    font-family: Inter;
 }
 
 body {
     margin: 0;
-    background: #000;
+    background: radial-gradient(81.79% 49.97% at 50% 50.03%, #2E2B2B 0%, #212121 100%);
     overflow-x: hidden;
 }
