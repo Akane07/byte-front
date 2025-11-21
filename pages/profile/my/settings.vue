@@ -137,7 +137,7 @@
           ></UIDevInput>
         </div>
         <div class="flex items-center gap-8">
-          <UIDevButton type="active" @click="saveUser" style="width: 200px"
+          <UIDevButton type="active" @click="saveUser" :disabled="!(validProfile && validPass)" style="width: 200px"
             >Сохранить</UIDevButton
           >
           <UIDevButton type="cancel" style="width: 200px"
@@ -187,6 +187,14 @@ const pass = ref({
   password: "",
   newPassword: "",
 });
+
+const validProfile = computed(() => {
+  return profile.value.name && general.value.nickname && general.value.email;
+});
+
+const validPass = computed(() => {
+  return pass.value.password === pass.value.newPassword;
+})
 
 const photo = ref<File | null>(null);
 

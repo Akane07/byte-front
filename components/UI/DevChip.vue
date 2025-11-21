@@ -3,7 +3,9 @@
     class="chip flex items-center gap-2 px-3.5 py-1.5 rounded-md"
     :class="{ 'non-hoverale': !hover }"
   >
-    <span>{{ text }}</span>
+    <slot>
+      <span>{{ text }}</span>
+    </slot>
     <IconsCross
       v-if="removable"
       style="transform: scale(0.8)"
@@ -16,7 +18,7 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    text: string;
+    text?: string;
     removable?: boolean;
     hover?: boolean;
   }>(),

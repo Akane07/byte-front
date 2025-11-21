@@ -88,10 +88,9 @@
           <div class="block">
             <p>Популярные навыки</p>
             <div class="tags">
-              <div
+              <UIDevChip
                 v-for="tag in filteredSkills"
                 :key="tag"
-                class="tag"
                 @click="addSkill(tag)"
               >
                 {{ tag }}
@@ -99,7 +98,7 @@
                   color="$text-placeholder"
                   style="transform: scale(1.2)"
                 ></IconsPlus>
-              </div>
+              </UIDevChip>
             </div>
           </div>
         </div>
@@ -668,19 +667,6 @@ onMounted(async () => {
           flex-wrap: wrap;
           min-height: 120px;
           user-select: none;
-
-          .tag {
-            display: flex;
-            align-items: center;
-            justify-items: center;
-            gap: 4px;
-            border-radius: 6px;
-            background: $tag-color;
-            color: $text-secondary;
-            padding: 8px 12px;
-            font-size: 12px;
-            cursor: pointer;
-          }
         }
 
         .skills_block {

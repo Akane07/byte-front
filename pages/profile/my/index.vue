@@ -36,13 +36,7 @@
           <p class="speciality">{{ userStore.user.speciality }}</p>
           <span>{{ userStore.user.description || "Нет описания" }}</span>
           <div class="skills">
-            <div
-              class="skill"
-              v-for="skill in userStore.user.skills"
-              :key="skill"
-            >
-              {{ skill }}
-            </div>
+            <UIDevChip v-for="skill in userStore.user.skills" :text="skill"></UIDevChip>
           </div>
         </div>
         <div class="bordered"></div>
@@ -246,17 +240,6 @@ onMounted(async () => {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-
-        .skill {
-          border-radius: 6px;
-          padding: 6px 14px;
-          background: $tag-color;
-          font-size: 14px;
-          color: $text-placeholder;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
       }
     }
 
