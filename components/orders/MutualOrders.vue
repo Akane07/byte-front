@@ -17,8 +17,8 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton type="active" style="min-width: 155px; background: #38A169;" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">Перейти в чат</UIDevButton>
-            <UIDevButton type="active" style="min-width: 155px; background: #38A169;" v-if="user_performer" @click="$emit('finishOrder', order)">Завершить заказ</UIDevButton>
+            <UIDevButton type="active" style="min-width: 155px; background: $bg-button-success;" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">Перейти в чат</UIDevButton>
+            <UIDevButton type="active" style="min-width: 155px; background: $bg-button-success;" v-if="user_performer" @click="$emit('finishOrder', order)">Завершить заказ</UIDevButton>
         </div>
     </div>
 </template>
@@ -67,7 +67,7 @@ const userStore = useUserStore();
 
         p {
             font-weight: 600;
-            color: #38A169;
+            color: $bg-button-success;
             transition: color 0.3s ease-in-out;
             text-align: center;
         }

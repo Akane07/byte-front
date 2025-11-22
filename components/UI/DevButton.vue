@@ -1,9 +1,6 @@
 <template>
-  <button
-    class="flex gap-2 cursor-pointer items-center justify-center whitespace-nowrap py-3 px-6"
-    :class="type"
-    :disabled="disabled"
-  >
+  <button class="flex gap-2 cursor-pointer items-center justify-center whitespace-nowrap py-3 px-6" :class="type"
+    :disabled="disabled">
     <slot></slot>
   </button>
 </template>
@@ -11,7 +8,7 @@
 <script setup lang="ts">
 withDefaults(
   defineProps<{
-    type?: "active" | "secondary" | "cancel";
+    type?: "active" | "secondary" | "cancel" | "success";
     disabled?: boolean;
   }>(),
   {
@@ -36,6 +33,11 @@ button {
   &:active {
     opacity: 0.9;
   }
+
+  &:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+  }
 }
 
 .secondary {
@@ -58,8 +60,7 @@ button {
   }
 }
 
-button:disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
+.success {
+  background: $bg-button-success;
 }
 </style>

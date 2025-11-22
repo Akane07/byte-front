@@ -755,7 +755,7 @@ onMounted(async () => {
         gap: 8px;
         border: none;
         outline: none;
-        color: #38a169;
+        color: $bg-button-success;
         font-weight: 600;
 
         svg {
@@ -845,12 +845,12 @@ onMounted(async () => {
           align-items: center;
           gap: 8px;
           padding-bottom: 20px;
-          border-bottom: 1px solid #38a169;
+          border-bottom: 1px solid $bg-button-success;
 
           p {
             font-weight: 600;
             font-size: 16px;
-            color: #38a169;
+            color: $bg-button-success;
           }
         }
 

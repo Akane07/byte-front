@@ -2,34 +2,31 @@
     <UIDevNavMenu></UIDevNavMenu>
     <UIBackground></UIBackground>
 
-    <div class="wrapper">
-        <div class="orders_wrapper">
-            <div class="filters">
-                <p>Найти проект</p>
-                <div class="filters_block">
+    <div class="w-full flex flex-col justify-center items-center z-100 relative mb-25">
+        <div class="flex w-full max-w-360 mt-8">
+            <div class="filters w-[25%] flex flex-col gap-6 px-5 py-11.5">
+                <p class="pt-2 pb-5 title">Категории заказа</p>
+                <div class="flex flex-col gap-6 h-full">
                     <UIDevCheckbox v-for="filter in filters" v-model="filter.checked">{{ filter.title }}</UIDevCheckbox>
                 </div>
-                <div class="buttons">
-                    <UIDevNavButton class="save_button" @click="savefilters">Сохранить</UIDevNavButton>
+                <div class="flex flex-col items-center justify-self-end mt-3">
+                    <UIDevButton class="w-[250px]" type="success" @click="savefilters">Сохранить</UIDevButton>
                 </div>
             </div>
-            <div class="orders">
-                <div class="orders_header">
+            <div class="orders w-[75%] flex flex-col gap-6 px-5 py-11.5">
+                <div class="flex justify-between items-center">
                     <div class="title">
                         <p>Все предложения</p>
                     </div>
-                    <div class="orders_buttons">
-                        <UIDevNavButton :stroke="true" @click="navigateTo('/orders/create')">
-                            <IconsPlus style="transform: scale(1.3); margin-right: 8px;"></IconsPlus>
-                            Создать заказ
-                        </UIDevNavButton>
-                    </div>
+                    <UIDevButton class="w-[250px]" type="active" @click="navigateTo('/orders/create')">
+                        Разместить заказ
+                    </UIDevButton>
                 </div>
-                <div class="orders_list">
+                <div class="flex flex-col gap-4">
                     <OrdersOrderCard v-for="order in orderStore.orders" :key="order.id" :order="order"
                         @showOrder="showOrder"></OrdersOrderCard>
                 </div>
-                <div class="pagionation" v-if="orderStore.total > 10">
+                <div class="flex justify-center mt-8 justify-self-end" v-if="orderStore.total > 10">
                     <UIDevPagination :total="orderStore.total" :currentPage="orderStore.page" @change="getOrders">
                     </UIDevPagination>
                 </div>
@@ -118,107 +115,20 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 100;
-    position: relative;
-    margin-bottom: 100px;
+.filters {
+    p {
+        font-weight: 500;
+        border-bottom: 1px solid $border-color;
+    }
 }
 
-.orders_wrapper {
-    color: $white;
-    display: flex;
-    width: 100%;
-    max-width: 1440px;
-    margin-top: 32px;
+.orders {
+    border-left: 1px solid $border-color;
+    height: fit-content;
+}
 
-    .filters {
-        width: 25%;
-        padding: 46px 20px;
-        border-radius: 20px 0 0 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-        min-height: 800px;
-
-        p {
-            font-weight: 400;
-            font-size: 18px;
-            text-align: center;
-            padding-bottom: 24px;
-            border-bottom: 1px solid $border-color;
-            color: $text-header;
-        }
-
-        .filters_block {
-            padding: 0 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            height: 100%;
-            min-height: 600px;
-        }
-
-        .buttons {
-            margin-top: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-self: end;
-
-            .save_button {
-                width: 100%;
-                max-width: 200px;
-            }
-        }
-
-    }
-
-    .orders {
-        width: 75%;
-        height: fit-content;
-        padding: 46px 20px;
-        border-radius: 0 20px 20px 20px;
-        border-left: 1px solid $border-color;
-        min-height: 800px;
-
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-
-        .orders_header {
-            display: flex;
-            justify-content: space-between;
-            padding: 0 16px;
-
-            .orders_buttons {
-                display: flex;
-                gap: 16px;
-            }
-
-            .title {
-                font-size: 18px;
-            }
-        }
-
-        .orders_list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            height: 100%;
-            min-height: 600px;
-        }
-
-        .pagionation {
-            display: flex;
-            justify-content: center;
-            margin-top: 32px;
-            justify-self: end;
-        }
-    }
+.title {
+    font-size: 20px;
+    color: $text-header;
 }
 </style>
