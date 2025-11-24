@@ -5,7 +5,7 @@ export function useOrderDeadlines(deadline: "contract" | "less-week" | "more-wee
     if (deadline === 'more-week') return 'Более 1 недели';
     if (deadline === 'less-week') return 'Менее 1 недели';
     if (deadline === 'custom' && deadline_date) {
-        return `${useUserCreated(deadline_date.from)} - ${useUserCreated(deadline_date.to)}`;
+        return `до ${useUserCreated(deadline_date.to)}`;
     }
     return deadline;
 }

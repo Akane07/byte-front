@@ -1,8 +1,8 @@
 <template>
-    <div class="nav flex items-center justify-center w-full h-20 px-15 py-0">
+    <div class="nav flex items-center justify-center w-full h-20 px-15 py-0" :class="[absolute ? 'fixed z-1000 top-0' : '']">
         <div class="w-full max-w-360 h-11 flex items-center justify-between z-1000">
             <div class="flex items-center justify-center gap-2 cursor-pointer" @click="navigateTo(`/orders`)">
-                <img src="../../public/logo.svg" alt="logo">
+                <img src="../../public/logo.svg" alt="logo" class="w-10">
                 <span class="byte text-center">FreelanceByte</span>
             </div>
             <div v-if="!userStore.isAuth && userStore.checked"
@@ -67,6 +67,10 @@ import DevButton from './DevButton.vue';
 import { useUserStore } from '~/store/userStore';
 import { makeURL } from '~/shared/utils/helpers';
 
+defineProps<{
+    absolute?: boolean
+}>();
+
 const userStore = useUserStore();
 
 const showMenu = shallowRef(false);
@@ -80,14 +84,14 @@ useClickOutside(menuRef, () => {
 
 <style lang="scss" scoped>
 .nav {
-    background: #DEDEDE08;
-    // backdrop-filter: blur(80px);
+    background: #2B2A2A;
+    box-shadow: 0px 1px 18.7px 0px #0F0F0F40;
 }
 
 .byte {
     color: $white;
     font-weight: 700;
-    font-size: 32px;
+    font-size: 26px;
 }
 
 .arrow {
@@ -104,7 +108,7 @@ useClickOutside(menuRef, () => {
 
     .menu_wrapper {
         background: $input-auth;
-        backdrop-filter: blur(80px);
+        // backdrop-filter: blur(80px);
     }
 
     .bordered {

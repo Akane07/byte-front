@@ -40,6 +40,7 @@ withDefaults(
   }
 
   &.non-hoverale {
+    color: $text-secondary;
     background: $tag-secondary-color;
 
     &:hover {

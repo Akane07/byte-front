@@ -1,19 +1,19 @@
 <template>
-    <UIDevNavMenu></UIDevNavMenu>
+    <UIDevNavMenu absolute></UIDevNavMenu>
     <UIBackground></UIBackground>
 
     <div class="w-full flex flex-col justify-center items-center z-100 relative mb-25">
-        <div class="flex w-full max-w-360 mt-8">
-            <div class="filters w-[25%] flex flex-col gap-6 px-5 py-11.5">
+        <div class="w-full max-w-360 flex justify-end relative mt-8">
+            <div class="filters w-[25%] flex flex-col gap-6 px-5 py-11.5 sticky top-20 self-start">
                 <p class="pt-2 pb-5 title">Категории заказа</p>
-                <div class="flex flex-col gap-6 h-full">
+                <div class="flex flex-col gap-5 h-full">
                     <UIDevCheckbox v-for="filter in filters" v-model="filter.checked">{{ filter.title }}</UIDevCheckbox>
                 </div>
                 <div class="flex flex-col items-center justify-self-end mt-3">
                     <UIDevButton class="w-[250px]" type="success" @click="savefilters">Сохранить</UIDevButton>
                 </div>
             </div>
-            <div class="orders w-[75%] flex flex-col gap-6 px-5 py-11.5">
+            <div class="orders w-[75%] flex flex-col gap-6 px-5 py-11.5 mt-12">
                 <div class="flex justify-between items-center">
                     <div class="title">
                         <p>Все предложения</p>
