@@ -48,3 +48,9 @@ body {
     background: radial-gradient(81.79% 49.97% at 50% 50.03%, #2E2B2B 0%, #212121 100%);
     overflow-x: hidden;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

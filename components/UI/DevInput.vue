@@ -2,6 +2,7 @@
   <div class="flex flex-col gap-3">
     <p v-if="label">{{ label }}<span v-if="required">*</span></p>
     <div class="input" :class="{ 'has-error': errors }">
+      <slot name="prepend"></slot>
       <input
         :type="type"
         :placeholder="placeholder"
@@ -11,6 +12,7 @@
         autocomplete="off"
         :maxlength="maxlength || 30"
       />
+      <slot name="append"></slot>
     </div>
   </div>
 </template>
