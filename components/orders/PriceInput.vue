@@ -1,6 +1,7 @@
 <template>
-    <div class="price_input_wrapper">
-        <input type="number" :value="modelValue" @input="handleChange($event.target.value)" @focus="$event.target.select()">
+    <div class="price_input_wrapper flex justify-end items-center gap-1 w-full max-w-[200px] p-2 rounded-md">
+        <input class="w-full text-end bg-transparent border-none outline-none" type="number" :value="modelValue"
+            @input="handleChange($event.target.value)" @focus="$event.target.select()">
         <span>{{ type }}</span>
     </div>
 </template>
@@ -9,7 +10,6 @@
 const props = defineProps<{
     priceType: 'contract' | 'fixed' | 'hourly';
     modelValue: any;
-    disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -36,34 +36,13 @@ function handleChange(value: number) {
 </script>
 
 <style lang="scss" scoped>
-
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
 .price_input_wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 4px;
-    width: 100%;
-    max-width: 200px;
-    padding: 8px;
-    border-radius: 6px;
     background: $tag-color;
 
     input {
-        width: 100%;
         font-size: 14px;
         color: $text-secondary;
         font-weight: 500;
-        text-align: end;
-        background: transparent;
-        border: none;
-        outline: none;
 
         &::placeholder {
             font-size: 14px;

@@ -1,94 +1,57 @@
 <template>
-  <div class="modal_wrapper" @click.stop="$emit('close')">
-    <div class="date_wrapper" @click.stop>
-      <div class="calendar_block">
-        <div class="actions">
-          <div
-            class="action"
-            :class="{ active: deadlines === 'less-week' }"
-            @click="deadlines = 'less-week'"
-          >
+  <div class="modal_wrapper flex items-center justify-center w-full h-full fixed top-0 left-0 z-100000"
+    @click.stop="$emit('close')">
+    <div class="date_wrapper flex flex-col gap-6 w-full max-w-[800px] p-5 rounded-md select-none" @click.stop>
+      <div class="flex gap-6 justify-between w-full">
+        <div class="flex flex-col gap-1 w-[200px]">
+          <div class="action" :class="{ active: deadlines === 'less-week' }" @click="deadlines = 'less-week'">
             <p>Менее недели</p>
           </div>
-          <div
-            class="action"
-            :class="{ active: deadlines === 'more-week' }"
-            @click="deadlines = 'more-week'"
-          >
+          <div class="action" :class="{ active: deadlines === 'more-week' }" @click="deadlines = 'more-week'">
             <p>Более недели</p>
           </div>
-          <div
-            class="action"
-            :class="{ active: deadlines === 'less-month' }"
-            @click="deadlines = 'less-month'"
-          >
+          <div class="action" :class="{ active: deadlines === 'less-month' }" @click="deadlines = 'less-month'">
             <p>Менее месяца</p>
           </div>
-          <div
-            class="action"
-            :class="{ active: deadlines === 'more-month' }"
-            @click="deadlines = 'more-month'"
-          >
+          <div class="action" :class="{ active: deadlines === 'more-month' }" @click="deadlines = 'more-month'">
             <p>Более месяца</p>
           </div>
-          <div
-            class="action"
-            :class="{ active: deadlines === 'contract' }"
-            @click="deadlines = 'contract'"
-          >
+          <div class="action" :class="{ active: deadlines === 'contract' }" @click="deadlines = 'contract'">
             <p>По договоренности</p>
           </div>
-          <div
-            class="action"
-            :class="{ active: deadlines === 'custom' }"
-            @click="deadlines = 'custom'"
-          >
+          <div class="action" :class="{ active: deadlines === 'custom' }" @click="deadlines = 'custom'">
             <p>Обозначить сроки</p>
           </div>
         </div>
-        <div class="calendar" :class="{ disabled: deadlines !== 'custom' }">
-          <div class="calendar-header">
-            <IconsArrowLeft
-              style="transform: scale(1.5); cursor: pointer"
-              @click="prevMonth"
-            >
+        <div class="calendar flex flex-col gap-4 h-[310px]" :class="{ disabled: deadlines !== 'custom' }">
+          <div class="flex items-center justify-between">
+            <IconsArrowLeft style="transform: scale(1.5); cursor: pointer" @click="prevMonth">
             </IconsArrowLeft>
-            <span>{{ monthYear }}</span>
-            <IconsArrowLeft
-              style="transform: scale(1.5) rotate(180deg); cursor: pointer"
-              @click="nextMonth"
-            ></IconsArrowLeft>
+            <span class="calendar-header">{{ monthYear }}</span>
+            <IconsArrowLeft style="transform: scale(1.5) rotate(180deg); cursor: pointer" @click="nextMonth">
+            </IconsArrowLeft>
           </div>
 
           <div class="calendar-grid">
             <div class="day-name" v-for="(day, index) in weekDays" :key="index">
               {{ day }}
             </div>
-            <div
-              class="day"
-              v-for="date in calendarDays"
-              :key="date.toISOString()"
-              :class="dayClass(date)"
-              @click="selectDate(date)"
-            >
+            <div class="day" v-for="date in calendarDays" :key="date.toISOString()" :class="dayClass(date)"
+              @click="selectDate(date)">
               {{ date.getDate() }}
             </div>
           </div>
         </div>
       </div>
-      <div class="footer">
-        <p class="date">
+      <div class="footer flex justify-center items-center gap-16">
+        <p class="footer_date whitespace-nowrap">
           {{ from ? useUserCreated(from) : "дата начала" }} -
           {{ to ? useUserCreated(to) : "дата окончания" }}
         </p>
-        <div class="buttons">
-          <button class="cancel" @click="$emit('close')">Отмена</button>
-          <UIDevButton
-            active
-            @click="saveRange"
-            :disabled="(!from || !to) && deadlines === 'custom'"
-            >Сохранить</UIDevButton
-          >
+        <div class="w-full flex justify-end items-center gap-4">
+          <UIDevButton type="cancel" @click="$emit('close')">Отмена</UIDevButton>
+          <UIDevButton type="active" @click="saveRange" :disabled="(!from || !to) && deadlines === 'custom'">Сохранить
+          </UIDevButton>
         </div>
       </div>
     </div>
@@ -97,15 +60,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import type { Deadline } from "~/shared/types";
 
 const props = defineProps<{
-  deadline:
-    | "less-week"
-    | "more-week"
-    | "less-month"
-    | "more-month"
-    | "contract"
-    | "custom";
+  deadline: Deadline;
   from?: string;
   to?: string;
 }>();
@@ -115,14 +73,7 @@ const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
-const deadlines = ref<
-  | "less-week"
-  | "more-week"
-  | "less-month"
-  | "more-month"
-  | "contract"
-  | "custom"
->("less-week");
+const deadlines = ref<Deadline>("less-week");
 const currentDate = ref(new Date());
 const from = ref<Date | null>(null);
 const to = ref<Date | null>(null);
@@ -151,14 +102,10 @@ const nextMonth = () => {
 function getCalendarDays(date: Date): Date[] {
   const year = date.getFullYear();
   const month = date.getMonth();
-
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
-
   const days: Date[] = [];
-
   const startDay = (firstDayOfMonth.getDay() + 6) % 7;
-  const endDay = (lastDayOfMonth.getDay() + 6) % 7;
 
   for (let i = startDay - 1; i >= 0; i--) {
     days.push(new Date(year, month, 1 - i - 1));
@@ -246,168 +193,103 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .modal_wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
   background: rgba(0, 0, 0, 0.3);
-  z-index: 1000000000;
 }
 
 .date_wrapper {
   box-shadow: 0px 6px 15px 0px #ffffff1a;
   background: $tag-color;
-  border-radius: 6px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  width: 100%;
-  max-width: 800px;
-  user-select: none;
 
-  .calendar_block {
-    width: 100%;
-    display: flex;
-    gap: 24px;
-    justify-content: space-between;
+  .action {
+    border-radius: 4px 0 0 4px;
+    padding: 12px 16px;
+    background: transparent;
+    border-right: 2px solid transparent;
+    transition: all 0.2s ease-in;
+    cursor: pointer;
 
-    .actions {
-      width: 200px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-
-      .action {
-        border-radius: 4px 0 0 4px;
-        padding: 12px 16px;
-        background: transparent;
-        border-right: 2px solid transparent;
-        transition: all 0.2s ease-in;
-        cursor: pointer;
-
-        p {
-          color: $white;
-          font-size: 14px;
-          cursor: pointer;
-        }
-
-        &.active {
-          background: #242032;
-          border-right: 2px solid $white;
-        }
-
-        &:hover {
-          background: #242032;
-          border-right: 2px solid $white;
-        }
-      }
+    p {
+      color: $white;
+      font-size: 14px;
+      cursor: pointer;
     }
 
-    .calendar {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      height: 310px;
+    &.active {
+      background: #242032;
+      border-right: 2px solid $white;
+    }
 
-      .calendar-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        span {
-          font-weight: 500;
-          font-size: 16px;
-          color: $white;
-        }
-      }
-
-      .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        font-size: 14px;
-
-        .day {
-          padding: 10px 18px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          color: $text-placeholder;
-        }
-
-        .day-name {
-          color: $text-placeholder;
-          padding: 10px 18px;
-          margin-bottom: 16px;
-        }
-
-        .other-month {
-          color: $text-placeholder;
-        }
-
-        .weekend {
-          color: $text-red;
-        }
-
-        .selected-from,
-        .selected-to {
-          background-color: $select-enabled;
-          color: $white;
-        }
-
-        .selected-from {
-          border-radius: 6px 0 0 6px;
-        }
-
-        .selected-to {
-          border-radius: 0 6px 6px 0;
-        }
-
-        .in-range {
-          background-color: rgba(139, 96, 250, 0.1);
-          color: $white;
-        }
-      }
-
-      &.disabled {
-        opacity: 0.7;
-        cursor: default;
-        pointer-events: none;
-      }
+    &:hover {
+      background: #242032;
+      border-right: 2px solid $white;
     }
   }
 
-  .footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 64px;
-
-    .date {
-      color: $text-placeholder;
-      font-size: 14px;
-      white-space: nowrap;
+  .calendar {
+    .calendar-header {
+      font-weight: 500;
+      font-size: 16px;
+      color: $white;
     }
 
-    .buttons {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      font-size: 14px;
 
-      .cancel {
-        color: $text-red;
-        background: transparent;
-        border: none;
-        outline: none;
-        padding: 12px 28px;
+      .day {
+        padding: 10px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
+        color: $text-placeholder;
+      }
+
+      .day-name {
+        color: $text-placeholder;
+        padding: 10px 18px;
+        margin-bottom: 16px;
+      }
+
+      .other-month {
+        color: $text-placeholder;
+      }
+
+      .weekend {
+        color: $text-red;
+      }
+
+      .selected-from,
+      .selected-to {
+        background-color: $select-enabled;
+        color: $white;
+      }
+
+      .selected-from {
+        border-radius: 6px 0 0 6px;
+      }
+
+      .selected-to {
+        border-radius: 0 6px 6px 0;
+      }
+
+      .in-range {
+        background-color: rgba(139, 96, 250, 0.1);
+        color: $white;
       }
     }
+
+    &.disabled {
+      opacity: 0.7;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+
+  .footer_date {
+    color: $text-placeholder;
+    font-size: 14px;
   }
 }
 </style>

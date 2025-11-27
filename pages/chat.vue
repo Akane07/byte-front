@@ -10,10 +10,11 @@
           <span class="px-2 py-0.5 rounded-3xl">{{ chats.length }}</span>
         </div>
         <div class="px-6 py-3 w-full">
-          <div class="input flex items-center gap-2.5 px-5 py-2.5 rounded-xl">
-            <IconsSearch></IconsSearch>
-            <input type="text" placeholder="Поиск" v-model="searchString" />
-          </div>
+          <UIDevInput v-model="searchString" type="text" placeholder="Поик">
+            <template #prepend>
+              <IconsSearch></IconsSearch>
+            </template>
+          </UIDevInput>
         </div>
         <div class="users flex flex-col gap-2 w-full px-4 overflow-y-scroll">
           <div
