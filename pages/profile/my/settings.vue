@@ -1,143 +1,139 @@
 <template>
   <UIDevNavMenu></UIDevNavMenu>
-  <div class="wrapper">
-    <div class="settings_wrapper">
-      <div class="settings">
-        <div class="header">
+  <div
+    class="wrapper w-full min-h-dvh absolute top-0 left-0 flex justify-center pt-[150px] pb-[300px] px-[150px]"
+  >
+    <div class="w-full max-w-[1400px]">
+      <div class="settings w-full max-w-[500px] flex flex-col gap-12">
+        <div class="flex flex-col gap-6">
           <h2>Настройки</h2>
-          <div class="pages">
-            <p
-              class="page"
-              :class="{ active: active === 'general' }"
-              @click="active = 'general'"
-            >
-              Общие
-            </p>
-            <p
-              class="page"
-              :class="{ active: active === 'profile' }"
-              @click="active = 'profile'"
-            >
-              Профиль
-            </p>
-            <p
-              class="page"
-              :class="{ active: active === 'socials' }"
-              @click="active = 'socials'"
-            >
-              Ссылки
-            </p>
-          </div>
+          <UIDevTabs
+            v-model:active="active"
+            :tabs="[
+              { name: 'Общие', value: 'general' },
+              { name: 'Профиль', value: 'profile' },
+              { name: 'Ссылки', value: 'socials' },
+            ]"
+          />
         </div>
-        <div v-if="active === 'general'" class="settings_form">
-          <UIDevInput
-            v-model="general.nickname"
-            label="Логин"
-            type="text"
-            placeholder="Отображаемый ник"
-            :rules="rules.notEmpty"
-          ></UIDevInput>
-          <UIDevInput
-            v-model="general.email"
-            label="Почта"
-            type="text"
-            placeholder="Почта, привязанная к аккануту"
-            disabled
-          ></UIDevInput>
-          <div class="block pass">
-            <p>Пароль</p>
+        <div class="flex flex-col gap-6">
+          <template v-if="active === 'general'">
             <UIDevInput
-              v-model="pass.password"
-              type="password"
-              placeholder="Новый пароль"
+              v-model="general.nickname"
+              label="Логин"
+              type="text"
+              placeholder="Отображаемый ник"
               :rules="rules.notEmpty"
             ></UIDevInput>
             <UIDevInput
-              v-model="pass.newPassword"
-              type="password"
-              placeholder="Новый пароль ещё раз"
+              v-model="general.email"
+              label="Почта"
+              type="text"
+              placeholder="Почта, привязанная к аккануту"
+              disabled
+            ></UIDevInput>
+            <div class="block pass">
+              <p>Пароль</p>
+              <UIDevInput
+                v-model="pass.password"
+                type="password"
+                placeholder="Новый пароль"
+                :rules="rules.notEmpty"
+              ></UIDevInput>
+              <UIDevInput
+                v-model="pass.newPassword"
+                type="password"
+                placeholder="Новый пароль ещё раз"
+                :rules="rules.notEmpty"
+              >
+              </UIDevInput>
+            </div>
+          </template>
+          <template v-if="active === 'profile'">
+            <UIDevInput
+              v-model="profile.name"
+              label="Имя"
+              type="text"
+              placeholder="Ваше имя"
               :rules="rules.notEmpty"
+            ></UIDevInput>
+            <div class="block">
+              <p>Аватар</p>
+              <div
+                class="photo_wrapper w-[254px] h-[184px] rounded-md flex items-center justify-center cursor-pointer relative"
+              >
+                <img
+                  v-if="userStore.user?.avatar"
+                  :src="makeURL(userStore.user.avatar)"
+                  class="rounded-md w-full h-full object-cover"
+                  alt="avatar"
+                />
+                <p v-else>Нажмите, чтобы загрузить фото</p>
+                <input
+                  class="absolute w-full h-full opacity-0 cursor-pointer"
+                  type="file"
+                  accept="image/*"
+                  @change="uploadPhoto($event.target.files[0])"
+                />
+              </div>
+            </div>
+            <UIDevInput
+              v-model="profile.speciality"
+              label="Ваша специальность"
+              type="text"
+              placeholder="Вы по специальности"
+              maxlength="40"
             >
             </UIDevInput>
-          </div>
-        </div>
-        <div v-if="active === 'profile'" class="settings_form">
-          <UIDevInput
-            v-model="profile.name"
-            label="Имя"
-            type="text"
-            placeholder="Ваше имя"
-            :rules="rules.notEmpty"
-          ></UIDevInput>
-          <div class="block">
-            <p>Аватар</p>
-            <div class="photo_wrapper">
-              <img
-                v-if="userStore.user?.avatar"
-                :src="makeURL(userStore.user.avatar)"
-                alt="avatar"
-              />
-              <p v-else>Нажмите, чтобы загрузить фото</p>
-              <input
-                style="cursor: pointer"
-                type="file"
-                accept="image/*"
-                @change="uploadPhoto($event.target.files[0])"
-              />
+            <UIDevTextarea
+              v-model="profile.description"
+              label="Описание профиля"
+              maxlength="1000"
+              placeholder="Написание привлекательного описания может повысить шансы найти заказ"
+            >
+            </UIDevTextarea>
+            <div class="block">
+              <p>Навыки (до 10)</p>
+              <ProfileSkills
+                :skills="profile.skills"
+                @save="saveUser"
+                @delete="deleteSkill"
+              ></ProfileSkills>
             </div>
-          </div>
-          <UIDevInput
-            v-model="profile.speciality"
-            label="Ваша специальность"
-            type="text"
-            placeholder="Вы по специальности"
-            maxlength="40"
-          >
-          </UIDevInput>
-          <UIDevTextarea
-            v-model="profile.description"
-            label="Описание профиля"
-            maxlength="1000"
-            placeholder="Написание привлекательного описания может повысить шансы найти заказ"
-          >
-          </UIDevTextarea>
-          <div class="block">
-            <p>Навыки (до 10)</p>
-            <ProfileSkills
-              :skills="profile.skills"
-              @save="saveUser"
-              @delete="deleteSkill"
-            ></ProfileSkills>
-          </div>
-          <UIDevSelect
-            :list="countries"
-            label="Страна"
-            :selected="profile.country"
-            @select="handleSelect"
-          ></UIDevSelect>
-        </div>
-        <div v-if="active === 'socials'" class="settings_form">
-          <UIDevInput
-            v-model="profile.telegram"
-            label="Telegram"
-            type="text"
-            placeholder="Вставьте полную ссылку на ваш Telegram"
-          ></UIDevInput>
-          <UIDevInput
-            v-model="profile.behance"
-            label="Behance"
-            type="text"
-            placeholder="Вставьте полную ссылку на ваш Behance"
-          ></UIDevInput>
-          <UIDevInput
-            v-model="profile.git"
-            label="Github/Gitlab"
-            type="text"
-            placeholder="Вставьте полную ссылку на ваш Github/Gitlab"
-          ></UIDevInput>
+            <UIDevSelect
+              :list="countries"
+              label="Страна"
+              :selected="profile.country"
+              @select="handleSelect"
+            ></UIDevSelect>
+          </template>
+          <template v-if="active === 'socials'">
+            <UIDevInput
+              v-model="profile.telegram"
+              label="Telegram"
+              type="text"
+              placeholder="Вставьте полную ссылку на ваш Telegram"
+            ></UIDevInput>
+            <UIDevInput
+              v-model="profile.behance"
+              label="Behance"
+              type="text"
+              placeholder="Вставьте полную ссылку на ваш Behance"
+            ></UIDevInput>
+            <UIDevInput
+              v-model="profile.git"
+              label="Github/Gitlab"
+              type="text"
+              placeholder="Вставьте полную ссылку на ваш Github/Gitlab"
+            ></UIDevInput>
+          </template>
         </div>
         <div class="flex items-center gap-8">
-          <UIDevButton type="active" @click="saveUser" :disabled="!(validProfile && validPass)" style="width: 200px"
+          <UIDevButton
+            type="active"
+            @click="saveUser"
+            :disabled="!(validProfile && validPass)"
+            style="width: 200px"
             >Сохранить</UIDevButton
           >
           <UIDevButton type="cancel" style="width: 200px"
@@ -150,7 +146,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { getCountries, setAvatar } from "~/shared/api/user-api";
 import { makeURL } from "~/shared/utils/helpers";
 import { rules } from "~/shared/utils/rules";
@@ -166,6 +161,7 @@ const notiStore = useNotifications();
 
 const active = ref("general");
 const countries = ref<string[]>([]);
+const photo = ref<File | null>(null);
 
 const general = ref<any>({
   nickname: "",
@@ -195,9 +191,7 @@ const validProfile = computed(() => {
 
 const validPass = computed(() => {
   return pass.value.password === pass.value.newPassword;
-})
-
-const photo = ref<File | null>(null);
+});
 
 function handleSelect(el: string) {
   profile.value.country = el;
@@ -239,22 +233,7 @@ async function saveUser(skills?: string[]) {
     skills: skillsArray,
   });
 
-  general.value = {
-    nickname: userStore.user.nickname || "",
-    phone: userStore.user.phone || "",
-    email: userStore.user.email || "",
-  };
-
-  profile.value = {
-    name: userStore.user.name || "",
-    speciality: userStore.user.speciality || "",
-    skills: [...userStore.user.skills],
-    description: userStore.user.description || "",
-    country: userStore.user.country || null,
-    telegram: userStore.user.telegram || "",
-    behance: userStore.user.behance || "",
-    git: userStore.user.git || "",
-  };
+  setProfile();
 
   await notiStore.setNotification("Изменения сохранены");
 }
@@ -276,8 +255,7 @@ async function uploadPhoto(img: File) {
   }
 }
 
-onMounted(async () => {
-  await userStore.checkAuth();
+function setProfile() {
   if (!userStore.user?.id) return;
 
   general.value = {
@@ -296,6 +274,12 @@ onMounted(async () => {
     behance: userStore.user.behance || "",
     git: userStore.user.git || "",
   };
+}
+
+onMounted(async () => {
+  await userStore.checkAuth();
+
+  setProfile();
 
   countries.value = await getCountries();
 });
@@ -303,107 +287,34 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .wrapper {
-  width: 100%;
-  min-height: 100dvh;
   background: $input-auth;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  padding: 150px 150px 300px 150px;
 
-  .settings_wrapper {
-    max-width: 1400px;
-    width: 100%;
+  .settings {
+    color: $text-main;
 
-    .settings {
-      width: 100%;
-      max-width: 500px;
-      color: $text-main;
+    h2 {
+      font-weight: 500;
+      font-size: 32px;
+    }
+
+    .block {
       display: flex;
       flex-direction: column;
-      gap: 48px;
+      gap: 12px;
 
-      .header {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-
-        h2 {
-          font-weight: 500;
-          font-size: 32px;
-        }
-
-        .pages {
-          display: flex;
-          gap: 32px;
-
-          .page {
-            color: $text-link;
-            font-weight: 600;
-            transition: color 0.2s ease-in;
-            cursor: pointer;
-
-            &:hover {
-              color: $select-enabled;
-            }
-
-            &.active {
-              color: $select-enabled;
-              border-bottom: 1px solid $select-enabled;
-            }
-          }
-        }
+      .photo_wrapper {
+        border: 2px solid $select-enabled;
+        background: $tag-color;
+        font-size: 14px;
+        color: $text-placeholder;
       }
 
-      .settings_form {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
+      &.pass {
+        display: grid;
+        grid-template-columns: calc(50% - 6px) calc(50% - 6px);
 
-        .block {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-
-          .photo_wrapper {
-            width: 254px;
-            height: 184px;
-            border-radius: 6px;
-            border: 2px solid $select-enabled;
-            background: $tag-color;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            color: $text-placeholder;
-            cursor: pointer;
-            position: relative;
-
-            img {
-              border-radius: 6px;
-              object-fit: cover;
-              width: 100%;
-              height: 100%;
-            }
-
-            input {
-              position: absolute;
-              width: 100%;
-              height: 100%;
-              opacity: 0;
-            }
-          }
-
-          &.pass {
-            display: grid;
-            grid-template-columns: calc(50% - 6px) calc(50% - 6px);
-
-            p {
-              grid-column: 1 / span 2;
-            }
-          }
+        p {
+          grid-column: 1 / span 2;
         }
       }
     }
