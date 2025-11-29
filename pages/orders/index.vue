@@ -26,7 +26,7 @@
                     <OrdersOrderCard v-for="order in orderStore.orders" :key="order.id" :order="order"
                         @showOrder="showOrder"></OrdersOrderCard>
                 </div>
-                <div class="flex justify-center mt-8 justify-self-end" v-if="orderStore.total > 10">
+                <div class="flex justify-center mt-8 justify-self-end" v-if="orderStore.total > 1">
                     <UIDevPagination :total="orderStore.total" :currentPage="orderStore.page" @change="getOrders">
                     </UIDevPagination>
                 </div>
@@ -111,6 +111,9 @@ onMounted(async () => {
     }
 
     await orderStore.getAllOrders(filters.value);
+
+    console.log(orderStore, 'orderStore');
+    
 })
 </script>
 

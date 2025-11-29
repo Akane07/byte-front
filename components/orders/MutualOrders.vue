@@ -48,7 +48,7 @@ const userStore = useUserStore();
     width: 100%;
     padding: 16px 40px 16px 16px;
     border-radius: 8px;
-    background: $second-color;
+    background: $bg-secondary;
     box-shadow: 1px 1px 0px 0px #00000029;
     display: flex;
     gap: 20px;

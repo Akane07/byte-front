@@ -50,6 +50,7 @@ $animation-duration: 0.2s;
     position: absolute;
     background-color: $white;
     pointer-events: none;
+    border-radius: 6px;
 }
 
 .border-left {
