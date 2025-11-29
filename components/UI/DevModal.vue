@@ -9,7 +9,7 @@
             <div>
                 <slot name="body"></slot>
             </div>
-            <div class="flex justify-end ga-3 mt-3">
+            <div class="flex justify-end gap-4 mt-3">
                 <slot name="buttons"></slot>
             </div>
         </div>

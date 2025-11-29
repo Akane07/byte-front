@@ -82,7 +82,6 @@
 </template>
 
 <script setup lang="ts">
-import { baseURL } from '~/shared/api';
 import { likePortfolio, viewPortfolio, type Portfolio } from "~/shared/api/portfolio-api";
 import type { User } from '~/shared/api/user-api';
 import { makeURL } from '~/shared/utils/helpers';

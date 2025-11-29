@@ -2,90 +2,14 @@
     <UIDevNavMenu></UIDevNavMenu>
     <UIBackground></UIBackground>
 
-    <div class="wrapper">
-        <div class="profile" v-if="user">
-            <div class="main_info">
-                <div class="left_part">
-                    <div class="avatar">
-                        <UIProfileAvatar :src="makeURL(user?.avatar)"></UIProfileAvatar>
-                        <p>{{ user.nickname || 'без ника' }}</p>
-                    </div>
-                    <div class="stats">
-                        <div class="stat">
-                            <IconsMap></IconsMap>
-                            <span>{{ user.country || 'страна не указана' }}</span>
-                        </div>
-                        <div class="stat">
-                            <IconsClock></IconsClock>
-                            <span>На сайте с {{ useUserCreated(user.created_at) }}</span>
-                        </div>
-                        <div class="stat">
-                            <IconsSun></IconsSun>
-                            <span>Был в сети {{ useOrderCreated(user.last_seen) }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bordered"></div>
-                <div class="middle_part">
-                    <p class="name">{{ user.name }}</p>
-                    <p class="speciality">{{ user.speciality }}</p>
-                    <span>{{ user.description || 'Нет описания' }}</span>
-                </div>
-                <div class="bordered"></div>
-                <div class="right_part">
-                    <UIDevButton type="active" @click="navigateTo(`/chat/${user.id}`)">
-                        Отправить сообщение
-                    </UIDevButton>
-                    <div class="user_stats">
-                        <div class="average">
-                            <div class="star">
-                                <img src="../../assets/images/star.png" alt="star" width="20px" height="20px">
-                                {{ user.rating }}
-                            </div>
-                            <p>Оценка исполнителя</p>
-                        </div>
-                        <div class="stats">
-                            <div class="stat">
-                                <span>{{ user.orders_count }}</span>
-                                <p>Заказов выполнено</p>
-                            </div>
-                            <div class="stat">
-                                <span>70%</span>
-                                <p>Успешных заказов</p>
-                            </div>
-                            <div class="stat">
-                                <span>{{ user.reviews_count }}</span>
-                                <p>Получено отзывов</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="portfolio" v-if="portfolios.length">
-                <div class="header">
-                    <p>Портфолио</p>
-                </div>
-                <div class="portfolio_blocks">
-                    <ProfilePortfolio v-for="portfolio in portfolios" :key="portfolio.id" :portfolio="portfolio"
-                        :other="true"></ProfilePortfolio>
-                </div>
-            </div>
-            <div class="feedbacks" v-if="feedbacks.length">
-                <div class="header">
-                    <p>Отзывы</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <ProfileUser></ProfileUser>
 </template>
 
 <script setup lang="ts">
-import { baseURL } from '~/shared/api';
 import type { User } from '~/shared/api/user-api';
 import { useUserStore } from '~/store/userStore';
 import type { Portfolio } from '~/shared/api/portfolio-api';
 import { usePortfolioStore } from '~/store/portfolioStore';
-import { makeURL } from '~/shared/utils/helpers';
 
 definePageMeta({
     middleware: ['auth'],
@@ -102,15 +26,9 @@ const user = ref<User | null>(null);
 const id = route.params.id as string;
 user.value = await userStore.getUserId(id);
 portfolios.value = await portfolioStore.getPortfoliosById(id);
-
-onMounted(async () => {
-
-});
 </script>
 
 <style lang="scss" scoped>
-
-
 .wrapper {
     width: 100%;
     display: flex;
