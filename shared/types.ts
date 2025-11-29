@@ -5,3 +5,16 @@ export type Deadline =
   | "more-month"
   | "contract"
   | "custom";
+
+export interface Message {
+  id: string;
+  text: string;
+  mediaType: string;
+  mediaUrl: string;
+  createdAt: string;
+  is_suggest: boolean;
+  status: string;
+  senderId: string;
+  orderId: string;
+  responseId: string;
+}

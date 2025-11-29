@@ -37,3 +37,15 @@ export function generatePagination(current: number, total: number): (number | st
 
     return pages;
 }
+
+export function parseMessageDate(created: string) {
+    const hours = new Date(created).getHours();
+    const minutes = new Date(created).getMinutes();
+    return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`
+}
+
+export function scrollToBottom(container: any) {
+  if (container) {
+    container.scrollTop = container.scrollHeight;
+  }
+}
