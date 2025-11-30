@@ -6,7 +6,7 @@
     <div class="w-full max-w-[1400px]">
       <div class="settings w-full max-w-[500px] flex flex-col gap-12">
         <div class="flex flex-col gap-6">
-          <h2>Настройки</h2>
+          <h2 class="font-medium text-[32px]">Настройки</h2>
           <UIDevTabs
             v-model:active="active"
             :tabs="[
@@ -291,11 +291,6 @@ onMounted(async () => {
 
   .settings {
     color: $text-main;
-
-    h2 {
-      font-weight: 500;
-      font-size: 32px;
-    }
 
     .block {
       display: flex;

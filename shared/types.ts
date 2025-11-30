@@ -18,3 +18,9 @@ export interface Message {
   orderId: string;
   responseId: string;
 }
+
+export interface Filter {
+  id: number;
+  title: string;
+  checked: boolean;
+}

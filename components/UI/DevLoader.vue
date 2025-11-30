@@ -17,7 +17,7 @@ onMounted(() => {
     width: 48px;
     height: 48px;
     display: inline-block;
-    position: relative;
+    position: absolute;
 }
 
 .loader::after,
