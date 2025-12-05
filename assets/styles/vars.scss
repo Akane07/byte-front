@@ -7,7 +7,8 @@ $white: #ffffff;
 $bg-brand: #222228;
 $bg-secondary: #333338;
 $border-color: #333741;
-$border-secondary: #444343;
+$border-secondary: #333338;
+$border-active: #989898;
 $pagination-color: #f1f1f1;
 $tag-color: #2e2e2e;
 $tag-hover: #3c3b3b;
@@ -21,7 +22,7 @@ $text-secondary: #D9D9D9;
 $text-header: #c5c5c5;
 $text-link: #c9c9c9;
 $text-red: #ff6969;
-$text-placeholder: #9e9e9f;
+$text-placeholder: rgba(255, 255, 255, 0.5);
 $text-accent: #dd6b20;
 
 // цвет кнопок

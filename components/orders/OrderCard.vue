@@ -22,6 +22,10 @@
           >+{{ order.skills.length - 5 }}</UIDevChip
         >
       </div>
+      <div class="flex justify-between">
+        <span class="text-[14px] opacity-60 flex flex-col justify-end">{{ categoryStore.getCategoryTitleById(order.category) }}</span>
+        <span class="text-[14px] opacity-60 flex flex-col justify-end">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
+      </div>
     </div>
     <div class="info-block flex flex-col justify-between py-4 px-5">
       <div class="price flex flex-col gap-2">
@@ -33,9 +37,8 @@
           }}</span>
         </div>
       </div>
-      <div class="info flex flex-col gap-2">
-        <p>Предложений: {{ order.response_count }}</p>
-        <p>Опубликовано {{ useOrderCreated(order.created_at) }}</p>
+      <div class="flex flex-col gap-2">
+        <span class="text-[14px] opacity-60 flex flex-col justify-end">Предложений: {{ order.response_count }}</span>
       </div>
     </div>
   </div>
@@ -44,6 +47,7 @@
 <script setup lang="ts">
 import type { Order } from "~/shared/api/order-api";
 import { makeURL } from "~/shared/utils/helpers";
+import { useCategory } from "~/store/categoryStore";
 import { useUserStore } from "~/store/userStore";
 
 const props = defineProps<{
@@ -55,6 +59,7 @@ defineEmits<{
 }>();
 
 const userStore = useUserStore();
+const categoryStore = useCategory();
 
 function handleOrderRedirect() {
   navigateTo(`/orders/${props.order.id}`);
@@ -99,6 +104,7 @@ const viewed = computed(() => {
   .info-block {
     border-left: 1px solid $border-color;
     color: $white;
+    width: 280px;
 
     .info {
       font-size: 12px;

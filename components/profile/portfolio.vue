@@ -16,19 +16,19 @@
     >
       <div class="absolute flex gap-2 top-2.5 right-3.5" v-if="!other">
         <div
-          class="button w-10 h-6.5 flex items-center justify-center rounded-md"
+          class="button w-9 h-9 flex items-center justify-center rounded-md"
           @click.stop="handleDelete"
         >
-          <IconsTrash style="transform: scale(1.3)"></IconsTrash>
+          <IconsTrash style="transform: scale(1.3)" color="white"></IconsTrash>
         </div>
         <div
-          class="button w-10 h-6.5 flex items-center justify-center rounded-md"
+          class="button w-9 h-9 flex items-center justify-center rounded-md"
           @click.stop="navigateTo(`/profile/portfolio/edit/${portfolio.id}`)"
         >
-          <IconsEditPen style="transform: scale(1.3)"></IconsEditPen>
+          <IconsEditPen style="transform: scale(1.3)" color="white"></IconsEditPen>
         </div>
       </div>
-      <div class="absolute bottom-2.5 left-3.5">
+      <div class="absolute bottom-4 left-3">
         <p>{{ portfolio.title }}</p>
         <span>{{ portfolio.role }}</span>
       </div>
@@ -56,8 +56,9 @@ async function handleDelete() {
 
 <style scoped lang="scss">
 .work {
-  border: 1.5px solid $active;
+  border: 2px solid $border-color;
   scroll-snap-align: start;
+  transform: border 0.3s ease-in-out;
 
   .loader {
     transform: translate(-50%, -50%);
@@ -68,31 +69,33 @@ async function handleDelete() {
     transition: opacity 0.2s ease-in;
 
     .button {
-      background: $white;
-      border: 2px solid rgba(70, 144, 212, 0.376);
+      background: $tag-secondary-color;
     }
 
     p {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: 600;
+      font-size: 16px;
     }
 
     span {
-      font-weight: 500;
-      font-size: 12px;
+      font-weight: 400;
+      font-size: 14px;
     }
 
     .gradient {
       background: linear-gradient(
         180deg,
-        rgba(107, 99, 99, 0.08) 2.74%,
-        $black 100%
+        rgba(107, 99, 99, 0.1) 2.74%,
+        rgba(0, 0, 0, 0.8) 100%
       );
     }
   }
 
-  &:hover .hover {
-    opacity: 1;
+  &:hover {
+    border: 2px solid $active;
+    .hover {
+      opacity: 1;
+    }
   }
 }
 </style>
