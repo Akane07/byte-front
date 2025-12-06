@@ -34,23 +34,30 @@
           class="cursor-pointer"
           @click="navigateTo('/chat')"
         ></IconsChat>
-        <UIUserAvatar
-          class="cursor-pointer"
-          @click.stop="showMenu = !showMenu"
-          :src="makeURL(userStore.user?.avatar)"
+        <div
+          class="flex items-center gap-3 relative select-none"
+          @mouseenter="show"
+          @mouseleave="hide"
         >
-        </UIUserAvatar>
-        <IconsArrow
-          class="cursor-pointer arrow"
-          @click.stop="showMenu = !showMenu"
-          :class="{ active: showMenu }"
-        >
-        </IconsArrow>
+          <UIUserAvatar
+            class="cursor-pointer"
+            :src="makeURL(userStore.user?.avatar)"
+          >
+          </UIUserAvatar>
+          <IconsArrow
+            class="cursor-pointer arrow"
+            :class="{ active: showMenu }"
+          >
+          </IconsArrow>
+        </div>
 
         <div
+          v-show="showMenu"
           ref="menuRef"
           class="menu w-60 absolute -right-5 top-13.5 p-0.5 rounded-md z-100000"
-          v-if="showMenu"
+          :class="[activeClass]"
+          @mouseenter="show"
+          @mouseleave="hide"
         >
           <div
             class="menu_wrapper w-full flex flex-col gap-3 rounded-md px-5 py-4"
@@ -150,12 +157,49 @@ defineProps<{
 
 const userStore = useUserStore();
 
-const showMenu = shallowRef(false);
-const menuRef = ref<HTMLElement | null>(null);
 const modal = shallowRef(false);
+const menuRef = ref<HTMLElement | null>(null);
+const showMenu = shallowRef(false);
+const activeClass = shallowRef<"show" | "hide" | null>(null);
+const timeout = ref<ReturnType<typeof setTimeout> | null>(null);
+const classTimeout = ref<ReturnType<typeof setTimeout> | null>(null);
 
 useClickOutside(menuRef, () => {
   showMenu.value = false;
+});
+
+function show() {
+  timeout.value && clearTimeout(timeout.value);
+  classTimeout.value && clearTimeout(classTimeout.value);
+  activeClass.value = "show";
+  showMenu.value = true;
+}
+
+function hide() {
+  console.log("hide");
+
+  classTimeout.value = setTimeout(() => {
+    activeClass.value = "hide";
+  }, 300);
+  timeout.value = setTimeout(() => {
+    showMenu.value = false;
+    activeClass.value = null;
+  }, 600);
+}
+
+/* Принудительное закрытие при переходе со страницы */
+function handleVisibilityChange() {
+  if (document.hidden && showMenu.value) {
+    timeout.value && clearTimeout(timeout.value);
+    classTimeout.value && clearTimeout(classTimeout.value);
+
+    showMenu.value = false;
+    activeClass.value = null;
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 });
 </script>
 
@@ -182,6 +226,8 @@ useClickOutside(menuRef, () => {
 
 .menu {
   background: $tag-secondary-color;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
 
   .menu_wrapper {
     background: $tag-secondary-color;
@@ -217,6 +263,10 @@ useClickOutside(menuRef, () => {
         }
       }
     }
+  }
+
+  &.show {
+    opacity: 1;
   }
 }
 </style>
