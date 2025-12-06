@@ -330,7 +330,7 @@ onMounted(async () => {
     gap: 32px;
 
     .file_input {
-      border: 2px dashed $active;
+      border: 2px dashed $primary;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -377,7 +377,7 @@ onMounted(async () => {
     .file {
       width: 100%;
       max-height: 500px;
-      border: 2px solid $active;
+      border: 2px solid $primary;
       border-radius: 6px;
       position: relative;
 

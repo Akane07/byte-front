@@ -55,9 +55,9 @@
                 </div>
                 <div class="portfolio_wrapper" v-if="portfolios">
                     <div class="other_portfolio">
-                        <ProfilePortfolio v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id"
+                        <ProfilePortfolioBlock v-for="portfolio in portfolios" :portfolio="portfolio" :key="portfolio.id"
                             :other="true">
-                        </ProfilePortfolio>
+                        </ProfilePortfolioBlock>
                     </div>
                 </div>
                 <div class="bottom_info">
@@ -197,7 +197,7 @@ onMounted(async () => {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: $active;
+                background: $primary;
                 cursor: pointer;
                 padding: 2px;
 

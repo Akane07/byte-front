@@ -22,9 +22,9 @@
           >+{{ order.skills.length - 5 }}</UIDevChip
         >
       </div>
-      <div class="flex justify-between">
-        <span class="text-[14px] opacity-60 flex flex-col justify-end">{{ categoryStore.getCategoryTitleById(order.category) }}</span>
-        <span class="text-[14px] opacity-60 flex flex-col justify-end">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
+      <div class="flex items-end ga-4 text-white opacity-60 text-[14px]">
+        <span v-if="order.category" class="border-r-[#9E9E9F] border-r pr-4 mr-4">{{ categoryStore.getCategoryTitleById(order.category) }}</span>
+        <span>Опубликовано {{ useOrderCreated(order.created_at) }}</span>
       </div>
     </div>
     <div class="info-block flex flex-col justify-between py-4 px-5">
@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="flex flex-col gap-2">
-        <span class="text-[14px] opacity-60 flex flex-col justify-end">Предложений: {{ order.response_count }}</span>
+        <span class="text-[14px] flex flex-col justify-end">Предложений: {{ order.response_count }}</span>
       </div>
     </div>
   </div>
@@ -46,7 +46,6 @@
 
 <script setup lang="ts">
 import type { Order } from "~/shared/api/order-api";
-import { makeURL } from "~/shared/utils/helpers";
 import { useCategory } from "~/store/categoryStore";
 import { useUserStore } from "~/store/userStore";
 
@@ -79,11 +78,11 @@ const viewed = computed(() => {
     p {
       font-weight: 600;
       font-size: 20px;
-      color: $active;
+      color: $primary;
       transition: color 0.3s ease-in-out;
     }
 
-    span {
+    & > span {
       color: $white;
       height: 40px;
     }
@@ -115,7 +114,7 @@ const viewed = computed(() => {
       p {
         font-weight: 600;
         font-size: 20px;
-        color: $active;
+        color: $primary;
       }
 
       span {

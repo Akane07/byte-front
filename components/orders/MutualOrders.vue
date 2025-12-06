@@ -135,7 +135,7 @@ const userStore = useUserStore();
                 cursor: pointer;
 
                 &.edit {
-                    color: #8B60FA;
+                    color: $primary-active;
                 }
 
                 &.delete {

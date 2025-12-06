@@ -112,7 +112,7 @@ const responseFrom = computed(() => {
   color: $text-placeholder !important;
 
   &.message {
-    background: $active;
+    background: $primary;
     border-radius: 6px;
     padding: 8px 16px;
     max-width: 45%;
@@ -190,7 +190,7 @@ const responseFrom = computed(() => {
         span {
           font-weight: 600;
           font-size: 15px;
-          color: $active;
+          color: $primary;
         }
       }
     }

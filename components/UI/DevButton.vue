@@ -1,6 +1,9 @@
 <template>
-  <button class="flex gap-2 cursor-pointer items-center justify-center whitespace-nowrap py-3 px-6" :class="type"
-    :disabled="disabled">
+  <button
+    class="flex gap-2 cursor-pointer items-center justify-center whitespace-nowrap py-3 px-6"
+    :class="[type, variant]"
+    :disabled="disabled"
+  >
     <slot></slot>
   </button>
 </template>
@@ -9,10 +12,12 @@
 withDefaults(
   defineProps<{
     type?: "active" | "secondary" | "cancel" | "success";
+    variant?: "solid" | "outline";
     disabled?: boolean;
   }>(),
   {
     type: "secondary",
+    variant: "solid",
   }
 );
 </script>
@@ -26,37 +31,110 @@ button {
   transition: all 0.3s ease;
   white-space: nowrap;
 
-  &:hover {
-    opacity: 0.8;
-  }
-
-  &:active {
-    opacity: 0.9;
-  }
-
   &:disabled {
     opacity: 0.8;
     cursor: not-allowed;
   }
 }
 
-.secondary {
-  border: 1px solid $white;
+.outline {
   background: transparent;
+
+  &.secondary {
+    border: none;
+    background: transparent;
+    color: $secondary;
+    border: 1px solid transparent;
+
+    &:hover {
+      border: 1px solid $secondary;
+    }
+
+    &:active {
+      color: $secondary;
+      border: 1px solid $secondary;
+    }
+  }
+
+  &.active {
+    border: none;
+    background: transparent;
+    color: $primary;
+    border: 1px solid transparent;
+
+    &:hover {
+      border: 1px solid $primary;
+    }
+
+    &:active {
+      color: $primary-hover;
+      border: 1px solid $primary-hover;
+    }
+  }
+
+  &.cancel {
+    border: none;
+    background: transparent;
+    color: $delete;
+    border: 1px solid transparent;
+
+    &:hover {
+      border: 1px solid $delete;
+    }
+
+    &:active {
+      color: $delete-hover;
+      border: 1px solid $delete-hover;
+    }
+  }
 }
 
-.active {
-  border: none;
-  background: $active;
-}
+.solid {
+  &.secondary {
+    border: 1px solid $secondary;
+    background: transparent;
 
-.cancel {
-  border: none;
-  background: transparent;
-  color: $text-red;
+    &:hover {
+      border: 1px solid $secondary;
+      background: $secondary-hover;
+    }
 
-  &:hover {
-    background: $bg-button-delete;
+    &:active {
+      background: transparent;
+      border: 1px solid $secondary;
+      color: $secondary;
+    }
+  }
+
+  &.active {
+    border: 1px solid $primary;
+    background: $primary;
+
+    &:hover {
+      border: 1px solid $primary-hover;
+      background: $primary-hover;
+    }
+
+    &:active {
+      background: transparent;
+      border: 1px solid $primary-active;
+      color: $primary-active;
+    }
+  }
+
+  &.cancel {
+    border: none;
+    background: $delete;
+
+    &:hover {
+      background: $delete-hover;
+    }
+
+    &:active {
+      background: transparent;
+      border: 1px solid $delete;
+      color: $delete;
+    }
   }
 }
 

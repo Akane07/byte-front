@@ -340,7 +340,7 @@ watch(props, async () => {
         p {
           font-weight: 600;
           font-size: 16px;
-          color: $active;
+          color: $primary;
         }
       }
 
@@ -405,7 +405,7 @@ watch(props, async () => {
         }
 
         & > span {
-          color: $active;
+          color: $primary;
           font-weight: 600;
           font-size: 12px;
           cursor: pointer;

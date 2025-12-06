@@ -750,7 +750,7 @@ onMounted(async () => {
             width: 32px;
             height: 32px;
             border-radius: 6px;
-            border: 2px solid $active;
+            border: 2px solid $primary;
             cursor: pointer;
           }
         }
@@ -793,7 +793,7 @@ onMounted(async () => {
                 .circle {
                   width: 20px;
                   height: 20px;
-                  background: $active;
+                  background: $primary;
                   border-radius: 100%;
                   cursor: pointer;
                 }
@@ -808,11 +808,11 @@ onMounted(async () => {
             }
 
             &.active {
-              border: 1px solid $active;
+              border: 1px solid $primary;
             }
 
             &:hover {
-              border: 1px solid $active;
+              border: 1px solid $primary;
             }
           }
         }
@@ -840,7 +840,7 @@ onMounted(async () => {
         .contract {
           font-weight: 500;
           font-size: 14px;
-          color: $active;
+          color: $primary;
           cursor: pointer;
         }
       }
@@ -909,7 +909,7 @@ onMounted(async () => {
           border: none;
           outline: none;
           background: transparent;
-          color: $active;
+          color: $primary;
           padding: 12px 28px;
           cursor: pointer;
         }

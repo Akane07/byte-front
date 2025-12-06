@@ -40,7 +40,7 @@
             type="active"
             @click="navigateTo('/profile/my/settings')"
           >
-            <IconsSettings></IconsSettings>
+            <!-- <IconsSettings></IconsSettings> -->
             Настройки профиля
           </UIDevButton>
           <UIDevButton
@@ -121,11 +121,11 @@
           </UIDevButton>
         </div>
         <div class="flex flex-wrap gap-6" v-if="portfolios.length">
-          <ProfilePortfolio
+          <ProfilePortfolioBlock
             v-for="portfolio in portfolios"
             :key="portfolio.id"
             :portfolio="portfolio"
-          ></ProfilePortfolio>
+          ></ProfilePortfolioBlock>
         </div>
       </div>
       <div class="feedbacks" v-if="feedbacks.length">
@@ -199,7 +199,7 @@ onMounted(async () => {
 
   .name {
     font-weight: 600;
-    color: $active;
+    color: $primary;
     font-size: 24px;
   }
 

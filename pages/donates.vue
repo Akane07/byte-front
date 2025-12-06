@@ -251,7 +251,7 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
                             .copy {
                                 margin-left: auto;
                                 padding: 29px 18px;
-                                background: #8B60FA;
+                                background: $primary-active;
                                 border-radius: 6px;
                                 cursor: pointer;
                                 color: $white;

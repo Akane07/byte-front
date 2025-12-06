@@ -85,7 +85,7 @@ const userStore = inject("userStore");
   & > p {
     font-weight: 600;
     font-size: 18px;
-    color: $active;
+    color: $primary;
   }
 
   .main_info {

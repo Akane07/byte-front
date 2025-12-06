@@ -86,7 +86,7 @@ async function handleDelete() {
 
         p {
             font-weight: 600;
-            color: $active;
+            color: $primary;
             transition: color 0.3s ease-in-out;
             text-align: center;
         }

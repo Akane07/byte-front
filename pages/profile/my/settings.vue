@@ -136,7 +136,7 @@
             style="width: 200px"
             >Сохранить</UIDevButton
           >
-          <UIDevButton type="cancel" style="width: 200px"
+          <UIDevButton type="cancel" variant="outline" style="width: 200px"
             >Удалить акканут</UIDevButton
           >
         </div>

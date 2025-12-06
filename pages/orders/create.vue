@@ -63,19 +63,8 @@
           <div class="block">
             <p>Добавьте навыки или напишите свои (до 10)</p>
             <div class="skills_block" @click="handleFocus">
-              <div
-                v-for="(skill, index) in newOrder.skills"
-                :key="skill"
-                class="skill"
-              >
-                <span>{{ skill }}</span>
-                <IconsCross
-                  style="transform: scale(0.8)"
-                  class="cursor"
-                  @click="deleteSkill(index)"
-                >
-                </IconsCross>
-              </div>
+              <UIDevChip v-for="(skill, index) in newOrder.skills" :key="skill" :text="skill" removable :hover="false"
+                    @delete="deleteSkill(index)"></UIDevChip>
               <input
                 v-model="newSkill"
                 ref="inputRef"
@@ -682,7 +671,7 @@ await categoryStore.getAllCategories();
             width: 32px;
             height: 32px;
             border-radius: 6px;
-            border: 2px solid $active;
+            border: 2px solid $primary;
             cursor: pointer;
           }
         }
@@ -725,7 +714,7 @@ await categoryStore.getAllCategories();
                 .circle {
                   width: 20px;
                   height: 20px;
-                  background: $active;
+                  background: $primary;
                   border-radius: 100%;
                   cursor: pointer;
                 }
@@ -740,11 +729,11 @@ await categoryStore.getAllCategories();
             }
 
             &.active {
-              border: 1px solid $active;
+              border: 1px solid $primary;
             }
 
             &:hover {
-              border: 1px solid $active;
+              border: 1px solid $primary;
             }
           }
         }
@@ -772,7 +761,7 @@ await categoryStore.getAllCategories();
         .contract {
           font-weight: 500;
           font-size: 14px;
-          color: $active;
+          color: $primary;
           cursor: pointer;
         }
       }
@@ -841,7 +830,7 @@ await categoryStore.getAllCategories();
           border: none;
           outline: none;
           background: transparent;
-          color: $active;
+          color: $primary;
           padding: 12px 28px;
           cursor: pointer;
         }

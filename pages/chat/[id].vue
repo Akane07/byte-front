@@ -315,7 +315,7 @@ onMounted(async () => {
 
   .request {
     background: rgba(139, 96, 250, 0.1);
-    color: $active;
+    color: $primary;
   }
 
   .view {
