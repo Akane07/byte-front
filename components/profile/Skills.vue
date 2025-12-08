@@ -8,14 +8,14 @@
             @click="showModal = !showModal">Добавить навык</button>
     </div>
 
-    <UIDevModal v-if="showModal" title="Какими навыками вы обладаете?" @close="showModal = false">
+    <UIDevModal v-if="showModal" title="Какими навыками вы обладаете?" @close="showModal = false" >
         <template #body>
             <p class="mb-3">Навыки</p>
-            <div class="skills w-[500px] flex flex-wrap gap-3 rounded-md p-4" @click="handleFocus">
+            <div class="skills w-[500px] flex flex-wrap gap-3 rounded-md p-4" @click="handleFocus" @blur="handleBlur" @mousedown.prevent="handleMouseDown">
                 <UIDevChip v-for="(skill, index) in copySkills" :key="skill" :text="skill" removable :hover="false"
                     @delete="deleteSkill(index)"></UIDevChip>
                 <input ref="inputRef" v-model="newSkill" class="cursor-pointer bg-transparent border-none outline-none"
-                    type="text" maxlength="20" @keyup.enter="handleAddSkill">
+                    type="text" maxlength="20" @keyup.enter="handleAddSkill" @blur="handleAddSkillOnBlur">
             </div>
         </template>
         <template #buttons>
@@ -45,6 +45,13 @@ function handleAddSkill() {
     if (copySkills.value.length >= 10) return;
     copySkills.value.push(newSkill.value);
     newSkill.value = '';
+    nextTick(() => {
+        inputRef.value?.focus();
+    });
+}
+
+function handleAddSkillOnBlur() {
+    handleAddSkill();
 }
 
 function deleteSkill(index: number) {
@@ -55,6 +62,20 @@ function handleFocus() {
     inputRef.value?.focus();
 }
 
+function handleBlur(event: FocusEvent) {
+    const relatedTarget = event.relatedTarget as HTMLElement;
+    if (relatedTarget && !event.currentTarget?.contains(relatedTarget)) {
+        handleAddSkill();
+    }
+}
+
+function handleMouseDown(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (target.classList.contains('skills')) {
+        event.preventDefault();
+    }
+}
+
 watch(props, () => {
     copySkills.value = structuredClone(toRaw(props.skills));
 }, {
@@ -63,6 +84,11 @@ watch(props, () => {
 
 watch(showModal, () => {
     copySkills.value = structuredClone(toRaw(props.skills));
+     if (showModal.value) {
+        nextTick(() => {
+            inputRef.value?.focus();
+        });
+    }
 });
 </script>
 
