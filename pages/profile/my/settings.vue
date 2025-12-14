@@ -1,5 +1,5 @@
 <template>
-  <UIDevNavMenu></UIDevNavMenu>
+  <UINavMenu></UINavMenu>
   <div
     class="wrapper w-full min-h-dvh absolute top-0 left-0 flex justify-center pt-[150px] pb-[300px] px-[150px]"
   >
@@ -7,7 +7,7 @@
       <div class="settings w-full max-w-[500px] flex flex-col gap-12">
         <div class="flex flex-col gap-6">
           <h2 class="font-medium text-[32px]">Настройки</h2>
-          <UIDevTabs
+          <UITabs
             v-model:active="active"
             :tabs="[
               { name: 'Общие', value: 'general' },
@@ -18,45 +18,45 @@
         </div>
         <div class="flex flex-col gap-6">
           <template v-if="active === 'general'">
-            <UIDevInput
+            <UIInput
               v-model="general.nickname"
               label="Логин"
               type="text"
               placeholder="Отображаемый ник"
               :rules="rules.notEmpty"
-            ></UIDevInput>
-            <UIDevInput
+            ></UIInput>
+            <UIInput
               v-model="general.email"
               label="Почта"
               type="text"
               placeholder="Почта, привязанная к аккануту"
               disabled
-            ></UIDevInput>
+            ></UIInput>
             <div class="block pass">
               <p>Пароль</p>
-              <UIDevInput
+              <UIInput
                 v-model="pass.password"
                 type="password"
                 placeholder="Новый пароль"
                 :rules="rules.notEmpty"
-              ></UIDevInput>
-              <UIDevInput
+              ></UIInput>
+              <UIInput
                 v-model="pass.newPassword"
                 type="password"
                 placeholder="Новый пароль ещё раз"
                 :rules="rules.notEmpty"
               >
-              </UIDevInput>
+              </UIInput>
             </div>
           </template>
           <template v-if="active === 'profile'">
-            <UIDevInput
+            <UIInput
               v-model="profile.name"
               label="Имя"
               type="text"
               placeholder="Ваше имя"
               :rules="rules.notEmpty"
-            ></UIDevInput>
+            ></UIInput>
             <div class="block">
               <p>Аватар</p>
               <div
@@ -77,21 +77,21 @@
                 />
               </div>
             </div>
-            <UIDevInput
+            <UIInput
               v-model="profile.speciality"
               label="Ваша специальность"
               type="text"
               placeholder="Вы по специальности"
               maxlength="40"
             >
-            </UIDevInput>
-            <UIDevTextarea
+            </UIInput>
+            <UITextarea
               v-model="profile.description"
               label="Описание профиля"
               maxlength="1000"
               placeholder="Написание привлекательного описания может повысить шансы найти заказ"
             >
-            </UIDevTextarea>
+            </UITextarea>
             <div class="block">
               <p>Навыки (до 10)</p>
               <ProfileSkills
@@ -100,44 +100,44 @@
                 @delete="deleteSkill"
               ></ProfileSkills>
             </div>
-            <UIDevSelect
+            <UISelect
               :list="countries"
               label="Страна"
               :selected="profile.country"
               @select="handleSelect"
-            ></UIDevSelect>
+            ></UISelect>
           </template>
           <template v-if="active === 'socials'">
-            <UIDevInput
+            <UIInput
               v-model="profile.telegram"
               label="Telegram"
               type="text"
               placeholder="Вставьте полную ссылку на ваш Telegram"
-            ></UIDevInput>
-            <UIDevInput
+            ></UIInput>
+            <UIInput
               v-model="profile.behance"
               label="Behance"
               type="text"
               placeholder="Вставьте полную ссылку на ваш Behance"
-            ></UIDevInput>
-            <UIDevInput
+            ></UIInput>
+            <UIInput
               v-model="profile.git"
               label="Github/Gitlab"
               type="text"
               placeholder="Вставьте полную ссылку на ваш Github/Gitlab"
-            ></UIDevInput>
+            ></UIInput>
           </template>
         </div>
         <div class="flex items-center gap-8">
-          <UIDevButton
+          <UIButton
             type="active"
             @click="saveUser"
             :disabled="!(validProfile && validPass)"
             style="width: 200px"
-            >Сохранить</UIDevButton
+            >Сохранить</UIButton
           >
-          <UIDevButton type="cancel" variant="outline" style="width: 200px"
-            >Удалить акканут</UIDevButton
+          <UIButton type="cancel" variant="outline" style="width: 200px"
+            >Удалить акканут</UIButton
           >
         </div>
       </div>

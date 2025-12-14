@@ -1,5 +1,5 @@
 <template>
-  <UIDevNavMenu></UIDevNavMenu>
+  <UINavMenu></UINavMenu>
 
   <ProfilePortfolio />
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <UIDevNavMenu></UIDevNavMenu>
+  <UINavMenu></UINavMenu>
 
   <div class="wrapper">
     <div ref="wrapperRef" class="step_wrapper">
@@ -14,14 +14,14 @@
           </p>
         </div>
         <div class="right_part">
-          <UIDevInput
+          <UIInput
             v-model="newOrder.title"
             type="text"
             label="Напишите название для своего заказа"
             placeholder="Например, создание адаптивного сайта"
             :rules="rules.notEmpty"
             required
-          ></UIDevInput>
+          ></UIInput>
           <div class="description">
             <p>Примеры названий</p>
             <ul>
@@ -53,12 +53,12 @@
         <div class="right_part">
           <div class="block">
             <p>Категория заказа<span style="color: $text-red">*</span></p>
-            <UIDevSelect
+            <UISelect
               style="width: 100%"
               :list="categoryStore.mapCategories"
               :selected="newOrder.category"
               @select="handleSelect"
-            ></UIDevSelect>
+            ></UISelect>
           </div>
           <div class="block">
             <p>Добавьте навыки или напишите свои</p>
@@ -88,7 +88,7 @@
           <div class="block">
             <p>Популярные навыки</p>
             <div class="tags">
-              <UIDevChip
+              <LazyUIChip
                 v-for="tag in filteredSkills"
                 :key="tag"
                 @click="addSkill(tag)"
@@ -98,7 +98,7 @@
                   color="$text-placeholder"
                   style="transform: scale(1.2)"
                 ></IconsPlus>
-              </UIDevChip>
+              </LazyUIChip>
             </div>
           </div>
         </div>
@@ -279,11 +279,11 @@
                 >*</span
               >
             </p>
-            <UIDevTextarea
+            <UITextarea
               v-model="newOrder.description"
               placeholder="Описание вашего заказа"
               maxlength="2000"
-            ></UIDevTextarea>
+            ></UITextarea>
           </div>
         </div>
       </div>
@@ -294,14 +294,14 @@
         <div class="line" :style="{ width: `${step * 20}%` }"></div>
       </div>
       <div class="actions">
-        <UIDevButton class="next" @click="prevStep">Назад</UIDevButton>
+        <UIButton class="next" @click="prevStep">Назад</UIButton>
         <div class="right">
           <button class="draft" @click="saveAsDraft">
             Сохранить как черновик
           </button>
-          <UIDevButton class="next" type="active" @click="nextStep">{{
+          <UIButton class="next" type="active" @click="nextStep">{{
             step === 5 ? "Сохранить" : "Далее"
-          }}</UIDevButton>
+          }}</UIButton>
         </div>
       </div>
     </div>

@@ -54,3 +54,11 @@ input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
+svg {
+    transition: all 0.2s ease-in-out;
+}
+
+path {
+    transition: all 0.2s ease-in-out;
+}

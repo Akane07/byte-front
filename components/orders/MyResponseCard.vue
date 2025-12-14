@@ -14,20 +14,20 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(response.price_type, response.price) }}</p>
-            <UIDevButton v-if="response.viewed" type="active" @click.stop="">Просмотрено</UIDevButton>
-            <UIDevButton v-if="!response.viewed" @click.stop="">Не просмотрено</UIDevButton>
+            <UIButton v-if="response.viewed" type="active" @click.stop="">Просмотрено</UIButton>
+            <UIButton v-if="!response.viewed" @click.stop="">Не просмотрено</UIButton>
         </div>
     </div>
 
-    <UIDevModal v-if="modal" title="Подтверждение" @close="modal = false">
+    <UIModal v-if="modal" title="Подтверждение" @close="modal = false">
         <template #body>
             <p class="confirm">Вы уверены, что хотите удалить свой отклик? Отменить это действие будет невозможно.</p>
         </template>
         <template #buttons>
-            <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton type="active" @click.stop="handleDelete">Удалить</UIDevButton>
+            <UIButton @click.stop="modal = false">Отмена</UIButton>
+            <UIButton type="active" @click.stop="handleDelete">Удалить</UIButton>
         </template>
-    </UIDevModal>
+    </UIModal>
 </template>
 
 <script setup lang="ts">

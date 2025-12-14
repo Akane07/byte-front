@@ -1,5 +1,5 @@
 <template>
-    <UIDevNavMenu absolute></UIDevNavMenu>
+    <UINavMenu absolute></UINavMenu>
     <UIBackground></UIBackground>
 
     <div class="w-full flex flex-col justify-center items-center z-100 relative mb-25">
@@ -10,17 +10,17 @@
                     <div class="title">
                         <p>Все предложения</p>
                     </div>
-                    <UIDevButton class="w-[250px]" type="active" @click="navigateTo('/orders/create')">
+                    <UIButton class="w-[250px]" type="active" @click="navigateTo('/orders/create')">
                         Разместить заказ
-                    </UIDevButton>
+                    </UIButton>
                 </div>
                 <div class="flex flex-col gap-4">
                     <OrdersOrderCard v-for="order in orderStore.orders" :key="order.id" :order="order"
                         @showOrder="showOrder"></OrdersOrderCard>
                 </div>
                 <div class="flex justify-center mt-8 justify-self-end" v-if="orderStore.total > 1">
-                    <UIDevPagination :total="orderStore.total" :currentPage="orderStore.page" @change="getOrders">
-                    </UIDevPagination>
+                    <UIPagination :total="orderStore.total" :currentPage="orderStore.page" @change="getOrders">
+                    </UIPagination>
                 </div>
             </div>
         </div>

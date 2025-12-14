@@ -14,12 +14,12 @@
 
     <div class="w-full flex gap-8 max-w-[1440px] mt-8">
       <div class="flex flex-col gap-8 w-[40%]">
-        <UIDevInput v-model="portfolio.title" label="Название проекта" type="text"
+        <UIInput v-model="portfolio.title" label="Название проекта" type="text"
           placeholder="Введите краткое, но понятное название" maxlength="40" :rules="rules.notEmpty" required />
-        <UIDevInput v-model="portfolio.role" label="Ваша роль" type="text"
+        <UIInput v-model="portfolio.role" label="Ваша роль" type="text"
           placeholder="Например, Front-end разработчик или Web-designer" maxlength="40" :rules="rules.notEmpty"
           required />
-        <UIDevTextarea v-model="portfolio.description" label="Описание проекта"
+        <UITextarea v-model="portfolio.description" label="Описание проекта"
           placeholder="Например, Front-end разработчик или Web-designer" maxlength="1000" :rules="rules.notEmpty"
           required />
         <div class="flex flex-col gap-3">
@@ -44,15 +44,18 @@
           <img v-else :src="file" alt="photo" class="w-full h-full rounded-md object-cover" />
           <div class="hover absolute top-0 left-0 w-full h-full opacity-0">
             <div class="flex gap-2 absolute right-3.5 top-2.5">
-              <div class="button w-9 h-9 flex items-center justify-center rounded-md relative cursor-pointer"
-                @click="deleteFile(index)">
-                <IconsTrash style="transform: scale(1.3)" color="white"></IconsTrash>
-              </div>
-              <div class="button w-9 h-9 flex items-center justify-center rounded-md relative">
-                <input class="absolute z-10 w-full h-full opacity-0 cursor-pointer" type="file" accept="image/*"
-                  @change="handleFileReplace($event.target.files[0], index)" />
-                <IconsEditPen style="transform: scale(1.3)" color="white"></IconsEditPen>
-              </div>
+              <LazyUIActionButton @click="deleteFile(index)">
+                <template #icon="{ color }">
+                  <IconsTrash style="transform: scale(1.3)" :color="color"></IconsTrash>
+                </template>
+              </LazyUIActionButton>
+              <LazyUIActionButton @click.stop="navigateTo(`/profile/portfolio/edit/${portfolio.id}`)">
+                <template #icon="{ color }">
+                  <input class="absolute z-10 w-full h-full opacity-0 cursor-pointer" type="file" accept="image/*"
+                    @change="handleFileReplace($event.target.files[0], index)" />
+                  <IconsEditPen style="transform: scale(1.3)" :color="color"></IconsEditPen>
+                </template>
+              </LazyUIActionButton>
             </div>
             <div class="gradient" />
           </div>
@@ -78,9 +81,9 @@
     </div>
 
     <div class="w-full flex justify-end mt-25 max-w-[1440px]">
-      <UIDevButton type="active" :disabled="!isValid" @click="uploadFiles">
+      <UIButton type="active" :disabled="!isValid" @click="uploadFiles">
         Опубликовать
-      </UIDevButton>
+      </UIButton>
     </div>
   </div>
 </template>
@@ -251,10 +254,6 @@ onMounted(async () => {
 
     .hover {
       transition: opacity 0.2s ease-in;
-
-      .button {
-        background: $tag-secondary-color;
-      }
     }
 
     .gradient {

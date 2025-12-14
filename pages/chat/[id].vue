@@ -66,7 +66,7 @@
     </div>
   </div>
   <div class="flex flex-col w-full items-center justify-center" v-else>
-    <UIDevLoader />
+    <UILoader />
   </div>
 
   <LazyChatAcceptModal v-if="modalAccept && order" :order="order" @close="modalAccept = false"

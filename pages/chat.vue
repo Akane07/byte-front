@@ -1,5 +1,5 @@
 <template>
-  <UIDevNavMenu></UIDevNavMenu>
+  <UINavMenu></UINavMenu>
   <UIBackground></UIBackground>
 
   <div class="flex flex-col items-center w-full pt-8">
@@ -10,11 +10,11 @@
           <span class="px-2 py-0.5 rounded-3xl">{{ chats.length }}</span>
         </div>
         <div class="px-6 py-3 w-full">
-          <UIDevInput v-model="searchString" type="text" placeholder="Поик">
+          <UIInput v-model="searchString" type="text" placeholder="Поик">
             <template #prepend>
               <IconsSearch></IconsSearch>
             </template>
-          </UIDevInput>
+          </UIInput>
         </div>
         <div class="users flex flex-col gap-2 w-full px-4 overflow-y-scroll">
           <div

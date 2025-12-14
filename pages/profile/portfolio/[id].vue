@@ -1,5 +1,5 @@
 <template>
-    <UIDevNavMenu></UIDevNavMenu>
+    <UINavMenu></UINavMenu>
     <UIBackground></UIBackground>
 
     <div class="wrapper">
@@ -42,15 +42,15 @@
                     <UIUserAvatar size="56px" :src="makeURL(user?.avatar)"></UIUserAvatar>
                     <div class="name">
                         <p>{{ user?.nickname || 'Без имени' }}</p>
-                        <UIDevButton v-if="user?.id === userStore.user?.id" active
+                        <UIButton v-if="user?.id === userStore.user?.id" active
                             @click.stop="navigateTo(`/profile/portfolio/edit/${portfolio.id}`)">
                             <IconsPencil></IconsPencil>
                             Редактировать проект
-                        </UIDevButton>
-                        <UIDevButton v-if="user?.id !== userStore.user?.id" active
+                        </UIButton>
+                        <UIButton v-if="user?.id !== userStore.user?.id" active
                             @click="navigateTo(`/profile/${user?.id}`)">
                             Перейти в профиль
-                        </UIDevButton>
+                        </UIButton>
                     </div>
                 </div>
                 <div class="portfolio_wrapper" v-if="portfolios">

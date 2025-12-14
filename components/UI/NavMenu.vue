@@ -130,24 +130,24 @@
     </div>
   </div>
 
-  <UIDevModal v-if="modal" title="Подтверждение" @close="modal = false">
+  <UIModal v-if="modal" title="Подтверждение" @close="modal = false">
     <template #body>
       <p class="confirm" style="color: white">
         Вы уверены, что хотите выйти из своего аккаунта?
       </p>
     </template>
     <template #buttons>
-      <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
-      <UIDevButton type="active" @click.stop="userStore.logout()"
-        >Выйти</UIDevButton
+      <UIButton @click.stop="modal = false">Отмена</UIButton>
+      <UIButton type="active" @click.stop="userStore.logout()"
+        >Выйти</UIButton
       >
     </template>
-  </UIDevModal>
+  </UIModal>
 </template>
 
 <script setup lang="ts">
-import DevNavButton from "./DevNavButton.vue";
-import DevButton from "./DevButton.vue";
+import DevNavButton from "./NavButton.vue";
+import DevButton from "./Button.vue";
 import { useUserStore } from "~/store/userStore";
 import { makeURL } from "~/shared/utils/helpers";
 

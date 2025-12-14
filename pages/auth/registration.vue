@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import DevAuthInput from '~/components/auth/AuthInput.vue';
-import DevNavButton from '~/components/UI/DevNavButton.vue';
+import DevNavButton from '~/components/UI/NavButton.vue';
 import DevAuthBoard from '~/components/auth/AuthBoard.vue';
 import { register } from '~/shared/api/auth-api';
 import { setToken } from '~/shared/api';

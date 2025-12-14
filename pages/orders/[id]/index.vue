@@ -1,5 +1,5 @@
 <template>
-    <UIDevNavMenu></UIDevNavMenu>
+    <UINavMenu></UINavMenu>
     <UIBackground></UIBackground>
 
     <div class="wrapper">
@@ -50,9 +50,9 @@
             </div>
             <div class="right_part" v-if="!response.id">
                 <p>Ваше предложение</p>
-                <UIDevTextarea v-model="newResponse.description" maxlength="2000"></UIDevTextarea>
-                <UIDevButton style="align-self: flex-start;" active :disabled="!newResponse.description"
-                    @click="handlePostResponse">Откликнуться</UIDevButton>
+                <UITextarea v-model="newResponse.description" maxlength="2000"></UITextarea>
+                <UIButton style="align-self: flex-start;" active :disabled="!newResponse.description"
+                    @click="handlePostResponse">Откликнуться</UIButton>
             </div>
             <div class="right_part" v-if="response.id && !edit && userStore.user">
                 <p>Ваше предложение</p>
@@ -77,26 +77,26 @@
                     <span>Отклик от {{ useUserCreated(response.created_at) }}</span>
                 </div>
                 <div class="block">
-                    <UIDevTextarea v-model="response.description" style="width: 100%;" maxlength="2000"></UIDevTextarea>
+                    <UITextarea v-model="response.description" style="width: 100%;" maxlength="2000"></UITextarea>
                 </div>
                 <div class="actions">
-                    <UIDevButton style="align-self: flex-start;" type="active" @click="handleEditResponse">Подтвердить
-                    </UIDevButton>
+                    <UIButton style="align-self: flex-start;" type="active" @click="handleEditResponse">Подтвердить
+                    </UIButton>
                     <button class="delete" @click="edit = false">Отменить</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <UIDevModal v-if="modal" title="Подтверждение" @close="modal = false">
+    <UIModal v-if="modal" title="Подтверждение" @close="modal = false">
         <template #body>
             <p class="confirm">Вы уверены, что хотите удалить свой отклик? Отменить это действие будет невозможно.</p>
         </template>
         <template #buttons>
-            <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton type="active" @click.stop="handleDelete">Удалить</UIDevButton>
+            <UIButton @click.stop="modal = false">Отмена</UIButton>
+            <UIButton type="active" @click.stop="handleDelete">Удалить</UIButton>
         </template>
-    </UIDevModal>
+    </UIModal>
 </template>
 
 <script setup lang="ts">

@@ -17,19 +17,19 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIDevButton style="min-width: 155px; color: $text-secondary; border-color: $text-secondary;">Черновик</UIDevButton>
+            <UIButton style="min-width: 155px; color: $text-secondary; border-color: $text-secondary;">Черновик</UIButton>
         </div>
     </div>
 
-    <UIDevModal v-if="modal" title="Подтверждение" @close="modal = false">
+    <UIModal v-if="modal" title="Подтверждение" @close="modal = false">
         <template #body>
             <p class="confirm">Вы уверены, что хотите удалить свой черновик? Отменить это действие будет невозможно.</p>
         </template>
         <template #buttons>
-            <UIDevButton @click.stop="modal = false">Отмена</UIDevButton>
-            <UIDevButton type="active" @click.stop="handleDelete">Удалить</UIDevButton>
+            <UIButton @click.stop="modal = false">Отмена</UIButton>
+            <UIButton type="active" @click.stop="handleDelete">Удалить</UIButton>
         </template>
-    </UIDevModal>
+    </UIModal>
 </template>
 
 <script setup lang="ts">

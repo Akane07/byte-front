@@ -12,14 +12,14 @@
         useSliceDescription(order.description, 175)
       }}</span>
       <div class="flex flex-wrap gap-2">
-        <UIDevChip
+        <LazyUIChip
           v-for="skill in order.skills.slice(0, 5)"
           :key="skill"
           :text="skill"
           :hover="false"
-        ></UIDevChip>
-        <UIDevChip v-if="order.skills.length > 5" :hover="false"
-          >+{{ order.skills.length - 5 }}</UIDevChip
+        ></LazyUIChip>
+        <LazyUIChip v-if="order.skills.length > 5" :hover="false"
+          >+{{ order.skills.length - 5 }}</LazyUIChip
         >
       </div>
       <div class="flex items-end ga-4 text-white opacity-60 text-[14px]">

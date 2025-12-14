@@ -66,8 +66,8 @@
       <div class="right_part" v-if="order">
         <div class="price">
           <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-          <UIDevButton type="active" @click="handleOrderRedirect"
-            >Откликнуться</UIDevButton
+          <UIButton type="active" @click="handleOrderRedirect"
+            >Откликнуться</UIButton
           >
         </div>
         <div class="about_client" v-if="user">

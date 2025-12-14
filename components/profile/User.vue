@@ -30,26 +30,26 @@
             user.description || "Нет описания"
           }}</span>
           <div class="flex flex-wrap gap-2 pt-3">
-            <UIDevChip v-for="skill in user.skills" :text="skill"></UIDevChip>
+            <LazyUIChip v-for="skill in user.skills" :text="skill"></LazyUIChip>
           </div>
         </div>
         <div class="bordered"></div>
         <div class="w-full flex flex-col gap-8 pb-4.5 pt-3 max-w-[230px]">
-          <UIDevButton
+          <UIButton
             v-if="userStore.user?.id === user.id"
             type="active"
             @click="navigateTo('/profile/my/settings')"
           >
             <!-- <IconsSettings></IconsSettings> -->
             Настройки профиля
-          </UIDevButton>
-          <UIDevButton
+          </UIButton>
+          <UIButton
             v-else
             type="active"
             @click="navigateTo(`/chat/${user.id}`)"
           >
             Отправить сообщение
-          </UIDevButton>
+          </UIButton>
           <div class="flex flex-col gap-4">
             <div
               v-if="userStore.user?.id !== user.id"
@@ -108,7 +108,7 @@
       <div class="portfolio">
         <div class="flex justify-between items-center">
           <p>Портфолио</p>
-          <UIDevButton
+          <UIButton
             v-if="userStore.user.id === user?.id"
             class="add-button"
             @click="navigateTo('/profile/new-project')"
@@ -118,7 +118,7 @@
               style="transform: scale(1.2)"
             ></IconsPlus>
             Добавить проект в портфолио
-          </UIDevButton>
+          </UIButton>
         </div>
         <div class="flex flex-wrap gap-6" v-if="portfolios.length">
           <ProfilePortfolioBlock
@@ -138,7 +138,7 @@
 </template>
 
 <script setup lang="ts">
-import DevCard from "~/components/UI/DevCard.vue";
+import DevCard from "~/components/UI/Card.vue";
 import type { Portfolio } from "~/shared/api/portfolio-api";
 import type { User } from "~/shared/api/user-api";
 import { makeURL } from "~/shared/utils/helpers";

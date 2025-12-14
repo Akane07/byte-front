@@ -1,5 +1,5 @@
 <template>
-    <UIDevNavMenu></UIDevNavMenu>
+    <UINavMenu></UINavMenu>
     <UIBackground></UIBackground>
 
     <div class="wrapper">
@@ -24,10 +24,10 @@
                         Мои заказы
                     </div>
                     <div class="orders_buttons">
-                        <UIDevNavButton :stroke="true" @click="navigateTo('/orders/create')">
+                        <UINavButton :stroke="true" @click="navigateTo('/orders/create')">
                             <IconsPlus style="transform: scale(1.3); margin-right: 8px;"></IconsPlus>
                             Создать заказ
-                        </UIDevNavButton>
+                        </UINavButton>
                     </div>
                 </div>
                 <div class="orders_list" v-if="orderStore.myOrders.length">
@@ -44,10 +44,10 @@
                         Мои отклики
                     </div>
                     <div class="orders_buttons">
-                        <UIDevNavButton :stroke="true" @click="navigateTo('/orders/create')">
+                        <UINavButton :stroke="true" @click="navigateTo('/orders/create')">
                             <IconsPlus style="transform: scale(1.3); margin-right: 8px;"></IconsPlus>
                             Создать заказ
-                        </UIDevNavButton>
+                        </UINavButton>
                     </div>
                 </div>
                 <div class="orders_list" v-if="orderStore.myResponses.length">
@@ -64,10 +64,10 @@
                         Черновики
                     </div>
                     <div class="orders_buttons">
-                        <UIDevNavButton :stroke="true" @click="navigateTo('/orders/create')">
+                        <UINavButton :stroke="true" @click="navigateTo('/orders/create')">
                             <IconsPlus style="transform: scale(1.3); margin-right: 8px;"></IconsPlus>
                             Создать заказ
-                        </UIDevNavButton>
+                        </UINavButton>
                     </div>
                 </div>
                 <div class="orders_list" v-if="orderStore.myDrafts.length">

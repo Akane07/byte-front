@@ -49,9 +49,9 @@
           {{ to ? useUserCreated(to) : "дата окончания" }}
         </p>
         <div class="w-full flex justify-end items-center gap-4">
-          <UIDevButton type="cancel" @click="$emit('close')">Отмена</UIDevButton>
-          <UIDevButton type="active" @click="saveRange" :disabled="(!from || !to) && deadlines === 'custom'">Сохранить
-          </UIDevButton>
+          <UIButton type="cancel" @click="$emit('close')">Отмена</UIButton>
+          <UIButton type="active" @click="saveRange" :disabled="(!from || !to) && deadlines === 'custom'">Сохранить
+          </UIButton>
         </div>
       </div>
     </div>

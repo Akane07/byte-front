@@ -1,12 +1,12 @@
 <template>
   <div class="home w-full h-screen relative">
-    <UIDevNavMenu></UIDevNavMenu>
+    <UINavMenu></UINavMenu>
     <div class="absolute w-full h-full flex justify-center px-15 top-0">
       <UIBackground></UIBackground>
       <div class="content flex flex-col items-center gap-7.5 text-center mt-[260px]">
         <h1 class="z-1 w-full max-w-[1100px]">Виртуальный мир реальных возможностей</h1>
         <p class="z-3">Работай с проверенными заказчиками, получай честную оплату и развивай свои навыки каждый день.</p>
-        <UIDevNavButton @click="$router.push('/orders')" style="z-index: 100">Перейти</UIDevNavButton>
+        <UINavButton @click="$router.push('/orders')" style="z-index: 100">Перейти</UINavButton>
       </div>
     </div>
   </div>

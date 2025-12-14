@@ -1,5 +1,5 @@
 <template>
-  <UIDevCustomModal @close="$emit('close')">
+  <UICustomModal @close="$emit('close')">
     <div class="accept_modal w-full max-w-[600px] h-full p-8 rounded-[20px]">
       <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
       <div class="main_info flex flex-col gap-6 pb-4 mt-4">
@@ -45,9 +45,9 @@
       <div class="skills flex flex-col gap-4">
         <p>Навыки и экспертный опыт</p>
         <div class="flex flex-wrap gap-2">
-          <LazyUIDevChip v-for="skill in order.skills" :key="skill">{{
+          <LazyUIChip v-for="skill in order.skills" :key="skill">{{
             skill
-          }}</LazyUIDevChip>
+          }}</LazyUIChip>
         </div>
       </div>
       <div class="flex gap-3 items-center justify-center mt-6">
@@ -55,7 +55,7 @@
         <button class="delete" @click="$emit('reject')">Отклонить</button>
       </div>
     </div>
-  </UIDevCustomModal>
+  </UICustomModal>
 </template>
 
 <script setup lang="ts">
@@ -72,7 +72,7 @@ defineEmits<{
   (e: "reject"): void;
 }>();
 
-const userStore = inject("userStore");
+const userStore = inject<any>("userStore");
 </script>
 
 <style lang="scss" scoped>

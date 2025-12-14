@@ -36,34 +36,34 @@
     </div>
     <div class="order_actions">
       <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-      <UIDevButton
+      <UIButton
         v-if="plain"
         active
         @click="$emit('suggest', order.id)"
-        >Предложить</UIDevButton
+        >Предложить</UIButton
       >
-      <UIDevButton
+      <UIButton
         v-else-if="!order.is_active"
        
         style="min-width: 155px"
-        >В архиве</UIDevButton
+        >В архиве</UIButton
       >
-      <UIDevButton
+      <UIButton
         v-else-if="order.is_active && !order.performer"
         active
         style="min-width: 155px"
-        >Активен</UIDevButton
+        >Активен</UIButton
       >
-      <UIDevButton
+      <UIButton
         v-else-if="order.is_active && order.performer"
         active
         style="min-width: 155px"
-        >Есть исполнитель</UIDevButton
+        >Есть исполнитель</UIButton
       >
     </div>
   </div>
 
-  <UIDevModal v-if="modal" title="Подтверждение" @close="modal = false">
+  <UIModal v-if="modal" title="Подтверждение" @close="modal = false">
     <template #body>
       <p class="confirm">
         Вы уверены, что хотите удалить свой заказ? Отменить это действие будет
@@ -71,14 +71,14 @@
       </p>
     </template>
     <template #buttons>
-      <UIDevButton @click.stop="modal = false"
-        >Отмена</UIDevButton
+      <UIButton @click.stop="modal = false"
+        >Отмена</UIButton
       >
-      <UIDevButton type="active" @click.stop="handleDelete"
-        >Удалить</UIDevButton
+      <UIButton type="active" @click.stop="handleDelete"
+        >Удалить</UIButton
       >
     </template>
-  </UIDevModal>
+  </UIModal>
 </template>
 
 <script setup lang="ts">
