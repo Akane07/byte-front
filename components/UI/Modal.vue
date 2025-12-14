@@ -1,7 +1,7 @@
 <template>
     <div class="modal_wrapper flex items-center justify-center w-full h-full fixed top-0 left-0"
         @click="$emit('close')">
-        <div class="modal flex flex-col gap-5.5 rounded-md p-5.5" @click.stop>
+        <div class="modal flex flex-col gap-5.5 rounded-md px-6 py-4 max-w-[600px]" @click.stop>
             <div class="header flex items-center justify-between">
                 <p v-if="title">{{ title }}</p>
                 <IconsCross class="cursor-pointer ml-40" @click="$emit('close')"></IconsCross>
@@ -43,7 +43,8 @@ onUnmounted(() => {
 
     .modal {
         background: $tag-color;
-        box-shadow: 0px 6px 15px 0px $shadow;
+        box-shadow: 0px 0px 10px 1px $shadow;
+
 
         .header {
             p {
