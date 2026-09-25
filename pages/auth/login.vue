@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="login-wrapper">
-      <div class="login-menu">
+      <form class="login-menu" @submit.prevent="handleLogin">
         <div class="text-menu">
           <span class="menu-hero">Вход</span>
           <span class="menu-context typed-wrapper">
@@ -9,22 +9,14 @@
           </span>
         </div>
         <div class="nav-menu">
-          <DevAuthInput
-            v-model="loginData.email"
-            placeholder="Ваша почта"
-            type="text"
-          />
-          <DevAuthInput
-            v-model="loginData.password"
-            placeholder="Пароль"
-            type="password"
-          />
-          <DevNavButton @click="handleLogin">Войти</DevNavButton>
+          <AuthInput v-model="loginData.email" placeholder="Ваша почта" type="email" />
+          <AuthInput v-model="loginData.password" placeholder="Пароль" type="password" />
+          <UINavButton type="submit" :disabled="loading">Войти</UINavButton>
         </div>
         <div class="log-and-recovery">
-          <div class="google">
+          <div class="google" @click="googleUnavailable">
             <div class="google-icon">
-              <img src="../../assets/icons/Google.svg" alt="" />
+              <img src="~/assets/icons/Google.svg" alt="Google" />
             </div>
             <div class="text-google">
               <span class="log">Войти с помощью</span>
@@ -33,45 +25,44 @@
           </div>
           <span class="recovery-text"
             >Забыли пароль?
-            <NuxtLink to="/auth/recovery" class="recovery">
-              Восстановить
-            </NuxtLink></span
+            <NuxtLink to="/auth/recovery" class="recovery">Восстановить</NuxtLink></span
           >
         </div>
-      </div>
-      <DevAuthBoard :recovery="false"></DevAuthBoard>
+      </form>
+      <AuthBoard :recovery="false" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import DevAuthInput from "~/components/auth/AuthInput.vue";
-import DevNavButton from "~/components/UI/NavButton.vue";
-import DevAuthBoard from "~/components/auth/AuthBoard.vue";
-import { login } from "~/shared/api/auth-api";
-import { setToken } from "~/shared/api";
+import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";
 
-definePageMeta({
-  middleware: ["auth"],
-});
-
 const userStore = useUserStore();
+const notifications = useNotifications();
 
+const loading = shallowRef(false);
 const loginData = ref({
   email: "",
   password: "",
 });
 
 async function handleLogin() {
-  const res = await login(loginData.value);
-
-  if (res.access_token) {
-    localStorage.setItem("byte-accessToken", res.access_token);
-    setToken(res.access_token);
-    await userStore.checkAuth();
-    navigateTo("/orders");
+  if (!loginData.value.email.trim() || !loginData.value.password) {
+    notifications.setNotification("Введите почту и пароль");
+    return;
   }
+
+  loading.value = true;
+  // Текст ошибки от сервера («Неверная почта или пароль») показывает интерсептор.
+  const ok = await userStore.login(loginData.value);
+  loading.value = false;
+
+  if (ok) navigateTo("/orders");
+}
+
+function googleUnavailable() {
+  notifications.setNotification("Вход через Google пока недоступен");
 }
 </script>
 

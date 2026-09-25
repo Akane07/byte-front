@@ -1,94 +1,106 @@
 import { io, type Socket } from "socket.io-client";
+import { api, call, getToken } from "~/shared/api";
 import type { Message } from "~/shared/types";
+import { useNotifications } from "~/store/notiStore";
 
-export const useChatSocket = () => {
-  const socket = ref<Socket | null>(null);
-  const messages = ref<Message[]>([]);
+interface ServerEvents {
+  receiveMessage: (message: Message) => void;
+  messageDeleted: (payload: { messageId: string }) => void;
+  messageAccepted: (payload: { messageId: string }) => void;
+  messageRejected: (payload: { messageId: string }) => void;
+  exception: (payload: { message: string | string[] }) => void;
+}
 
-  const connect = (roomId: string) => {
-    if (socket.value?.connected) return;
+interface ClientEvents {
+  sendMessage: (payload: {
+    receiverId: string;
+    text?: string;
+    mediaUrl?: string;
+    mediaType?: Message["mediaType"];
+    is_suggest?: boolean;
+    orderId?: string;
+  }) => void;
+  deleteMessage: (payload: { messageId: string }) => void;
+  acceptMessage: (payload: { messageId: string }) => void;
+  rejectMessage: (payload: { messageId: string }) => void;
+  postResponse: (payload: { orderId: string; responseId: string }) => void;
+  finishOrder: (payload: { orderId: string }) => void;
+}
 
-    socket.value = io("http://localhost:3002", {
+type ChatSocket = Socket<ServerEvents, ClientEvents>;
+
+/**
+ * Одно соединение на всё приложение. Раньше каждая страница открывала
+ * своё и не закрывала его, и при переходах соединения копились.
+ */
+let socket: ChatSocket | null = null;
+
+function getSocket(origin: string): ChatSocket {
+  if (!socket) {
+    socket = io(origin, {
       transports: ["websocket"],
+      // Функция, а не значение: токен читается заново при каждом переподключении.
+      auth: (cb) => cb({ token: getToken() }),
     });
-
-    socket.value.emit("joinRoom", roomId);
-
-    socket.value.on("receiveMessage", (msg) => {
-      messages.value.push(msg);
+    socket.on("exception", ({ message }) => {
+      useNotifications().setNotification(Array.isArray(message) ? message.join(". ") : message);
     });
-    socket.value.on("messageDeleted", (msg: { messageId: string }) => {
-      messages.value = messages.value.filter((m) => m.id !== msg.messageId);
+  } else if (socket.disconnected) {
+    socket.connect();
+  }
+  return socket;
+}
+
+/** Закрыть соединение — при выходе из аккаунта. */
+export function disconnectChatSocket() {
+  socket?.disconnect();
+  socket = null;
+}
+
+export function useChatSocket() {
+  const s = getSocket(useRuntimeConfig().public.apiOrigin);
+
+  /** Подписка на событие, которая снимается вместе с компонентом. */
+  function on<E extends keyof ServerEvents>(event: E, handler: ServerEvents[E]) {
+    s.on(event, handler as never);
+    onBeforeUnmount(() => {
+      s.off(event, handler as never);
     });
-    socket.value.on("messageRejected", (msg: { messageId: string }) => {
-      const index = messages.value.findIndex(
-        (m) => m.id === msg.messageId
-      ) as number;
-      messages.value[index].status = "rejected";
-    });
-  };
+  }
 
-  const sendMessageEvent = async (
-    sender: string,
-    reciever: string,
-    text: string,
-    file: any
-  ) => {
-    let mediaUrl = null;
-    let mediaType = "none";
+  async function sendMessage(receiverId: string, text: string, file?: File | null) {
+    let media: { mediaUrl: string; mediaType: Message["mediaType"] } | undefined;
 
-    if (file.value) {
-      const formData = new FormData();
-      formData.append("file", file.value);
-
-      const res = await fetch("http://localhost:3000/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await res.json();
-      mediaUrl = result.url;
-      mediaType = result.mimetype.startsWith("video") ? "video" : "image";
+    if (file) {
+      const form = new FormData();
+      form.append("file", file);
+      const uploaded = await call(api.post<{ url: string; mimetype: string }>("/upload", form));
+      if (!uploaded) return false;
+      media = {
+        mediaUrl: uploaded.url,
+        mediaType: uploaded.mimetype.startsWith("video") ? "video" : "image",
+      };
     }
 
-    socket.value?.emit("sendMessage", {
-      senderId: sender,
-      receiverId: reciever,
-      text: text,
-      mediaUrl,
-      mediaType,
-      createdAt: new Date().toISOString(),
-      is_suggest: false,
-    });
-  };
-
-  const acceptMessageEvent = (payload: any) => {
-    socket.value?.emit("acceptMessage", payload);
-  };
-
-  const rejectMessageEvent = (payload: any) => {
-    socket.value?.emit("rejectMessage", payload);
-  };
-
-  const deleteMessageEvent = (payload: any) => {
-    socket.value?.emit("deleteMessage", payload);
-  };
-
-  const disconnect = () => {
-    if (socket.value) {
-      socket.value.disconnect();
-      socket.value = null;
-    }
-  };
+    s.emit("sendMessage", { receiverId, text, ...media });
+    return true;
+  }
 
   return {
-    socket,
-    messages,
-    connect,
-    disconnect,
-    sendMessageEvent,
-    acceptMessageEvent,
-    rejectMessageEvent,
-    deleteMessageEvent,
+    on,
+    sendMessage,
+    suggestOrder: (receiverId: string, orderId: string) =>
+      s.emit("sendMessage", {
+        receiverId,
+        orderId,
+        is_suggest: true,
+        text: "Предложение заказа",
+      }),
+    acceptMessage: (messageId: string) => s.emit("acceptMessage", { messageId }),
+    rejectMessage: (messageId: string) => s.emit("rejectMessage", { messageId }),
+    deleteMessage: (messageId: string) => s.emit("deleteMessage", { messageId }),
+    postResponse: (orderId: string, responseId: string) =>
+      s.emit("postResponse", { orderId, responseId }),
+    finishOrder: (orderId: string) => s.emit("finishOrder", { orderId }),
   };
-};
+}

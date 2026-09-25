@@ -1,11 +1,17 @@
-export function useOrderDeadlines(deadline: "contract" | "less-week" | "more-week" | "less-month" | "more-month" | "custom", deadline_date?: { from: string; to: string; }) {
-    if (deadline === 'contract') return 'По договоренности';
-    if (deadline === 'more-month') return 'Более 1 месяца';
-    if (deadline === 'less-month') return 'Менее 1 месяца';
-    if (deadline === 'more-week') return 'Более 1 недели';
-    if (deadline === 'less-week') return 'Менее 1 недели';
-    if (deadline === 'custom' && deadline_date) {
-        return `до ${useUserCreated(deadline_date.to)}`;
-    }
-    return deadline;
+import type { DateRange, Deadline } from "~/shared/types";
+
+const DEADLINE_LABELS: Record<Exclude<Deadline, "custom">, string> = {
+  contract: "По договоренности",
+  "more-month": "Более 1 месяца",
+  "less-month": "Менее 1 месяца",
+  "more-week": "Более 1 недели",
+  "less-week": "Менее 1 недели",
+};
+
+export function useOrderDeadlines(deadline?: Deadline, deadlineDate?: DateRange): string {
+  if (!deadline) return "";
+  if (deadline === "custom") {
+    return deadlineDate?.to ? `до ${useUserCreated(deadlineDate.to)}` : "Сроки не указаны";
+  }
+  return DEADLINE_LABELS[deadline];
 }

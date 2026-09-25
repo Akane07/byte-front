@@ -1,129 +1,82 @@
-import { getDrafts, getMyResponses, getOrderById, getOrderByUserId, getOrders, getResponse, getResponsesOnOrder, markOrderViewed, patchOrder, postOrder, postResponse, type Order, type OrderResponse } from "~/shared/api/order-api";
-import { useCategory } from './categoryStore';
+import {
+  getDrafts,
+  getMyResponses,
+  getOrderById,
+  getOrderByUserId,
+  getOrders,
+  markOrderViewed,
+  patchOrder,
+  postOrder,
+  type MyOrderResponse,
+  type Order,
+  type OrderInput,
+} from "~/shared/api/order-api";
+import type { Filter } from "~/shared/types";
 
-export const useOrderStore = defineStore('order', () => {
-    const orders = ref<Order[]>([]);
-    const page = ref(1);
-    const total = ref(1);
+export const useOrderStore = defineStore("order", () => {
+  const orders = ref<Order[]>([]);
+  const page = shallowRef(1);
+  const total = shallowRef(1);
 
-    const myOrders = ref<Order[]>([]);
-    const myResponses = ref<OrderResponse[]>([]);
-    const myDrafts = ref<Order[]>([]);
+  // Бэкенд уже отдаёт списки от новых к старым — переворачивать не нужно.
+  const myOrders = ref<Order[]>([]);
+  const myResponses = ref<MyOrderResponse[]>([]);
+  const myDrafts = ref<Order[]>([]);
 
-    async function getAllOrders(filters?: { title: string; id: number; checked: boolean }[]) {
-        let filtersString = '';
-        if (filters) {
-            filtersString = filters.filter(filter => filter.checked).map(filter => `categories=${filter.id}`).join('&');
-        }
-            
-        const res = await getOrders(page.value, filtersString);        
+  async function getAllOrders(filters: Filter[] = []) {
+    const categories = filters.filter((f) => f.checked).map((f) => f.id);
+    const res = await getOrders(page.value, categories);
+    if (!res) return;
 
-        if (res.currentPage) {
-            orders.value = res.orders;
-            page.value = res.currentPage;
-            total.value = res.totalPages;
-        }
-    }
+    orders.value = res.orders;
+    page.value = res.currentPage;
+    total.value = res.totalPages;
+  }
 
-    async function getOrder(id: string): Promise<Order | null> {
-        const res = await getOrderById(id);
+  function getOrder(id: string) {
+    return getOrderById(id);
+  }
 
-        if (res.id) {
-            return res;
-        }
-        return null;
-    }
+  async function viewOrder(id: string) {
+    await markOrderViewed(id);
+  }
 
-    async function viewOrder(id: string) {
-        await markOrderViewed(id);
-    }
+  async function loadMyOrders(userId: string) {
+    myOrders.value = (await getOrderByUserId(userId)) ?? [];
+  }
 
-    async function postOrderResponse(id: string, description: string) {
-        const res = await postResponse(id, description);
+  async function getMyDrafts(userId: string) {
+    myDrafts.value = (await getDrafts(userId)) ?? [];
+  }
 
-        return res;
-    }
+  async function getResponses() {
+    myResponses.value = (await getMyResponses()) ?? [];
+  }
 
-    async function getOrderResponse(id: string) {
-        const res = await getResponse(id);
+  function createOrder(order: OrderInput) {
+    return postOrder(order);
+  }
 
-        return res;
-    }
+  function editOrder(order: Partial<OrderInput>, orderId: string) {
+    return patchOrder(orderId, order);
+  }
 
-    async function getOrderResponses(id: string) {
-        const res = await getResponsesOnOrder(id);
+  return {
+    orders,
+    page,
+    total,
 
-        return res;
-    }
+    myOrders,
+    myResponses,
+    myDrafts,
 
-    async function getUserOrders(id: string): Promise<Order[]> {
-        const res = await getOrderByUserId(id);
-
-        return res;
-    }
-
-    async function getMyDrafts(user_id: string) {
-        const drafts = await getDrafts(user_id);
-
-        if (drafts.length) {
-            myDrafts.value = drafts.reverse();
-        } else {
-            myDrafts.value = [];
-        }
-    }
-
-    async function getResponses() {
-        const res = await getMyResponses();
-
-        myResponses.value = res.reverse();
-    }
-
-    async function createOrder(order: Partial<Order>) {
-
-        if (order.draft) {
-            const res = await postOrder(order);
-
-            return res;
-        }
-
-        const categoryStore = useCategory();
-
-        order.category = categoryStore.getCategoryIdByTitle(order.category as unknown as string) as number;
-
-        const res = await postOrder(order);
-
-        return res;
-    }
-
-    async function editOrder(order: Partial<Order>, order_id: string) {
-        const categoryStore = useCategory();
-
-        order.category = categoryStore.getCategoryIdByTitle(order.category as unknown as string) as number;
-
-        const res = await patchOrder(order_id, order);
-
-        return res;
-    }
-
-    return {
-        orders,
-        page,
-        total,
-
-        myOrders,
-        myResponses,
-        myDrafts,
-
-        getAllOrders,
-        getOrder,
-        viewOrder,
-        postOrderResponse,
-        getOrderResponse,
-        getOrderResponses,
-        getUserOrders,
-        getMyDrafts,
-        getResponses,
-        createOrder,
-        editOrder,
-    };
+    getAllOrders,
+    getOrder,
+    viewOrder,
+    loadMyOrders,
+    getMyDrafts,
+    getResponses,
+    createOrder,
+    editOrder,
+  };
 });

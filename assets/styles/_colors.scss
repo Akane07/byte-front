@@ -1,0 +1,51 @@
+// Основные цвета
+$black: #000000;
+$white: #ffffff;
+$bg-brand: #222228;
+$bg-secondary: #333338;
+$border-color: #333741;
+$border-secondary: #333338;
+$border-active: #989898;
+$pagination-color: #f1f1f1;
+$tag-color: #2e2e2e;
+$tag-hover: #3c3b3b;
+$tag-secondary-color: #2E2E2E;
+$shadow: #1F1F1F5C;
+$chat-border: #333339;
+
+// Цвет текста
+$text-main: #f1ecff;
+$text-secondary: #D9D9D9;
+$text-header: #c5c5c5;
+$text-link: #c9c9c9;
+$text-red: #ff6969;
+$text-placeholder: rgba(255, 255, 255, 0.5);
+$text-accent: #dd6b20;
+
+// цвет кнопок
+$bg-button-gradient: linear-gradient(92.51deg, #ff9898 0.48%, #8054ff 100%);
+$bg-gradient: radial-gradient(
+    80.38% 222.5% at -13.75% -12.36%,
+    #98f9ff 0%,
+    rgba(255, 255, 255, 0) 100%
+  ),
+  radial-gradient(
+    80.69% 208.78% at 108.28% 112.58%,
+    #eabfff 0%,
+    rgba(135, 38, 183, 0) 100%
+  );
+$primary: #8355FA;
+$primary-hover: #A17DFF;
+$primary-active: #8B60FA;
+$secondary: #ABABAB;
+$secondary-hover: #FFFFFF0D;
+$delete: #FC585B;
+$delete-hover: #FF7F81;
+$bg-button-delete: rgba(255, 105, 105, 0.1);
+$bg-button-success: #38A169;
+
+// цвет инпутов
+$input-auth: #18181c;
+$bg-input: #323232;
+$select-enabled: #8355fa;
+$select-hover: rgba(139, 96, 250, 0.102);

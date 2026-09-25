@@ -4,7 +4,7 @@
       <div class="header">
         <IconsSuggest></IconsSuggest>
         <p v-if="from === 'sender'">
-          Предложение от {{ userStore.user?.nickname || user.name }}
+          Предложение от {{ userStore.user?.nickname || userStore.user?.name }}
         </p>
         <p v-else>Предложение от {{ user.nickname || user.name }}</p>
       </div>
@@ -34,7 +34,10 @@
 </template>
 
 <script setup lang="ts">
+import type { Order } from "~/shared/api/order-api";
+import type { User } from "~/shared/api/user-api";
 import type { Message } from "~/shared/types";
+import { useUserStore } from "~/store/userStore";
 
 const { msg } = defineProps<{
   msg: Message;
@@ -47,10 +50,10 @@ defineEmits<{
   (e: "openModal"): void;
 }>();
 
-const ordersInChat = inject<any[]>("ordersInChat");
-const user = inject<any>("user");
-const userStore = inject<any>("userStore");
-const currentOrder = inject<any>("currentOrder");
+const ordersInChat = inject<Ref<Order[]>>("ordersInChat");
+const user = inject<Ref<User | null>>("user", ref(null));
+const userStore = useUserStore();
+const currentOrder = inject<Ref<Order | undefined>>("currentOrder");
 
 const notSelected = computed(() => {
   return msg.status !== "rejected" && msg.status !== "accepted";

@@ -10,15 +10,15 @@
             </div>
             <div class="stats_info">
                 <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"
-                    :src="makeURL(userStore.user?.avatar)"></UIUserAvatar>
+                    :src="order.user_id === userStore.user?.id ? makeURL(userStore.user?.avatar) : undefined"></UIUserAvatar>
                 <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                 <button class="bordered edit" @click="navigateTo(`/orders/${order.id}`)" v-if="user_performer">Просмотреть заказ</button>
             </div>
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIButton type="active" style="min-width: 155px; background: $bg-button-success;" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">Перейти в чат</UIButton>
-            <UIButton type="active" style="min-width: 155px; background: $bg-button-success;" v-if="user_performer" @click="$emit('finishOrder', order)">Завершить заказ</UIButton>
+            <UIButton type="success" style="min-width: 155px" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">Перейти в чат</UIButton>
+            <UIButton type="success" style="min-width: 155px" v-if="user_performer" @click="$emit('finishOrder', order)">Завершить заказ</UIButton>
         </div>
     </div>
 </template>

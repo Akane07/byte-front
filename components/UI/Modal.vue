@@ -17,23 +17,19 @@
 </template>
 
 <script setup lang="ts">
-import { useScroll } from '../../store/scrollStore';
+import { useScroll } from "~/store/scrollStore";
 
 defineProps<{
-    title?: string;
+  title?: string;
 }>();
 
 defineEmits<{
-    (e: 'close'): () => void
+  (e: "close"): void;
 }>();
 
 const scroll = useScroll();
-
-scroll.showScroll = false;
-
-onUnmounted(() => {
-    scroll.showScroll = true;
-});
+onMounted(scroll.lock);
+onBeforeUnmount(scroll.unlock);
 </script>
 
 <style lang="scss" scoped>

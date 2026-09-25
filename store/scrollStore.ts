@@ -1,16 +1,22 @@
-export const useScroll = defineStore('scroll', () => {
-    const showScroll = shallowRef(true);
+/**
+ * Блокирует прокрутку страницы, пока открыта модалка или боковая панель.
+ * Счётчик вместо флага: при двух открытых модалках закрытие одной
+ * больше не разблокирует прокрутку под второй.
+ */
+export const useScroll = defineStore("scroll", () => {
+  const locks = shallowRef(0);
 
-    watch(showScroll, () => {
-        if (showScroll.value) {
-            document.body.style.overflow = 'auto';
-        }
-        if (!showScroll.value) {
-            document.body.style.overflow = 'hidden';
-        }
-    });
+  watch(locks, (count) => {
+    document.body.style.overflow = count > 0 ? "hidden" : "";
+  });
 
-    return {
-        showScroll,
-    };
+  function lock() {
+    locks.value++;
+  }
+
+  function unlock() {
+    locks.value = Math.max(0, locks.value - 1);
+  }
+
+  return { lock, unlock };
 });

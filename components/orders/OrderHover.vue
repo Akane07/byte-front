@@ -16,8 +16,9 @@
           <p>{{ order?.title }}</p>
           <div class="stats_info">
             <UIUserAvatar
+              class="cursor-pointer"
               @click="navigateTo(`/profile/${order.user_id}`)"
-              :src="makeURL(userStore.user?.avatar)"
+              :src="makeURL(user?.avatar)"
             ></UIUserAvatar>
             <span class="bordered"
               >Опубликовано {{ useOrderCreated(order.created_at) }}</span
@@ -78,7 +79,7 @@
           </div>
           <div class="block">
             <p>В сети</p>
-            <span>{{ useOrderCreated(user.last_seen) }}</span>
+            <span>{{ user.last_seen ? useOrderCreated(user.last_seen) : "давно" }}</span>
           </div>
           <div class="block">
             <p>Страна</p>
@@ -91,7 +92,7 @@
         <div class="link">
           <p>Ссылка на заказ</p>
           <div class="link_block">
-            <span>{{ `${frontURL}/orders/${props.order?.id}` }}</span>
+            <span>{{ orderLink }}</span>
             <div class="hidder"></div>
           </div>
           <span v-if="!showCopiedText" class="copy" @click="copyLink"
@@ -105,7 +106,6 @@
 </template>
 
 <script setup lang="ts">
-import { frontURL } from "~/shared/api";
 import type { Order } from "~/shared/api/order-api";
 import type { User } from "~/shared/api/user-api";
 import { makeURL } from "~/shared/utils/helpers";
@@ -124,14 +124,16 @@ defineEmits<{
 const userStore = useUserStore();
 const orderStore = useOrderStore();
 const scroll = useScroll();
+const siteUrl = useRuntimeConfig().public.siteUrl;
 
 const user = ref<User | null>(null);
-const showCopiedText = ref(false);
+const showCopiedText = shallowRef(false);
 
-function copyLink() {
-  navigator.clipboard.writeText(`${frontURL}/orders/${props.order?.id}`);
+const orderLink = computed(() => `${siteUrl}/orders/${props.order?.id}`);
+
+async function copyLink() {
+  await navigator.clipboard.writeText(orderLink.value);
   showCopiedText.value = true;
-
   setTimeout(() => {
     showCopiedText.value = false;
   }, 3000);
@@ -141,22 +143,30 @@ function handleOrderRedirect() {
   navigateTo(`/orders/${props.order?.id}`);
 }
 
-watch(props, async () => {
-  if (!props.order?.id) {
-    scroll.showScroll = true;
-  } else {
-    scroll.showScroll = false;
-  }
+watch(
+  () => props.order?.id,
+  async (id, previousId) => {
+    if (id && !previousId) scroll.lock();
+    if (!id && previousId) scroll.unlock();
 
-  if (
-    !props.order?.user_id ||
-    !userStore.user ||
-    props.order.viewed_by.includes(userStore.user?.id)
-  )
-    return;
-  user.value = await userStore.getUserId(props.order?.user_id);
-  await orderStore.viewOrder(props.order.id);
-  props.order.viewed_by.push(userStore.user?.id || "");
+    const order = props.order;
+    user.value = null;
+    if (!order) return;
+
+    // Данные клиента нужны всегда. Раньше они загружались только для
+    // непросмотренных заказов, и у просмотренных блок «О клиенте» был пуст.
+    user.value = await userStore.getUserId(order.user_id);
+
+    const me = userStore.user?.id;
+    if (me && !order.viewed_by.includes(me)) {
+      await orderStore.viewOrder(order.id);
+      order.viewed_by.push(me);
+    }
+  },
+);
+
+onBeforeUnmount(() => {
+  if (props.order) scroll.unlock();
 });
 </script>
 

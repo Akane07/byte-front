@@ -10,27 +10,30 @@
           <span class="px-2 py-0.5 rounded-3xl">{{ chats.length }}</span>
         </div>
         <div class="px-6 py-3 w-full">
-          <UIInput v-model="searchString" type="text" placeholder="Поик">
+          <UIInput v-model="searchString" type="text" placeholder="Поиск">
             <template #prepend>
               <IconsSearch></IconsSearch>
             </template>
           </UIInput>
         </div>
         <div class="users flex flex-col gap-2 w-full px-4 overflow-y-scroll">
-          <div
-            class="user flex items-center gap-4 p-4 cursor-pointer"
+          <NuxtLink
             v-for="chat in searchedChats"
-            :key="chat.name"
-            @click="navigateTo(`/chat/${chat.userId}`)"
+            :key="chat.userId"
+            :to="`/chat/${chat.userId}`"
+            class="user flex items-center gap-4 p-4 cursor-pointer"
             :class="{ active: $route.params.id === chat.userId }"
           >
-            <img :src="makeURL(chat.avatar)" alt="avatar" class="rounded-md w-12 h-12" />
+            <UIUserAvatar :src="makeURL(chat.avatar)" size="48px" class="rounded-md" />
             <div class="info flex flex-col gap-1 w-full">
-              <p>{{ chat.name }}</p>
+              <p>{{ chat.nickname || chat.name }}</p>
               <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>
             </div>
             <span>{{ useTimeAgo(chat.lastMessageDate) }}</span>
-          </div>
+          </NuxtLink>
+          <p v-if="loaded && !chats.length" class="empty px-4">
+            Диалогов пока нет. Написать исполнителю можно из его профиля.
+          </p>
         </div>
       </div>
       <NuxtPage></NuxtPage>
@@ -39,26 +42,31 @@
 </template>
 
 <script setup lang="ts">
-import { api } from "~/shared/api";
+import { api, call } from "~/shared/api";
+import type { ChatPreview } from "~/shared/types";
 import { makeURL } from "~/shared/utils/helpers";
-import { useUserStore } from "~/store/userStore";
 
-const userStore = useUserStore();
+const chat = useChatSocket();
 
-const chats = ref<any[]>([]);
+const chats = ref<ChatPreview[]>([]);
 const searchString = shallowRef("");
+const loaded = shallowRef(false);
 
 const searchedChats = computed(() => {
-  return chats.value.filter((chat) =>
-    chat.name.toLowerCase().includes(searchString.value.toLowerCase())
-  );
+  const query = searchString.value.trim().toLowerCase();
+  return chats.value.filter((c) => (c.nickname || c.name).toLowerCase().includes(query));
 });
 
-onMounted(async () => {
-  await userStore.checkAuth();
+async function loadChats() {
+  chats.value = (await call(api.get<ChatPreview[]>("/chat/all"))) ?? [];
+  loaded.value = true;
+}
 
-  chats.value = (await api.get("/chat/all")).data;
-});
+// Новое сообщение — обновляем последний текст и порядок диалогов.
+chat.on("receiveMessage", loadChats);
+chat.on("messageDeleted", loadChats);
+
+onMounted(loadChats);
 </script>
 
 <style lang="scss" scoped>
@@ -138,5 +146,10 @@ onMounted(async () => {
       }
     }
   }
+}
+
+.empty {
+  color: $text-placeholder;
+  font-size: 14px;
 }
 </style>

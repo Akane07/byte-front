@@ -1,29 +1,34 @@
 <template>
-    <div class="recovery-wrapper">
-        <div class="recovery-menu">
-            <div class="text-menu">
-                <span class="menu-hero">Восстановление</span>
-                <span class="menu-context">
-                    Чтобы восстановить пароль введите вашу почту
-                </span>
-            </div>
-            <div class="nav-menu">
-                <DevAuthInput placeholder="Ваша почта" type="text" />
-                <DevNavButton>Войти</DevNavButton>
-            </div>
-        </div>
-        <DevAuthBoard :recovery="true"></DevAuthBoard>
-    </div>
+  <div class="recovery-wrapper">
+    <form class="recovery-menu" @submit.prevent="handleRecovery">
+      <div class="text-menu">
+        <span class="menu-hero">Восстановление</span>
+        <span class="menu-context">Чтобы восстановить пароль, введите вашу почту</span>
+      </div>
+      <div class="nav-menu">
+        <AuthInput v-model="email" placeholder="Ваша почта" type="email" />
+        <UINavButton type="submit">Восстановить</UINavButton>
+        <NuxtLink to="/auth/login" class="menu-context">Вернуться ко входу</NuxtLink>
+      </div>
+    </form>
+    <AuthBoard :recovery="true" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import DevAuthInput from '~/components/auth/AuthInput.vue';
-import DevNavButton from '~/components/UI/NavButton.vue';
-import DevAuthBoard from '~/components/auth/AuthBoard.vue';
+import { useNotifications } from "~/store/notiStore";
 
-definePageMeta({
-    middleware: ['auth'],
-});
+const notifications = useNotifications();
+const email = shallowRef("");
+
+// На бэкенде пока нет эндпоинта восстановления пароля (есть только шаблон
+// письма в MailService.sendRestoreEmail). Раньше кнопка «Войти» здесь
+// молча ничего не делала — теперь пользователь хотя бы видит, почему.
+function handleRecovery() {
+  notifications.setNotification(
+    "Восстановление пароля пока недоступно. Обратитесь в поддержку",
+  );
+}
 </script>
 
 <style scoped lang="scss">

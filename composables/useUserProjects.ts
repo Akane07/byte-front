@@ -1,6 +1,6 @@
-export function useUserProjects(count: number) {
-    if (count == 0) return '0 активных проектов';
-    if (count == 1) return '1 активный проект';
-    if (count > 1 && count < 5) return `${count} активных проекта`;
-    return `${count} активных проектов`;
+import { plural } from "~/shared/utils/helpers";
+
+/** «1 активный проект», «3 активных проекта», «11 активных проектов». */
+export function useUserProjects(count: number): string {
+  return `${count} ${plural(count, "активный проект", "активных проекта", "активных проектов")}`;
 }

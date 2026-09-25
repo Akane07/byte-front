@@ -30,8 +30,8 @@ const props = defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'save', value: string[]): () => void,
-    (e: 'delete', value: number): () => void
+    (e: 'save', value: string[]): void,
+    (e: 'delete', value: number): void
 }>();
 
 const inputRef = ref<HTMLInputElement | null>(null);
@@ -43,7 +43,9 @@ function handleAddSkill() {
     newSkill.value = newSkill.value.trim();
     if (newSkill.value.length === 0) return;
     if (copySkills.value.length >= 10) return;
-    copySkills.value.push(newSkill.value);
+    if (!copySkills.value.includes(newSkill.value)) {
+        copySkills.value.push(newSkill.value);
+    }
     newSkill.value = '';
     nextTick(() => {
         inputRef.value?.focus();
@@ -64,7 +66,7 @@ function handleFocus() {
 
 function handleBlur(event: FocusEvent) {
     const relatedTarget = event.relatedTarget as HTMLElement;
-    if (relatedTarget && !event.currentTarget?.contains(relatedTarget)) {
+    if (relatedTarget && !(event.currentTarget as HTMLElement | null)?.contains(relatedTarget)) {
         handleAddSkill();
     }
 }

@@ -22,7 +22,7 @@
           >+{{ order.skills.length - 5 }}</LazyUIChip
         >
       </div>
-      <div class="flex items-end ga-4 text-white opacity-60 text-[14px]">
+      <div class="flex items-end gap-4 text-white opacity-60 text-[14px]">
         <span v-if="order.category" class="border-r-[#9E9E9F] border-r pr-4 mr-4">{{ categoryStore.getCategoryTitleById(order.category) }}</span>
         <span>Опубликовано {{ useOrderCreated(order.created_at) }}</span>
       </div>
@@ -59,10 +59,6 @@ defineEmits<{
 
 const userStore = useUserStore();
 const categoryStore = useCategory();
-
-function handleOrderRedirect() {
-  navigateTo(`/orders/${props.order.id}`);
-}
 
 const viewed = computed(() => {
   return props.order.viewed_by.includes(userStore.user?.id || "");

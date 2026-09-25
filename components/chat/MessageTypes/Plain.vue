@@ -1,14 +1,14 @@
 <template>
   <div class="message" :class="[!isServer && 'chat_message']">
-    <p>{{ msg.text }}</p>
+    <p v-if="msg.text">{{ msg.text }}</p>
     <img
       v-if="msg.mediaType === 'image' && !isServer"
-      :src="msg.mediaUrl"
+      :src="makeURL(msg.mediaUrl)"
       width="200"
     />
     <video
       v-if="msg.mediaType === 'video' && !isServer"
-      :src="msg.mediaUrl"
+      :src="makeURL(msg.mediaUrl)"
       width="200"
       controls
     />
@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import type { Message } from "~/shared/types";
-import { parseMessageDate } from "~/shared/utils/helpers";
+import { makeURL, parseMessageDate } from "~/shared/utils/helpers";
 
 const { msg } = defineProps<{
   msg: Message;

@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "byte-front",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,7 +7,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "typecheck": "nuxi typecheck"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.10.1",
@@ -23,6 +24,8 @@
     "@tailwindcss/postcss": "^4.1.17",
     "postcss": "^8.5.6",
     "sass": "^1.85.1",
-    "tailwindcss": "^4.1.17"
+    "tailwindcss": "^4.1.17",
+    "typescript": "~5.8",
+    "vue-tsc": "^2.2.12"
   }
 }

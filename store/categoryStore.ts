@@ -1,69 +1,37 @@
-import { getCategories, getSkills } from "~/shared/api/category-api";
+import { getCategories, getSkills, type Category } from "~/shared/api/category-api";
 
-export const useCategory = defineStore('category', () => {
-    const categories = ref<{ id: number, title: string }[]>([]);
-    const mapCategories = ref<string[]>([]);
-    const skills = ref<string[]>([]);
+export const useCategory = defineStore("category", () => {
+  const categories = ref<Category[]>([]);
+  const skills = ref<string[]>([]);
 
-    async function getAllCategories() {
-        const res = await getCategories();
+  const titles = computed(() => categories.value.map((c) => c.title));
 
-        categories.value = res;
-        mapCategories.value = res.map((r) => r.title);
-    }
+  /** Справочник загружается один раз за сессию. */
+  async function getAllCategories() {
+    if (categories.value.length) return;
+    categories.value = (await getCategories()) ?? [];
+  }
 
-    async function getSkillsById(title: string) {
-        const id = categories.value.find((cat) => {
-            return cat.title === title;
-        })?.id;
+  async function loadSkills(categoryId: number | undefined) {
+    skills.value = categoryId ? ((await getSkills(categoryId)) ?? []) : [];
+  }
 
-        if (id) {
-            const res = await getSkills(id);
-            skills.value = res;
-        }
-    }
+  function getCategoryIdByTitle(title: string): number | undefined {
+    return categories.value.find((c) => c.title === title)?.id;
+  }
 
-    function getCategoryIdByTitle(title: string) {
-        const id = categories.value.find((cat) => {
-            return cat.title === title;
-        })?.id;
+  function getCategoryTitleById(id: number | undefined): string {
+    return categories.value.find((c) => c.id === id)?.title ?? "";
+  }
 
-        return id;
-    }
+  return {
+    categories,
+    titles,
+    skills,
 
-    function getCategoryTitleById(id: number) {
-        const title = categories.value.find((cat) => {
-            return cat.id === id;
-        })?.title;
-
-        return title || '';
-    }
-
-    function returnFilters(filters: { design: boolean, it: boolean, web: boolean, media: boolean, ad: boolean, outsource: boolean, promotion: boolean, engineering: boolean, texts: boolean, other: boolean }) {
-        const res = [];
-
-        if (filters.design) res.push('design');
-        if (filters.it) res.push('it');
-        if (filters.web) res.push('web');
-        if (filters.media) res.push('media');
-        if (filters.ad) res.push('ad');
-        if (filters.outsource) res.push('outsource');
-        if (filters.promotion) res.push('promotion');
-        if (filters.engineering) res.push('engineering');
-        if (filters.texts) res.push('texts');
-        if (filters.other) res.push('other');
-
-        return res.join('=true&');
-    }
-
-    return {
-        categories,
-        mapCategories,
-        skills,
-
-        getAllCategories,
-        getSkillsById,
-        getCategoryIdByTitle,
-        getCategoryTitleById,
-    };
+    getAllCategories,
+    loadSkills,
+    getCategoryIdByTitle,
+    getCategoryTitleById,
+  };
 });

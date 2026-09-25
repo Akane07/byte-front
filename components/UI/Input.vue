@@ -10,7 +10,7 @@
         @input="onInput"
         :disabled="disabled"
         autocomplete="off"
-        :maxlength="maxlength || 30"
+        :maxlength="maxlength"
       />
       <slot name="append"></slot>
     </div>
@@ -24,15 +24,15 @@ const props = defineProps<{
   placeholder: string;
   label?: string;
   modelValue: any;
-  type: "text" | "password";
+  type: "text" | "password" | "email";
   disabled?: boolean;
-  maxlength?: string;
+  maxlength?: string | number;
   rules?: RuleFn[] | RuleFn;
   required?: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: "update:modelValue", v: any): void;
+  (e: "update:modelValue", v: string): void;
 }>();
 
 const ruleList = computed<RuleFn[]>(() => {
@@ -42,15 +42,7 @@ const ruleList = computed<RuleFn[]>(() => {
 const errors = shallowRef<boolean>(false);
 
 function validate() {
-  errors.value = false;
-  if (!ruleList.value.length) return [];
-
-  for (const rule of ruleList.value) {
-    const res = rule(props.modelValue);
-    if (res !== true) {
-      errors.value = true;
-    }
-  }
+  errors.value = ruleList.value.some((rule) => !rule(props.modelValue));
 }
 
 function onInput(e: Event) {

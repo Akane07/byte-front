@@ -1,46 +1,27 @@
-export const useNotifications = defineStore('notifications', () => {
-    const showNotification = shallowRef(false);
-    const text = shallowRef('');
+const VISIBLE_MS = 5000;
 
-    async function setNotification(value: string) {
-        if (showNotification.value) return;
+/**
+ * Всплывающее уведомление. Раньше стор искал элемент через
+ * document.querySelector и переключал классы таймерами; второе
+ * уведомление, пришедшее во время показа первого, терялось.
+ * Теперь состояние реактивное, а новое уведомление заменяет текущее.
+ */
+export const useNotifications = defineStore("notifications", () => {
+  const text = shallowRef("");
+  const visible = shallowRef(false);
+  let timer: ReturnType<typeof setTimeout> | undefined;
 
-        text.value = value;
-        showNotification.value = true;
-        await nextTick();
+  function setNotification(value: string) {
+    clearTimeout(timer);
+    text.value = value;
+    visible.value = true;
+    timer = setTimeout(hideNotification, VISIBLE_MS);
+  }
 
-        const div = document.querySelector('.notification') as HTMLDivElement;
+  function hideNotification() {
+    clearTimeout(timer);
+    visible.value = false;
+  }
 
-        setTimeout(() => {
-            div.classList.add('active');
-        }, 100);
-
-        setTimeout(() => {
-            div.classList.remove('active');
-        }, 5000);
-        setTimeout(() => {
-            if (!div.classList.contains('active')) {
-                showNotification.value = false;
-                text.value = '';
-            }
-        }, 6000);
-    }
-
-    function hideNotification() {
-        const div = document.querySelector('.notification') as HTMLDivElement;
-        div.classList.remove('active');
-
-        setTimeout(() => {
-            showNotification.value = false;
-            text.value = '';
-        }, 1000);
-    }
-
-    return {
-        showNotification,
-        text,
-
-        setNotification,
-        hideNotification,
-    };
+  return { text, visible, setNotification, hideNotification };
 });

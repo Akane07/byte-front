@@ -1,7 +1,7 @@
 <template>
   <div
     class="chip flex items-center gap-2 px-3.5 py-1.5 rounded-md"
-    :class="{ 'non-hoverale': !hover }"
+    :class="{ 'non-hoverable': !hover }"
   >
     <slot>
       <span>{{ text }}</span>
@@ -39,7 +39,7 @@ withDefaults(
     background: $tag-hover;
   }
 
-  &.non-hoverale {
+  &.non-hoverable {
     color: $text-secondary;
     background: $tag-secondary-color;
 

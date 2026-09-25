@@ -1,21 +1,14 @@
-import { api } from ".";
+import { api, call } from ".";
 
-export async function getCategories() {
-    try {
-        const response = await api.get('/category');
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export interface Category {
+  id: number;
+  title: string;
 }
 
-export async function getSkills(id: number) {
-    try {
-        const response = await api.get(`/category/${id}/skills`);
+export function getCategories() {
+  return call(api.get<Category[]>("/category"));
+}
 
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getSkills(categoryId: number) {
+  return call(api.get<string[]>(`/category/${categoryId}/skills`));
 }

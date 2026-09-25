@@ -46,19 +46,19 @@
                     <UIUserAvatar size="56px" :src="makeURL(user?.avatar)"></UIUserAvatar>
                     <div class="flex flex-col gap-3">
                         <p class="text-white font-semibold text-[14px]">{{ user?.nickname || "Без имени" }}</p>
-                        <UIButton v-if="user?.id === userStore.user?.id" active @click.stop="
+                        <UIButton v-if="user?.id === userStore.user?.id" type="active" @click.stop="
                             navigateTo(`/profile/portfolio/edit/${portfolio.id}`)
                             ">
                             <IconsPencil></IconsPencil>
                             Редактировать проект
                         </UIButton>
-                        <UIButton v-if="user?.id !== userStore.user?.id" active
+                        <UIButton v-if="user?.id !== userStore.user?.id" type="active"
                             @click="navigateTo(`/profile/${user?.id}`)">
                             Перейти в профиль
                         </UIButton>
                     </div>
                 </div>
-                <div class="relative" v-if="portfolios">
+                <div class="relative" v-if="portfolios.length">
                     <div class="other_portfolio flex gap-6 overflow-x-auto pb-3">
                         <ProfilePortfolioBlock v-for="portfolio in portfolios" :portfolio="portfolio"
                             :key="portfolio.id" other>
@@ -66,7 +66,7 @@
                     </div>
                 </div>
                 <div class="flex justify-between items-start gap-16 pb-10">
-                    <div class="blocks flex flex-col gap-3"> 
+                    <div class="blocks flex flex-col gap-3">
                         <p>Роль</p>
                         <div class="value">
                             {{ portfolio.role }}
@@ -87,60 +87,48 @@
 </template>
 
 <script setup lang="ts">
-import {
-    likePortfolio,
-    viewPortfolio,
-    type Portfolio,
-} from "~/shared/api/portfolio-api";
+import { likePortfolio, viewPortfolio, type Portfolio } from "~/shared/api/portfolio-api";
 import type { User } from "~/shared/api/user-api";
 import { makeURL } from "~/shared/utils/helpers";
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
 
-definePageMeta({
-    middleware: ["auth"],
-});
-
 const route = useRoute();
 const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
 
-const portfolio = ref<Portfolio>();
+const portfolio = ref<Portfolio | null>(null);
+/** Другие проекты автора — без текущего. */
 const portfolios = ref<Portfolio[]>([]);
 const user = ref<User | null>(null);
 
 async function ratePortfolio() {
-    if (!userStore.user) return;
-
-    const isLike = portfolio.value?.liked_by.includes(userStore.user.id);
-
-    portfolio.value = await likePortfolio(route.params.id as string, !isLike);
+  if (!userStore.user || !portfolio.value) return;
+  const isLiked = portfolio.value.liked_by.includes(userStore.user.id);
+  const res = await likePortfolio(portfolio.value.id, !isLiked);
+  if (res) portfolio.value = res;
 }
 
-onMounted(async () => {
-    await userStore.checkAuth();
-    if (!userStore.user) return;
+async function load(id: string) {
+  portfolio.value = await portfolioStore.getPortfolio(id);
+  if (!portfolio.value) return;
 
-    const id = route.params.id as string;
-    portfolio.value = await portfolioStore.getPortfolio(id);
+  const authorId = portfolio.value.user_id;
+  const isMine = authorId === userStore.user?.id;
+  const [author, list] = await Promise.all([
+    isMine ? Promise.resolve(userStore.user) : userStore.getUserId(authorId),
+    portfolioStore.getPortfoliosById(authorId),
+  ]);
+  user.value = author;
+  // Раньше текущий проект убирался через splice(findIndex(...)), и при -1
+  // из списка пропадал последний проект.
+  portfolios.value = list.filter((p) => p.id !== id);
 
-    if (!portfolio.value) return;
+  if (!isMine) await viewPortfolio(id);
+}
 
-    if (portfolio.value.user_id === userStore.user.id) {
-        user.value = userStore.user;
-        await portfolioStore.getMyPortfolio();
-        portfolios.value = portfolioStore.portfolio;
-    } else {
-        user.value = await userStore.getUserId(portfolio.value.user_id);
-        portfolios.value = await portfolioStore.getPortfoliosById(
-            portfolio.value.user_id
-        );
-    }
-    const index = portfolios.value.findIndex((p) => p.id === id) as number;
-    portfolios.value.splice(index, 1);
-
-    await viewPortfolio(id);
-});
+// Переход между проектами автора переиспользует страницу — грузим заново.
+watch(() => route.params.id as string, load, { immediate: true });
 </script>
 
 <style lang="scss" scoped>

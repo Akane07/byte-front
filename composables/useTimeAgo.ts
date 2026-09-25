@@ -1,17 +1,16 @@
-export function useTimeAgo(date: string): string {
-  const now = new Date();
-  const diffMs = now.getTime() - new Date(date).getTime();
+/** Короткая давность для списка чатов: «5м», «3ч», «2д». */
+export function useTimeAgo(date: string | undefined): string {
+  if (!date) return "";
 
-  const minutes = Math.floor(diffMs / 60000);
-  const hours = Math.floor(diffMs / 3600000);
-  const days = Math.floor(diffMs / 86400000);
+  const minutes = Math.floor((Date.now() - new Date(date).getTime()) / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
   const months = Math.floor(days / 30);
-  const years = Math.floor(days / 365);
 
-  if (minutes < 1) return '1м';
+  if (minutes < 1) return "сейчас";
   if (minutes < 60) return `${minutes}м`;
   if (hours < 24) return `${hours}ч`;
   if (days < 30) return `${days}д`;
   if (months < 12) return `${months}мес`;
-  return `${years}г`;
+  return `${Math.floor(days / 365)}г`;
 }

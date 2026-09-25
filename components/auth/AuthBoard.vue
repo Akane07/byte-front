@@ -34,8 +34,8 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-    recovery: boolean
+defineProps<{
+    recovery?: boolean
 }>();
 </script>
 

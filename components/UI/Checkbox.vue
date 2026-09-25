@@ -19,7 +19,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-  (e: "update:modelValue", value: boolean): () => void;
+  (e: "update:modelValue", value: boolean): void;
 }>();
 </script>
 

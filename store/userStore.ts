@@ -1,82 +1,123 @@
-import { setToken } from "~/shared/api";
-import { changePassword, getUser, getUserById, postUser, type User } from "~/shared/api/user-api";
+import { clearToken, getToken, saveToken } from "~/shared/api";
+import { login as loginRequest, register as registerRequest, type LoginData, type RegisterData } from "~/shared/api/auth-api";
+import {
+  changePassword as changePasswordRequest,
+  getMe,
+  getUserById,
+  setAvatar as setAvatarRequest,
+  updateMe,
+  type User,
+  type UserUpdate,
+} from "~/shared/api/user-api";
 
-export const useUserStore = defineStore('user', () => {
-    const user = ref<User | null>(null);
-    const isAuth = ref<boolean>(false);
-    const checked = ref(false);
+export const useUserStore = defineStore("user", () => {
+  const user = ref<User | null>(null);
+  const isAuth = computed(() => user.value !== null);
+  /** Проверка сессии при старте уже выполнена. */
+  const checked = shallowRef(false);
 
-    async function fetchUser() {
-        const data = await getUser();
+  let pending: Promise<void> | null = null;
 
-        if (data.statusCode === 401) {
-            isAuth.value = false;
-            return;
-        }
-
-        user.value = data;
-    }
-
-    async function checkAuth() {
-        const token = localStorage.getItem('byte-accessToken');
-        if (token && !isAuth.value) {
-            setToken(token);
-            isAuth.value = true;
-            await fetchUser();
+  /**
+   * Загружает профиль по сохранённому токену. Безопасно вызывать
+   * из нескольких мест одновременно: запрос выполняется один раз.
+   */
+  function checkAuth(force = false): Promise<void> {
+    if (checked.value && !force) return Promise.resolve();
+    if (!pending) {
+      pending = (async () => {
+        if (getToken()) {
+          const me = await getMe();
+          if (me) {
+            user.value = me;
+          } else {
+            resetSession();
+          }
         }
         checked.value = true;
+      })().finally(() => {
+        pending = null;
+      });
     }
+    return pending;
+  }
 
-    function logout() {
-        user.value = null;
-        isAuth.value = false;
-        localStorage.removeItem('byte-accessToken');
-        navigateTo('/auth/login');
-    }
+  async function startSession(token: string) {
+    saveToken(token);
+    await checkAuth(true);
+  }
 
-    async function getUserId(id: string) {
-        const res = await getUserById(id);
+  async function login(data: LoginData) {
+    const res = await loginRequest(data);
+    if (!res) return false;
+    await startSession(res.access_token);
+    return isAuth.value;
+  }
 
-        return res;
-    }
+  async function register(data: RegisterData) {
+    const res = await registerRequest(data);
+    if (!res) return false;
+    await startSession(res.access_token);
+    return isAuth.value;
+  }
 
-async function editMe(updateData: Partial<User>) {
-    const trimmedData: Partial<User> = Object.fromEntries(
-        Object.entries(updateData).map(([key, value]) => {
-            if (typeof value === 'string') {
-                return [key, value.trim()];
-            }
-            return [key, value];
-        })
-    );
+  /** Сбросить сессию без навигации — например, когда токен протух. */
+  function resetSession() {
+    clearToken();
+    user.value = null;
+  }
 
-    const res = await postUser(trimmedData);
+  function logout() {
+    resetSession();
+    disconnectChatSocket();
+    navigateTo("/auth/login");
+  }
 
-    user.value = res;
-}
+  function getUserId(id: string) {
+    return getUserById(id);
+  }
 
-    async function newPassword(password: string, newPassword: string): Promise<boolean> {
-        const res = await changePassword(password, newPassword);
+  async function editMe(update: UserUpdate) {
+    const trimmed = Object.fromEntries(
+      Object.entries(update).map(([key, value]) => [
+        key,
+        typeof value === "string" ? value.trim() : value,
+      ]),
+    ) as UserUpdate;
 
-        if (res.access_token) {
-            localStorage.setItem('byte-accessToken', res.access_token);
-            setToken(res.access_token);
-            return true;
-        }
+    const res = await updateMe(trimmed);
+    if (res) user.value = res;
+    return res !== null;
+  }
 
-        return false;
-    }
+  async function changePassword(password: string, newPassword: string) {
+    const res = await changePasswordRequest(password, newPassword);
+    if (!res) return false;
+    saveToken(res.access_token);
+    return true;
+  }
 
-    return { 
-        user,
-        isAuth,
-        checked,
-        
-        fetchUser,
-        checkAuth,
-        getUserId,
-        logout,
-        editMe,
-        newPassword,
-    };
+  async function setAvatar(file: File) {
+    const form = new FormData();
+    form.append("avatar", file);
+    const res = await setAvatarRequest(form);
+    if (res && user.value) user.value.avatar = res.avatarUrl;
+    return res !== null;
+  }
+
+  return {
+    user,
+    isAuth,
+    checked,
+
+    checkAuth,
+    login,
+    register,
+    logout,
+    resetSession,
+    getUserId,
+    editMe,
+    changePassword,
+    setAvatar,
+  };
 });

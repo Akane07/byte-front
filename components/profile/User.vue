@@ -30,13 +30,13 @@
             user.description || "Нет описания"
           }}</span>
           <div class="flex flex-wrap gap-2 pt-3">
-            <LazyUIChip v-for="skill in user.skills" :text="skill"></LazyUIChip>
+            <LazyUIChip v-for="skill in user.skills" :key="skill" :text="skill"></LazyUIChip>
           </div>
         </div>
         <div class="bordered"></div>
         <div class="w-full flex flex-col gap-8 pb-4.5 pt-3 max-w-[230px]">
           <UIButton
-            v-if="userStore.user?.id === user.id"
+            v-if="isOwnProfile"
             type="active"
             @click="navigateTo('/profile/my/settings')"
           >
@@ -52,12 +52,12 @@
           </UIButton>
           <div class="flex flex-col gap-4">
             <div
-              v-if="userStore.user?.id !== user.id"
+              v-if="!isOwnProfile"
               class="flex flex-col gap-3 text-sm"
             >
               <div class="flex items-center gap-2 font-medium font-sm">
                 <img
-                  src="../../../assets/images/star.png"
+                  src="~/assets/images/star.png"
                   alt="star"
                   width="20px"
                   height="20px"
@@ -69,11 +69,7 @@
             <div class="flex flex-col gap-2">
               <div class="flex items-center justify-between gap-2">
                 <span class="stat">{{ user.orders_count }}</span>
-                <p>Заказов выполнено</p>
-              </div>
-              <div class="flex items-center justify-between gap-2">
-                <span class="stat">70%</span>
-                <p>Успешных заказов</p>
+                <p>Опубликовано заказов</p>
               </div>
               <div class="flex items-center justify-between gap-2">
                 <span class="stat">{{ user.reviews_count }}</span>
@@ -84,19 +80,19 @@
               <div
                 v-if="user.telegram"
                 class="link"
-                @click="openLink(user.telegram)"
+                @click="openExternal(user.telegram)"
               >
                 <IconsTelegram></IconsTelegram>
                 <p>Telegram</p>
               </div>
-              <div v-if="user.git" class="link" @click="openLink(user.git)">
+              <div v-if="user.git" class="link" @click="openExternal(user.git)">
                 <IconsGitHub></IconsGitHub>
                 <p>Git</p>
               </div>
               <div
                 v-if="user.behance"
                 class="link"
-                @click="openLink(user.behance)"
+                @click="openExternal(user.behance)"
               >
                 <IconsBehance></IconsBehance>
                 <p>Behance</p>
@@ -109,7 +105,7 @@
         <div class="flex justify-between items-center">
           <p>Портфолио</p>
           <UIButton
-            v-if="userStore.user.id === user?.id"
+            v-if="isOwnProfile"
             class="add-button"
             @click="navigateTo('/profile/new-project')"
           >
@@ -141,44 +137,42 @@
 import DevCard from "~/components/UI/Card.vue";
 import type { Portfolio } from "~/shared/api/portfolio-api";
 import type { User } from "~/shared/api/user-api";
-import { makeURL } from "~/shared/utils/helpers";
+import { makeURL, openExternal } from "~/shared/utils/helpers";
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
 
-definePageMeta({
-  middleware: ["auth"],
-});
-
+/** Профиль пользователя. Без route.params.id — свой профиль. */
 const route = useRoute();
 const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
 
-const portfolios = ref<Portfolio[]>([]);
-const feedbacks = ref([]);
 const user = ref<User | null>(null);
+const otherPortfolios = ref<Portfolio[]>([]);
+const feedbacks = ref([]);
 
-const id = route.params.id as string;
-if (id) {
-  user.value = await userStore.getUserId(id);
-  portfolios.value = await portfolioStore.getPortfoliosById(id);
-}
-
-function openLink(link: string) {
-  if (link.startsWith("http")) {
-    window.open(link, "_blank");
-  } else {
-    window.open(`https://${link}`, "_blank");
-  }
-}
+const profileId = computed(() => route.params.id as string | undefined);
+const isOwnProfile = computed(
+  () => !!user.value && user.value.id === userStore.user?.id,
+);
+// Для своего профиля список берётся из стора, чтобы удаление проекта
+// сразу отражалось на странице.
+const portfolios = computed(() =>
+  isOwnProfile.value ? portfolioStore.portfolio : otherPortfolios.value,
+);
 
 onMounted(async () => {
-  await userStore.checkAuth();
-  await portfolioStore.getMyPortfolio();
-
-  if (!id) {
+  if (!profileId.value || profileId.value === userStore.user?.id) {
     user.value = userStore.user;
-    portfolios.value = portfolioStore.portfolio;
+    await portfolioStore.getMyPortfolio();
+    return;
   }
+
+  const [profile, list] = await Promise.all([
+    userStore.getUserId(profileId.value),
+    portfolioStore.getPortfoliosById(profileId.value),
+  ]);
+  user.value = profile;
+  otherPortfolios.value = list;
 });
 </script>
 

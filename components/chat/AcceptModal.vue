@@ -6,8 +6,9 @@
         <p>{{ order?.title }}</p>
         <div class="stats_info flex items-center gap-3">
           <UIUserAvatar
+            class="cursor-pointer"
             @click="navigateTo(`/profile/${order.user_id}`)"
-            :src="makeURL(userStore.user?.avatar)"
+            :src="makeURL(ownerAvatar)"
           >
           </UIUserAvatar>
           <span class="bordered pr-3"
@@ -60,9 +61,11 @@
 
 <script setup lang="ts">
 import type { Order } from "~/shared/api/order-api";
+import type { User } from "~/shared/api/user-api";
 import { makeURL } from "~/shared/utils/helpers";
+import { useUserStore } from "~/store/userStore";
 
-defineProps<{
+const props = defineProps<{
   order: Order;
 }>();
 
@@ -72,7 +75,13 @@ defineEmits<{
   (e: "reject"): void;
 }>();
 
-const userStore = inject<any>("userStore");
+const userStore = useUserStore();
+const chatUser = inject<Ref<User | null>>("user", ref(null));
+
+/** Аватар владельца заказа — раньше здесь всегда был аватар текущего пользователя. */
+const ownerAvatar = computed(() =>
+  props.order.user_id === userStore.user?.id ? userStore.user?.avatar : chatUser.value?.avatar,
+);
 </script>
 
 <style lang="scss" scoped>

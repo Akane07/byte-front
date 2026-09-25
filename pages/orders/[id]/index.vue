@@ -6,14 +6,14 @@
         <div class="order_response" v-if="order">
             <div class="left_part">
                 <div class="title">
-                    <span>Отклик на заказ</span>
+                    <span>{{ isOwner ? 'Ваш заказ' : 'Отклик на заказ' }}</span>
                     <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
                 </div>
                 <div class="main_info">
-                    <p>{{ order?.title }}</p>
+                    <p>{{ order.title }}</p>
                     <div class="stats_info">
-                        <UIUserAvatar @click="navigateTo(`/profile/${order.user_id}`)"
-                            :src="makeURL(userStore.user?.avatar)"></UIUserAvatar>
+                        <UIUserAvatar class="cursor-pointer" @click="navigateTo(`/profile/${order.user_id}`)"
+                            :src="makeURL(owner?.avatar)"></UIUserAvatar>
                         <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений: {{ order.response_count }}</span>
                     </div>
@@ -48,42 +48,46 @@
                 </div>
                 <p>{{ useUserCreated(order.created_at) }}</p>
             </div>
-            <div class="right_part" v-if="!response.id">
+
+            <!-- Владелец не может откликнуться на свой заказ — раньше форма
+                 показывалась, а сервер отвечал ошибкой. -->
+            <div class="right_part" v-if="isOwner">
+                <p>Это ваш заказ</p>
+                <UIButton style="align-self: flex-start;" type="active"
+                    @click="navigateTo(`/orders/${order.id}/edit`)">Редактировать заказ</UIButton>
+            </div>
+            <div class="right_part" v-else-if="!response">
                 <p>Ваше предложение</p>
-                <UITextarea v-model="newResponse.description" maxlength="2000"></UITextarea>
-                <UIButton style="align-self: flex-start;" active :disabled="!newResponse.description"
+                <UITextarea v-model="newResponse" maxlength="2000"></UITextarea>
+                <UIButton style="align-self: flex-start;" type="active" :disabled="!newResponse.trim() || busy"
                     @click="handlePostResponse">Откликнуться</UIButton>
             </div>
-            <div class="right_part" v-if="response.id && !edit && userStore.user">
+            <div class="right_part" v-else-if="userStore.user">
                 <p>Ваше предложение</p>
                 <div class="block">
-                    <UIUserAvatar :src="makeURL(userStore.user?.avatar)"
+                    <UIUserAvatar :src="makeURL(userStore.user.avatar)"
                         @click="navigateTo(`/profile/${userStore.user.id}`)"></UIUserAvatar>
                     <span>Отклик от {{ useUserCreated(response.created_at) }}</span>
                 </div>
-                <div class="block">
-                    <p>{{ response.description }}</p>
-                </div>
-                <div class="actions">
-                    <button class="edit" @click="edit = true">Редактировать</button>
-                    <button class="delete" @click="modal = true">Удалить</button>
-                </div>
-            </div>
-            <div class="right_part" v-if="response.id && edit && userStore.user">
-                <p>Ваше предложение</p>
-                <div class="block">
-                    <UIUserAvatar :src="makeURL(userStore.user?.avatar)"
-                        @click="navigateTo(`/profile/${userStore.user.id}`)"></UIUserAvatar>
-                    <span>Отклик от {{ useUserCreated(response.created_at) }}</span>
-                </div>
-                <div class="block">
-                    <UITextarea v-model="response.description" style="width: 100%;" maxlength="2000"></UITextarea>
-                </div>
-                <div class="actions">
-                    <UIButton style="align-self: flex-start;" type="active" @click="handleEditResponse">Подтвердить
-                    </UIButton>
-                    <button class="delete" @click="edit = false">Отменить</button>
-                </div>
+                <template v-if="!edit">
+                    <div class="block">
+                        <p>{{ response.description }}</p>
+                    </div>
+                    <div class="actions">
+                        <button class="edit" @click="startEdit">Редактировать</button>
+                        <button class="delete" @click="modal = true">Удалить</button>
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="block">
+                        <UITextarea v-model="editedText" style="width: 100%;" maxlength="2000"></UITextarea>
+                    </div>
+                    <div class="actions">
+                        <UIButton style="align-self: flex-start;" type="active" :disabled="!editedText.trim() || busy"
+                            @click="handleEditResponse">Подтвердить</UIButton>
+                        <button class="delete" @click="edit = false">Отменить</button>
+                    </div>
+                </template>
             </div>
         </div>
     </div>
@@ -100,124 +104,101 @@
 </template>
 
 <script setup lang="ts">
-import { io } from 'socket.io-client';
-import { deleteResponse, editResponse, type Order } from '~/shared/api/order-api';
+import {
+    deleteResponse,
+    editResponse,
+    getResponse,
+    postResponse,
+    type Order,
+    type OrderResponse,
+} from '~/shared/api/order-api';
+import type { User } from '~/shared/api/user-api';
 import { makeURL } from '~/shared/utils/helpers';
+import { useNotifications } from '~/store/notiStore';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
-
-definePageMeta({
-    middleware: ['auth'],
-});
-
-const socket = io('http://localhost:3002', {
-    transports: ['websocket'],
-});
 
 const route = useRoute();
 const orderStore = useOrderStore();
 const userStore = useUserStore();
+const notifications = useNotifications();
+const chat = useChatSocket();
+
+const orderId = computed(() => route.params.id as string);
 
 const order = ref<Order | null>(null);
-
+const owner = ref<User | null>(null);
+const response = ref<OrderResponse | null>(null);
+const newResponse = shallowRef('');
+const editedText = shallowRef('');
 const edit = shallowRef(false);
 const modal = shallowRef(false);
-const newResponse = ref({
-    description: ''
-});
-const response = ref({
-    created_at: '',
-    description: '',
-    id: '',
-    messageId: '',
-});
+const busy = shallowRef(false);
+
+const isOwner = computed(() => !!order.value && order.value.user_id === userStore.user?.id);
 
 async function handlePostResponse() {
-    if (!route.params.id || !order.value?.user_id) return;
+    if (!order.value) return;
+    busy.value = true;
+    const res = await postResponse(order.value.id, newResponse.value.trim());
+    busy.value = false;
+    if (!res) return;
 
-    const res = await orderStore.postOrderResponse(route.params.id as string, newResponse.value.description);
+    response.value = res;
+    newResponse.value = '';
+    order.value.response_count++;
+    // Отклик уходит заказчику в чат отдельным сообщением.
+    chat.postResponse(order.value.id, res.id);
+    notifications.setNotification('Отклик отправлен заказчику');
+}
 
-    response.value.created_at = res.created_at;
-    response.value.description = res.description;
-    response.value.id = res.id;
-    newResponse.value.description = '';
-
-    socket.emit('postResponse', {
-        senderId: userStore.user!.id,
-        receiverId: order.value.user_id,
-        orderId: order.value.id,
-        responseId: res.id,
-    });
-
-    const hasRes = await orderStore.getOrderResponse(route.params.id as string);
-
-    if (hasRes) {
-        response.value.created_at = hasRes.created_at;
-        response.value.description = hasRes.description;
-        response.value.id = hasRes.id;
-        response.value.messageId = hasRes.messageId || '';
-    }
+function startEdit() {
+    editedText.value = response.value?.description ?? '';
+    edit.value = true;
 }
 
 async function handleEditResponse() {
-    if (!order.value) return;
+    if (!order.value || !response.value) return;
+    busy.value = true;
+    const res = await editResponse(order.value.id, response.value.id, editedText.value.trim());
+    busy.value = false;
+    if (!res) return;
 
-    const res = await editResponse(order.value.id, response.value.id, response.value.description);
-
-    response.value.created_at = res.created_at;
-    response.value.description = res.description;
-    response.value.id = res.id;
+    response.value = res;
     edit.value = false;
 }
 
 async function handleDelete() {
-    if (!order.value) return;
+    if (!order.value || !response.value) return;
     const res = await deleteResponse(response.value.id, order.value.id);
+    modal.value = false;
+    if (!res) return;
 
-    console.log({
-        senderId: userStore.user?.id,
-        receiverId: order.value?.user_id,
-        messageId: response.value?.messageId,
-    });
-
-    socket.emit('deleteMessage', {
-        senderId: userStore.user?.id,
-        receiverId: order.value?.user_id,
-        messageId: response.value?.messageId,
-    })
-
-    if (res) {
-        response.value.created_at = '';
-        response.value.description = '';
-        response.value.id = '';
-        modal.value = false;
-        order.value = await orderStore.getOrder(route.params.id as string);
-    }
+    // Убираем и сообщение с откликом из чата с заказчиком.
+    if (res.messageId) chat.deleteMessage(res.messageId);
+    response.value = null;
+    order.value.response_count = Math.max(0, order.value.response_count - 1);
+    notifications.setNotification('Отклик удалён');
 }
 
 onMounted(async () => {
-    await userStore.checkAuth();
-    if (!userStore.user?.id) return;
+    order.value = await orderStore.getOrder(orderId.value);
+    if (!order.value) return;
 
-    order.value = await orderStore.getOrder(route.params.id as string);
+    const me = userStore.user?.id;
+    const [ownerProfile, myResponse] = await Promise.all([
+        userStore.getUserId(order.value.user_id),
+        isOwner.value ? Promise.resolve(null) : getResponse(order.value.id),
+    ]);
+    owner.value = ownerProfile;
+    response.value = myResponse;
 
-    const hasRes = await orderStore.getOrderResponse(route.params.id as string);
+    if (route.query.edit && response.value) startEdit();
 
-    if (hasRes.description) {
-        response.value = hasRes;
+    if (me && !isOwner.value && !order.value.viewed_by.includes(me)) {
+        await orderStore.viewOrder(order.value.id);
     }
-
-    if (route.query.edit) {
-        edit.value = true;
-    }
-
-    if (order.value?.user_id !== userStore.user?.id && !order.value?.viewed_by.includes(userStore.user?.id || '')) {
-        await orderStore.viewOrder(route.params.id as string);
-    }
-
-    if (order.value?.user_id === userStore.user?.id) return;
-    socket.emit('joinRoom', order.value?.user_id as string);
-})
+});
 </script>
 
 <style lang="scss" scoped>

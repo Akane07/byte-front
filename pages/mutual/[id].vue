@@ -12,7 +12,7 @@
                 </div>
                 <div class="orders_list" v-if="activeOrders.length">
                     <OrdersMutualOrders v-for="order in activeOrders" :key="order.id" :order="order"
-                        :user_performer="order.performer === userStore.user?.id" @finish-order="handlefinishOrder">
+                        :user_performer="order.performer === userStore.user?.id" @finish-order="finishOrder">
                     </OrdersMutualOrders>
                 </div>
                 <div class="orders_list" v-else>
@@ -24,39 +24,34 @@
 </template>
 
 <script setup lang="ts">
-import { io } from 'socket.io-client';
 import { getOrdersBetweenUsers, type Order } from '~/shared/api/order-api';
+import { useNotifications } from '~/store/notiStore';
 import { useUserStore } from '~/store/userStore';
 
-definePageMeta({
-    middleware: ['auth'],
-});
-
 const route = useRoute();
-const socket = io('http://localhost:3002', {
-    transports: ['websocket'],
-});
-
 const userStore = useUserStore();
+const notifications = useNotifications();
+const chat = useChatSocket();
 
 const activeOrders = ref<Order[]>([]);
 
-async function handlefinishOrder(order: Order) {
-    socket.emit('postResponse', {
-        senderId: userStore.user!.id,
-        receiverId: order.performer,
-        orderId: order.id,
-    });
+/**
+ * Исполнитель сообщает, что заказ выполнен. Раньше здесь отправлялось
+ * событие postResponse без responseId, сервер его игнорировал,
+ * и кнопка «Завершить заказ» ничего не делала.
+ */
+function finishOrder(order: Order) {
+    chat.finishOrder(order.id);
+    activeOrders.value = activeOrders.value.filter((o) => o.id !== order.id);
+    notifications.setNotification('Заказчик получил уведомление о выполнении');
 }
 
 onMounted(async () => {
-    await userStore.checkAuth();
-    if (!userStore.user?.id) return;
-
-    if (!route.params.id) return;
-    activeOrders.value = await getOrdersBetweenUsers(userStore.user.id, route.params.id as string);
-    socket.emit('joinRoom', route.params.id as string);
-})
+    const me = userStore.user?.id;
+    const otherId = route.params.id as string;
+    if (!me || !otherId) return;
+    activeOrders.value = (await getOrdersBetweenUsers(me, otherId)) ?? [];
+});
 </script>
 
 <style scoped lang="scss">

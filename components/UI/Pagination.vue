@@ -1,20 +1,20 @@
 <template>
-    <div class="pagination_wrapper max-w-[500px] flex ga-3 select-none">
-        <div class="pagination_button" @click="$emit('change', 1)">
+    <div class="pagination_wrapper max-w-[500px] flex gap-3 select-none">
+        <div class="pagination_button" @click="go(1)">
             <IconsDoubleArrowLeft></IconsDoubleArrowLeft>
         </div>
-        <div class="pagination_button" @click="$emit('change', currentPage - 1)">
+        <div class="pagination_button" @click="go(currentPage - 1)">
             <IconsArrowLeft></IconsArrowLeft>
         </div>
         <div class="pagination_button" v-for="page in pages" :key="page"
             :class="{ 'active': page == currentPage, 'dots': page === '...' }"
-            @click="page === '...' ? null : $emit('change', Number(page))">
+            @click="page !== '...' && go(Number(page))">
             {{ page }}
         </div>
-        <div class="pagination_button" @click="$emit('change', currentPage + 1)">
+        <div class="pagination_button" @click="go(currentPage + 1)">
             <IconsArrowLeft class="reverse"></IconsArrowLeft>
         </div>
-        <div class="pagination_button" @click="$emit('change', total)">
+        <div class="pagination_button" @click="go(total)">
             <IconsDoubleArrowLeft class="reverse"></IconsDoubleArrowLeft>
         </div>
     </div>
@@ -28,9 +28,15 @@ const props = defineProps<{
     total: number;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'change', page: number): void;
 }>();
+
+/** Кнопки «назад»/«вперёд» на краях раньше уводили на страницы 0 и total + 1. */
+function go(page: number) {
+    if (page < 1 || page > props.total || page === props.currentPage) return;
+    emit('change', page);
+}
 
 const pages = computed(() => generatePagination(props.currentPage, props.total));
 </script>

@@ -7,46 +7,30 @@
       <div class="settings w-full max-w-[500px] flex flex-col gap-12">
         <div class="flex flex-col gap-6">
           <h2 class="font-medium text-[32px]">Настройки</h2>
-          <UITabs
-            v-model:active="active"
-            :tabs="[
-              { name: 'Общие', value: 'general' },
-              { name: 'Профиль', value: 'profile' },
-              { name: 'Ссылки', value: 'socials' },
-            ]"
-          />
+          <UITabs v-model:active="active" :tabs="TABS" />
         </div>
         <div class="flex flex-col gap-6">
           <template v-if="active === 'general'">
             <UIInput
-              v-model="general.nickname"
-              label="Логин"
+              v-model="profile.nickname"
+              label="Ник"
               type="text"
               placeholder="Отображаемый ник"
+              maxlength="40"
               :rules="rules.notEmpty"
-            ></UIInput>
+            />
             <UIInput
-              v-model="general.email"
+              :model-value="userStore.user?.email ?? ''"
               label="Почта"
-              type="text"
-              placeholder="Почта, привязанная к аккануту"
+              type="email"
+              placeholder="Почта, привязанная к аккаунту"
               disabled
-            ></UIInput>
+            />
             <div class="block pass">
-              <p>Пароль</p>
-              <UIInput
-                v-model="pass.password"
-                type="password"
-                placeholder="Новый пароль"
-                :rules="rules.notEmpty"
-              ></UIInput>
-              <UIInput
-                v-model="pass.newPassword"
-                type="password"
-                placeholder="Новый пароль ещё раз"
-                :rules="rules.notEmpty"
-              >
-              </UIInput>
+              <p>Смена пароля</p>
+              <UIInput v-model="pass.current" type="password" placeholder="Текущий пароль" />
+              <UIInput v-model="pass.next" type="password" placeholder="Новый пароль" />
+              <UIInput v-model="pass.repeat" type="password" placeholder="Новый пароль ещё раз" />
             </div>
           </template>
           <template v-if="active === 'profile'">
@@ -55,8 +39,9 @@
               label="Имя"
               type="text"
               placeholder="Ваше имя"
+              maxlength="100"
               :rules="rules.notEmpty"
-            ></UIInput>
+            />
             <div class="block">
               <p>Аватар</p>
               <div
@@ -72,8 +57,8 @@
                 <input
                   class="absolute w-full h-full opacity-0 cursor-pointer"
                   type="file"
-                  accept="image/*"
-                  @change="uploadPhoto($event.target.files[0])"
+                  accept="image/jpeg,image/png,image/webp"
+                  @change="uploadPhoto"
                 />
               </div>
             </div>
@@ -81,63 +66,60 @@
               v-model="profile.speciality"
               label="Ваша специальность"
               type="text"
-              placeholder="Вы по специальности"
+              placeholder="Например, Vue-разработчик"
               maxlength="40"
-            >
-            </UIInput>
+            />
             <UITextarea
               v-model="profile.description"
               label="Описание профиля"
               maxlength="1000"
               placeholder="Написание привлекательного описания может повысить шансы найти заказ"
-            >
-            </UITextarea>
+            />
             <div class="block">
               <p>Навыки (до 10)</p>
-              <ProfileSkills
-                :skills="profile.skills"
-                @save="saveUser"
-                @delete="deleteSkill"
-              ></ProfileSkills>
+              <ProfileSkills :skills="profile.skills" @save="saveSkills" @delete="deleteSkill" />
             </div>
             <UISelect
               :list="countries"
               label="Страна"
               :selected="profile.country"
-              @select="handleSelect"
-            ></UISelect>
+              @select="profile.country = $event"
+            />
           </template>
           <template v-if="active === 'socials'">
             <UIInput
               v-model="profile.telegram"
               label="Telegram"
               type="text"
+              maxlength="200"
               placeholder="Вставьте полную ссылку на ваш Telegram"
-            ></UIInput>
+            />
             <UIInput
               v-model="profile.behance"
               label="Behance"
               type="text"
+              maxlength="200"
               placeholder="Вставьте полную ссылку на ваш Behance"
-            ></UIInput>
+            />
             <UIInput
               v-model="profile.git"
               label="Github/Gitlab"
               type="text"
+              maxlength="200"
               placeholder="Вставьте полную ссылку на ваш Github/Gitlab"
-            ></UIInput>
+            />
           </template>
         </div>
         <div class="flex items-center gap-8">
           <UIButton
             type="active"
-            @click="saveUser"
-            :disabled="!(validProfile && validPass)"
+            :disabled="!canSave || saving"
             style="width: 200px"
+            @click="saveAll"
             >Сохранить</UIButton
           >
-          <UIButton type="cancel" variant="outline" style="width: 200px"
-            >Удалить акканут</UIButton
+          <UIButton type="cancel" variant="outline" style="width: 200px" @click="deleteAccount"
+            >Удалить аккаунт</UIButton
           >
         </div>
       </div>
@@ -146,30 +128,27 @@
 </template>
 
 <script setup lang="ts">
-import { getCountries, setAvatar } from "~/shared/api/user-api";
+import { getCountries, type UserUpdate } from "~/shared/api/user-api";
 import { makeURL } from "~/shared/utils/helpers";
 import { rules } from "~/shared/utils/rules";
 import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";
 
-definePageMeta({
-  middleware: ["auth"],
-});
+const TABS = [
+  { name: "Общие", value: "general" },
+  { name: "Профиль", value: "profile" },
+  { name: "Ссылки", value: "socials" },
+];
 
 const userStore = useUserStore();
-const notiStore = useNotifications();
+const notifications = useNotifications();
 
 const active = ref("general");
 const countries = ref<string[]>([]);
-const photo = ref<File | null>(null);
+const saving = shallowRef(false);
 
-const general = ref<any>({
+const profile = ref<Required<Omit<UserUpdate, "phone">>>({
   nickname: "",
-  phone: "",
-  email: "",
-});
-
-const profile = ref<any>({
   name: "",
   speciality: "",
   skills: [],
@@ -180,108 +159,99 @@ const profile = ref<any>({
   git: "",
 });
 
-const pass = ref({
-  password: "",
-  newPassword: "",
-});
+/**
+ * Раньше было два поля «Новый пароль», а бэкенд трактовал первое как
+ * текущий пароль. Смена пароля не работала, а её ошибка срывала
+ * сохранение всего профиля.
+ */
+const pass = ref({ current: "", next: "", repeat: "" });
+const wantsPasswordChange = computed(() => !!(pass.value.current || pass.value.next || pass.value.repeat));
 
-const validProfile = computed(() => {
-  return profile.value.name && general.value.nickname && general.value.email;
-});
+const canSave = computed(() => !!profile.value.name.trim() && !!profile.value.nickname.trim());
 
-const validPass = computed(() => {
-  return pass.value.password === pass.value.newPassword;
-});
+async function changePassword(): Promise<boolean> {
+  const { current, next, repeat } = pass.value;
+  if (!current || !next) {
+    notifications.setNotification("Для смены пароля введите текущий и новый пароль");
+    return false;
+  }
+  if (next !== repeat) {
+    notifications.setNotification("Новые пароли не совпадают");
+    return false;
+  }
+  const ok = await userStore.changePassword(current, next);
+  if (ok) pass.value = { current: "", next: "", repeat: "" };
+  return ok;
+}
 
-function handleSelect(el: string) {
-  profile.value.country = el;
+async function saveProfile(update: UserUpdate = profile.value) {
+  const ok = await userStore.editMe(update);
+  if (ok) fillForm();
+  return ok;
+}
+
+async function saveAll() {
+  // Флаг запоминаем до сохранения: после смены пароля поля очищаются.
+  const changingPassword = wantsPasswordChange.value;
+
+  saving.value = true;
+  const passwordOk = changingPassword ? await changePassword() : true;
+  const profileOk = await saveProfile();
+  saving.value = false;
+
+  if (profileOk && passwordOk) {
+    notifications.setNotification(
+      changingPassword ? "Пароль и профиль сохранены" : "Изменения сохранены",
+    );
+  }
+}
+
+/** Навыки сохраняются сразу — модалка навыков не зависит от кнопки «Сохранить». */
+async function saveSkills(skills: string[]) {
+  profile.value.skills = skills;
+  if (await saveProfile({ skills })) {
+    notifications.setNotification("Навыки сохранены");
+  }
 }
 
 async function deleteSkill(index: number) {
-  profile.value.skills.splice(index, 1);
-  await saveUser(profile.value.skills);
+  const skills = profile.value.skills.filter((_, i) => i !== index);
+  profile.value.skills = skills;
+  await saveProfile({ skills });
 }
 
-async function saveUser(skills?: string[]) {
-  if (!userStore.user) return;
-
-  const updateData = {
-    ...general.value,
-    ...profile.value,
-  };
-  delete updateData.email;
-
-  let skillsArray =
-    typeof skills === "object" && skills.length > 0 ? skills : [];
-  skillsArray = skillsArray.length
-    ? skillsArray
-    : updateData.skills.length
-    ? updateData.skills
-    : userStore.user.skills;
-
-  if (pass.value.password === pass.value.newPassword && pass.value.password) {
-    await userStore.newPassword(pass.value.password, pass.value.newPassword);
-  } else if (
-    pass.value.password !== pass.value.newPassword &&
-    pass.value.password
-  ) {
-    await notiStore.setNotification("Пароли не совпадают");
-  }
-
-  await userStore.editMe({
-    ...updateData,
-    skills: skillsArray,
-  });
-
-  setProfile();
-
-  await notiStore.setNotification("Изменения сохранены");
-}
-
-async function uploadPhoto(img: File) {
-  if (!userStore.user) return;
-  photo.value = img;
-
-  if (photo.value) {
-    const form = new FormData();
-    form.append("avatar", img);
-    try {
-      const res = await setAvatar(form);
-
-      userStore.user.avatar = res.avatarUrl;
-    } catch (error) {
-      // photoError.value = true;
-    }
+async function uploadPhoto(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = "";
+  if (file && (await userStore.setAvatar(file))) {
+    notifications.setNotification("Аватар обновлён");
   }
 }
 
-function setProfile() {
-  if (!userStore.user?.id) return;
+function deleteAccount() {
+  notifications.setNotification("Удаление аккаунта пока недоступно. Обратитесь в поддержку");
+}
 
-  general.value = {
-    nickname: userStore.user.nickname || "",
-    phone: userStore.user.phone || "",
-    email: userStore.user.email || "",
-  };
-
+function fillForm() {
+  const user = userStore.user;
+  if (!user) return;
   profile.value = {
-    name: userStore.user.name || "",
-    speciality: userStore.user.speciality || "",
-    skills: [...userStore.user.skills],
-    description: userStore.user.description || "",
-    country: userStore.user.country || null,
-    telegram: userStore.user.telegram || "",
-    behance: userStore.user.behance || "",
-    git: userStore.user.git || "",
+    nickname: user.nickname ?? "",
+    name: user.name ?? "",
+    speciality: user.speciality ?? "",
+    skills: [...(user.skills ?? [])],
+    description: user.description ?? "",
+    country: user.country ?? "",
+    telegram: user.telegram ?? "",
+    behance: user.behance ?? "",
+    git: user.git ?? "",
   };
 }
 
 onMounted(async () => {
-  await userStore.checkAuth();
-
-  setProfile();
-
-  countries.value = await getCountries();
+  fillForm();
+  countries.value = (await getCountries()) ?? [];
 });
 </script>
 

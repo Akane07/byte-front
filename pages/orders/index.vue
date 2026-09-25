@@ -4,7 +4,7 @@
 
     <div class="w-full flex flex-col justify-center items-center z-100 relative mb-25">
         <div class="w-full max-w-360 flex justify-end relative mt-8">
-            <OrdersFilters v-model:filters="filters" @change="getOrders"></OrdersFilters>
+            <OrdersFilters v-model:filters="filters" @change="applyFilters"></OrdersFilters>
             <div class="orders w-[75%] flex flex-col gap-6 px-5 py-11.5 mt-12">
                 <div class="flex justify-between items-center">
                     <div class="title">
@@ -14,9 +14,12 @@
                         Разместить заказ
                     </UIButton>
                 </div>
+                <p v-if="loaded && !orderStore.orders.length" class="empty">
+                    Заказов по выбранным категориям пока нет
+                </p>
                 <div class="flex flex-col gap-4">
                     <OrdersOrderCard v-for="order in orderStore.orders" :key="order.id" :order="order"
-                        @showOrder="showOrder"></OrdersOrderCard>
+                        @show-order="hoverOrder = $event"></OrdersOrderCard>
                 </div>
                 <div class="flex justify-center mt-8 justify-self-end" v-if="orderStore.total > 1">
                     <UIPagination :total="orderStore.total" :currentPage="orderStore.page" @change="getOrders">
@@ -26,44 +29,32 @@
         </div>
     </div>
 
-    <OrdersOrderHover :order="hoverOrder" @close-order="handleCloseOrder"></OrdersOrderHover>
+    <OrdersOrderHover :order="hoverOrder" @close-order="hoverOrder = null"></OrdersOrderHover>
 </template>
 
 <script setup lang="ts">
-import { type Order } from '~/shared/api/order-api';
+import type { Order } from '~/shared/api/order-api';
 import type { Filter } from '~/shared/types';
 import { useOrderStore } from '~/store/orderStore';
-import { useUserStore } from '~/store/userStore';
 
-definePageMeta({
-    middleware: ['auth'],
-});
-
-const userStore = useUserStore();
 const orderStore = useOrderStore();
 
 const hoverOrder = ref<Order | null>(null);
 const filters = ref<Filter[]>([]);
+const loaded = shallowRef(false);
 
-function showOrder(order: Order) {
-    hoverOrder.value = order;
-}
-
-function handleCloseOrder() {
-    hoverOrder.value = null;
+/** Фильтры изменились — начинаем с первой страницы. */
+async function applyFilters() {
+    orderStore.page = 1;
+    await orderStore.getAllOrders(filters.value);
+    loaded.value = true;
 }
 
 async function getOrders(page: number) {
-    if (page > orderStore.total) return;
     orderStore.page = page;
     await orderStore.getAllOrders(filters.value);
-
     window.scroll({ top: 0 });
 }
-
-onMounted(async () => {
-    await userStore.checkAuth();
-});
 </script>
 
 <style scoped lang="scss">
@@ -75,5 +66,9 @@ onMounted(async () => {
 .title {
     font-size: 20px;
     color: $text-header;
+}
+
+.empty {
+    color: $text-secondary;
 }
 </style>

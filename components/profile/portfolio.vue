@@ -1,59 +1,86 @@
 <template>
   <div
-    class="wrapper w-full min-h-dvh absolute top-0 left-0 flex flex-col justify-center items-center mb-25 py-[150px] pt-[50px] pb-[300px]">
+    class="wrapper w-full min-h-dvh absolute top-0 left-0 flex flex-col justify-center items-center mb-25 py-[150px] pt-[50px] pb-[300px]"
+  >
     <div class="head w-full max-w-[1440px] flex items-center justify-between mt-16">
       <h3 class="font-medium text-2xl">
-        {{
-          editMode
-            ? "Редактирование своего проекта"
-            : "Добавьте новый проект в портфолио"
-        }}
+        {{ editMode ? "Редактирование своего проекта" : "Добавьте новый проект в портфолио" }}
       </h3>
-      <IconsCross class="cursor-pointer" @click="navigateTo('/profile/my')" />
+      <IconsCross class="cursor-pointer" @click="router.back()" />
     </div>
 
     <div class="w-full flex gap-8 max-w-[1440px] mt-8">
       <div class="flex flex-col gap-8 w-[40%]">
-        <UIInput v-model="portfolio.title" label="Название проекта" type="text"
-          placeholder="Введите краткое, но понятное название" maxlength="40" :rules="rules.notEmpty" required />
-        <UIInput v-model="portfolio.role" label="Ваша роль" type="text"
-          placeholder="Например, Front-end разработчик или Web-designer" maxlength="40" :rules="rules.notEmpty"
-          required />
-        <UITextarea v-model="portfolio.description" label="Описание проекта"
-          placeholder="Например, Front-end разработчик или Web-designer" maxlength="1000" :rules="rules.notEmpty"
-          required />
+        <UIInput
+          v-model="portfolio.title"
+          label="Название проекта"
+          type="text"
+          placeholder="Введите краткое, но понятное название"
+          maxlength="100"
+          :rules="rules.notEmpty"
+          required
+        />
+        <UIInput
+          v-model="portfolio.role"
+          label="Ваша роль"
+          type="text"
+          placeholder="Например, Front-end разработчик или Web-designer"
+          maxlength="100"
+          :rules="rules.notEmpty"
+          required
+        />
+        <UITextarea
+          v-model="portfolio.description"
+          label="Описание проекта"
+          placeholder="Расскажите, что это за проект и что вы в нём сделали"
+          maxlength="2000"
+          :rules="rules.notEmpty"
+          required
+        />
         <div class="flex flex-col gap-3">
           <p class="text-white">Навыки</p>
-          <ProfileSkills :skills="portfolio.skills" @save="saveSkills" @delete="deleteSkill" />
+          <ProfileSkills
+            :skills="portfolio.skills"
+            @save="portfolio.skills = $event"
+            @delete="portfolio.skills.splice($event, 1)"
+          />
         </div>
       </div>
 
       <div class="flex flex-col gap-8 w-[calc(60%-32px)]">
-        <div v-if="video" class="file">
-          <!-- если это уже сохранённое видео с бэка -->
-          <video v-if="
-            typeof video === 'string' && video.includes('/uploads/files/')
-          " :src="makeURL(video as string)" controls style="max-width: 100%; height: auto" />
-          <!-- если только что выбранное видео (blob url) -->
-          <video v-else :src="video as string" controls style="max-width: 100%; height: auto" />
+        <div v-if="video" class="file relative">
+          <video :src="video.preview" controls style="max-width: 100%; height: auto" />
+          <div class="absolute right-3.5 top-2.5">
+            <LazyUIActionButton @click="video = null">
+              <template #icon="{ color }">
+                <IconsTrash style="transform: scale(1.3)" :color="color" />
+              </template>
+            </LazyUIActionButton>
+          </div>
         </div>
 
-        <div v-for="(file, index) in photos" :key="file + index" class="file w-full max-h-[500px] rounded-md relative">
-          <img class="w-full h-full rounded-md object-cover"
-            v-if="typeof file === 'string' && file.includes('/uploads/files/')" :src="makeURL(file)" alt="photo" />
-          <img v-else :src="file" alt="photo" class="w-full h-full rounded-md object-cover" />
+        <div
+          v-for="(image, index) in images"
+          :key="image.preview"
+          class="file w-full max-h-[500px] rounded-md relative"
+        >
+          <img :src="image.preview" alt="photo" class="w-full h-full rounded-md object-cover" />
           <div class="hover absolute top-0 left-0 w-full h-full opacity-0">
             <div class="flex gap-2 absolute right-3.5 top-2.5">
-              <LazyUIActionButton @click="deleteFile(index)">
+              <LazyUIActionButton @click="images.splice(index, 1)">
                 <template #icon="{ color }">
-                  <IconsTrash style="transform: scale(1.3)" :color="color"></IconsTrash>
+                  <IconsTrash style="transform: scale(1.3)" :color="color" />
                 </template>
               </LazyUIActionButton>
-              <LazyUIActionButton @click.stop="navigateTo(`/profile/portfolio/edit/${portfolio.id}`)">
+              <LazyUIActionButton>
                 <template #icon="{ color }">
-                  <input class="absolute z-10 w-full h-full opacity-0 cursor-pointer" type="file" accept="image/*"
-                    @change="handleFileReplace($event.target.files[0], index)" />
-                  <IconsEditPen style="transform: scale(1.3)" :color="color"></IconsEditPen>
+                  <input
+                    class="absolute z-10 w-full h-full opacity-0 cursor-pointer"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    @change="replaceImage($event, index)"
+                  />
+                  <IconsEditPen style="transform: scale(1.3)" :color="color" />
                 </template>
               </LazyUIActionButton>
             </div>
@@ -70,40 +97,53 @@
               <IconsPaperclip class="icon" />
             </div>
             <p class="text-sm text-center">
-              Добавьте фото или видео к проекту<span style="color: $text-red">*</span><br />
-              Первое фото будет обложкой для проекта
+              Добавьте фото или видео к проекту<span class="required">*</span><br />
+              До {{ MAX_IMAGES }} фото, первое будет обложкой проекта
             </p>
           </div>
-          <input class="cursor-pointer w-full h-full opacity-0 absolute" type="file" accept="image/*,video/*"
-            @change="handleFile($event.target.files[0])" />
+          <input
+            class="cursor-pointer w-full h-full opacity-0 absolute"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,video/mp4,video/webm"
+            @change="addFile"
+          />
         </div>
       </div>
     </div>
 
     <div class="w-full flex justify-end mt-25 max-w-[1440px]">
-      <UIButton type="active" :disabled="!isValid" @click="uploadFiles">
-        Опубликовать
+      <UIButton type="active" :disabled="!isValid || saving" @click="submit">
+        {{ editMode ? "Сохранить" : "Опубликовать" }}
       </UIButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { rules } from "~/shared/utils/rules";
 import { makeURL } from "~/shared/utils/helpers";
+import { rules } from "~/shared/utils/rules";
+import { useNotifications } from "~/store/notiStore";
 import { usePortfolioStore } from "~/store/portfolioStore";
-import { useUserStore } from "~/store/userStore";
 
-definePageMeta({
-  middleware: ["auth"],
-});
+const MAX_IMAGES = 5;
+const MAX_VIDEO_MB = 50;
 
-const router = useRouter();
+/**
+ * Картинка или видео проекта: уже загруженная на сервер (url)
+ * или только что выбранная (file). preview — что показать в <img>/<video>.
+ * Раньше файлы и превью лежали в двух массивах с разными индексами,
+ * и удаление картинки в режиме редактирования убирало не тот файл.
+ */
+type Media = { preview: string; url?: string; file?: File };
+
 const route = useRoute();
-const userStore = useUserStore();
+const router = useRouter();
 const portfolioStore = usePortfolioStore();
+const notifications = useNotifications();
 
-const editMode = shallowRef(false);
+const editId = computed(() => route.params.id as string | undefined);
+const editMode = computed(() => !!editId.value);
+const saving = shallowRef(false);
 
 const portfolio = ref({
   title: "",
@@ -111,116 +151,113 @@ const portfolio = ref({
   role: "",
   skills: [] as string[],
 });
+const images = ref<Media[]>([]);
+const video = ref<Media | null>(null);
+/** Было ли видео у проекта до редактирования — чтобы отправить его удаление. */
+const hadVideo = shallowRef(false);
 
-const files = ref<File[]>([]);
-const photos = ref<string[]>([]);
-const video = ref<string | null>(null);
-const fileVideo = ref<File | null>(null);
+const isValid = computed(
+  () =>
+    !!portfolio.value.title.trim() &&
+    !!portfolio.value.description.trim() &&
+    !!portfolio.value.role.trim() &&
+    images.value.length > 0,
+);
 
-const isValid = computed(() => {
-  return (
-    portfolio.value.title?.length &&
-    portfolio.value.description?.length &&
-    portfolio.value.role?.length &&
-    photos.value.length
-  );
-});
-
-async function handleFile(file: File) {
-  if (!file) return;
-  if (files.value.length >= 5) return;
-
-  if (file.type.startsWith("image/")) {
-    files.value.push(file);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      photos.value.push(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-  } else if (file.type.startsWith("video/") && file.size < 50 * 1024 * 1024) {
-    fileVideo.value = file;
-    video.value = URL.createObjectURL(file);
-  }
+function pickFile(event: Event): File | null {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0] ?? null;
+  input.value = ""; // чтобы тот же файл можно было выбрать повторно
+  return file;
 }
 
-async function handleFileReplace(file: File, index: number) {
+function toMedia(file: File): Media {
+  return { preview: URL.createObjectURL(file), file };
+}
+
+function addFile(event: Event) {
+  const file = pickFile(event);
   if (!file) return;
 
-  files.value.splice(index, 1, file);
-
-  if (file.type.startsWith("image/")) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      photos.value.splice(index, 1, e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-  }
-}
-
-function deleteFile(index: number) {
-  files.value.splice(index, 1);
-  photos.value.splice(index, 1);
-}
-
-async function uploadFiles() {
-  if (!photos.value.length) return;
-
-  const formData = new FormData();
-
-  if (fileVideo.value) {
-    formData.append("video", fileVideo.value);
-  }
-
-  for (const file of files.value) {
-    formData.append("images", file);
-  }
-
-  for (const photo of photos.value) {
-    if (photo.includes("/uploads/files/")) {
-      formData.append("photos[]", photo);
+  if (file.type.startsWith("video/")) {
+    if (file.size > MAX_VIDEO_MB * 1024 * 1024) {
+      notifications.setNotification(`Видео должно быть не больше ${MAX_VIDEO_MB} МБ`);
+      return;
     }
-  }
-
-  formData.append("title", portfolio.value.title);
-  formData.append("description", portfolio.value.description);
-  formData.append("role", portfolio.value.role);
-
-  for (const skill of portfolio.value.skills) {
-    formData.append("skills", skill);
-  }
-
-  if (editMode.value && route.params.id) {
-    await portfolioStore.editPortfolio(formData, route.params.id as string);
+    video.value = toMedia(file);
+  } else if (images.value.length >= MAX_IMAGES) {
+    notifications.setNotification(`Можно добавить не больше ${MAX_IMAGES} изображений`);
   } else {
-    await portfolioStore.createPortfolio(formData);
+    images.value.push(toMedia(file));
+  }
+}
+
+function replaceImage(event: Event, index: number) {
+  const file = pickFile(event);
+  if (file) images.value.splice(index, 1, toMedia(file));
+}
+
+function buildForm() {
+  const form = new FormData();
+  form.append("title", portfolio.value.title.trim());
+  form.append("description", portfolio.value.description.trim());
+  form.append("role", portfolio.value.role.trim());
+  portfolio.value.skills.forEach((skill) => form.append("skills", skill));
+
+  for (const image of images.value) {
+    if (image.file) form.append("images", image.file);
+    else if (image.url) form.append("photos[]", image.url);
   }
 
-  router.back();
+  if (video.value?.file) {
+    form.append("video", video.value.file);
+  } else if (video.value?.url) {
+    form.append("video", video.value.url);
+  } else if (hadVideo.value) {
+    form.append("video", ""); // видео удалили при редактировании
+  }
+  return form;
 }
 
-function deleteSkill(index: number) {
-  portfolio.value.skills.splice(index, 1);
-}
+async function submit() {
+  saving.value = true;
+  const res = editId.value
+    ? await portfolioStore.editPortfolio(buildForm(), editId.value)
+    : await portfolioStore.createPortfolio(buildForm());
+  saving.value = false;
 
-function saveSkills(skills: string[]) {
-  portfolio.value.skills = skills;
+  if (res) {
+    notifications.setNotification(editMode.value ? "Проект сохранён" : "Проект добавлен в портфолио");
+    router.back();
+  }
 }
 
 onMounted(async () => {
-  await userStore.checkAuth();
-  const id = route.params.id as string | undefined;
+  if (!editId.value) return;
 
-  if (id) {
-    editMode.value = true;
-    const res = await portfolioStore.getPortfolio(id);
+  const res = await portfolioStore.getPortfolio(editId.value);
+  if (!res) {
+    router.back();
+    return;
+  }
 
-    portfolio.value.title = res.title;
-    portfolio.value.description = res.description;
-    portfolio.value.role = res.role;
-    portfolio.value.skills = res.skills;
+  portfolio.value = {
+    title: res.title,
+    description: res.description,
+    role: res.role,
+    skills: [...res.skills],
+  };
+  images.value = res.images.map((url) => ({ url, preview: makeURL(url) }));
+  if (res.video) {
+    video.value = { url: res.video, preview: makeURL(res.video) };
+    hadVideo.value = true;
+  }
+});
 
-    photos.value = res.images || [];
-    video.value = res.video || null;
+// Освобождаем blob-ссылки на выбранные файлы.
+onBeforeUnmount(() => {
+  for (const media of [...images.value, video.value]) {
+    if (media?.file) URL.revokeObjectURL(media.preview);
   }
 });
 </script>
@@ -268,5 +305,10 @@ onMounted(async () => {
       opacity: 1;
     }
   }
+}
+
+
+.required {
+  color: $text-red;
 }
 </style>

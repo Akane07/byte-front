@@ -6,7 +6,7 @@
         <p>
           {{
             from === "sender"
-              ? `Отклик от ${userStore.user?.nickname || user.name}`
+              ? `Отклик от ${userStore.user?.nickname || userStore.user?.name}`
               : `Отклик от ${user.nickname || user.name}`
           }}
         </p>
@@ -36,11 +36,14 @@
 </template>
 
 <script setup lang="ts">
+import type { Order, OrderResponse } from "~/shared/api/order-api";
+import type { User } from "~/shared/api/user-api";
 import type { Message } from "~/shared/types";
+import { useUserStore } from "~/store/userStore";
 
 const { msg } = defineProps<{
   msg: Message;
-  from: "sender" | "receiver" | null;
+  from: "sender" | "receiver";
 }>();
 
 defineEmits<{
@@ -49,10 +52,10 @@ defineEmits<{
   (e: "rejectResponse"): void;
 }>();
 
-const ordersInChat = inject<any>("ordersInChat");
-const responsesInChat = inject<any[]>("responsesInChat");
-const user = inject<any>("user");
-const userStore = inject<any>("userStore");
+const ordersInChat = inject<Ref<Order[]>>("ordersInChat");
+const responsesInChat = inject<Ref<OrderResponse[]>>("responsesInChat", ref([]));
+const user = inject<Ref<User | null>>("user", ref(null));
+const userStore = useUserStore();
 
 const notSelected = computed(() => {
   return msg.status !== "rejected" && msg.status !== "accepted";

@@ -1,177 +1,146 @@
-import { api } from ".";
+import { api, call } from ".";
+import type { DateRange, Deadline, Price, PriceType } from "../types";
+
+export type OrderStatus = "active" | "pending" | "completed" | "cancelled";
 
 export interface Order {
-    id: string;
-    user_id: string;
-    title: string;
-    description: string;
-    price: number | {
-        from: number;
-        to: number;
-    };
-    price_type: 'contract' | 'fixed' | 'hourly';
-    type: 'one-time' | 'reusable';
-    for_experts: boolean;
-    deadlines: 'less-week' | 'more-week' | 'less-month' | 'more-month' | 'contract' | 'custom';
-    deadline_date?: {
-        from: string;
-        to: string;
-    };
-    skills: string[];
-    category: number;
-    response_count: number;
-    viewed_by: string[];
-    is_active: boolean;
-    created_at: string;
-    performer?: string;
-    draft: boolean;
-    is_suggest: boolean;
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  price: Price;
+  price_type: PriceType;
+  type: "one-time" | "reusable";
+  for_experts: boolean;
+  deadlines: Deadline;
+  deadline_date?: DateRange;
+  skills: string[];
+  category?: number;
+  response_count: number;
+  viewed_by: string[];
+  is_active: boolean;
+  created_at: string;
+  performer?: string;
+  status: OrderStatus;
+  draft: boolean;
 }
+
+/** Данные формы заказа, которые принимает бэкенд. */
+export type OrderInput = Pick<
+  Order,
+  | "title"
+  | "description"
+  | "price"
+  | "price_type"
+  | "type"
+  | "for_experts"
+  | "deadlines"
+  | "deadline_date"
+  | "skills"
+  | "category"
+  | "draft"
+>;
 
 export interface OrderResponse {
-    id: string;
-    order_id: string;
-    user_id: string;
-    description: string;
-    created_at: string;
-    title: string;
-    price: number;
-    viewed: boolean;
-    price_type: "contract" | "fixed";
-    messageId?: string;
+  id: string;
+  order_id: string;
+  user_id: string;
+  description: string;
+  created_at: string;
+  viewed: boolean;
+  messageId?: string;
 }
 
-
-export async function getOrders(page: number = 1, filters: any) {
-    try {
-        const response = await api.get<{ orders: Order[], currentPage: number, totalPages: number }>(`/order?page=${page}&${filters}`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+/** Свой отклик с данными заказа — ответ POST /order/responses. */
+export interface MyOrderResponse extends OrderResponse {
+  title: string;
+  price: Price;
+  price_type: PriceType;
 }
 
-export async function getDrafts(user_id: string) {
-    try {
-        const response = await api.get<Order[]>(`/order/user/${user_id}/drafts`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export interface OrderPage {
+  orders: Order[];
+  currentPage: number;
+  totalPages: number;
 }
 
-export async function postOrder(order: Partial<Order>) {
-    try {
-        const response = await api.post<Order>('/order', order);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getOrders(page: number, categories: number[]) {
+  return call(
+    api.get<OrderPage>("/order", {
+      params: { page, categories },
+      // ?categories=1&categories=2 — формат, который ждёт бэкенд
+      paramsSerializer: { indexes: null },
+    }),
+  );
 }
 
-export async function patchOrder(order_id: string, order: Partial<Order>) {
-    try {
-        const response = await api.patch<Order>(`/order/${order_id}`, order);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getOrderById(id: string) {
+  return call(api.get<Order>(`/order/${id}`));
 }
 
-export async function getOrderById(id: string) {
-    try {
-        const response = await api.get<Order>(`/order/${id}`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getOrderByUserId(userId: string) {
+  return call(api.get<Order[]>(`/order/user/${userId}`));
 }
 
-export async function deleteOrder(id: string) {
-    try {
-        const response = await api.delete(`/order/${id}`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getDrafts(userId: string) {
+  return call(api.get<Order[]>(`/order/user/${userId}/drafts`));
 }
 
-export async function postResponse(id: string, description: string) {
-    const response = await api.post<OrderResponse>(`/order/${id}/response`, {
-        description,
-    });
-
-    return response.data;
+export function postOrder(order: OrderInput) {
+  return call(api.post<Order>("/order", order));
 }
 
-export async function editResponse(id: string, response_id: string, description: string) {
-    const response = await api.patch<OrderResponse>(`/order/${id}/response/${response_id}`, {
-        description,
-    });
-
-    return response.data;
+export function patchOrder(orderId: string, order: Partial<OrderInput>) {
+  return call(api.patch<Order>(`/order/${orderId}`, order));
 }
 
-export async function getResponse(id: string) {
-    const response = await api.get<OrderResponse>(`/order/${id}/response`);
-
-    return response.data;
+export function deleteOrder(id: string) {
+  return call(api.delete<{ deleted: boolean }>(`/order/${id}`));
 }
 
-export async function getResponseById(id: string, rid: string) {
-    const response = await api.get<OrderResponse>(`/order/${id}/response/${rid}`);
-
-    return response.data;
+export function markOrderViewed(orderId: string) {
+  return call(api.post<Order>(`/order/${orderId}/viewed`, undefined, { silent: true }));
 }
 
-export async function getResponsesOnOrder(id: string) {
-    const response = await api.get<OrderResponse[]>(`/order/${id}/responses`);
-
-    return response.data;
+export function postResponse(orderId: string, description: string) {
+  return call(api.post<OrderResponse>(`/order/${orderId}/response`, { description }));
 }
 
-export async function markOrderViewed(orderId: string) {
-    await api.post<Order[]>(`/order/${orderId}/viewed`);
+export function editResponse(orderId: string, responseId: string, description: string) {
+  return call(
+    api.patch<OrderResponse>(`/order/${orderId}/response/${responseId}`, {
+      description,
+    }),
+  );
 }
 
-export async function getOrderByUserId(id: string) {
-    try {
-        const response = await api.get<Order[]>(`/order/user/${id}`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+/** Свой отклик на заказ; null — если не откликались. */
+export function getResponse(orderId: string) {
+  return call(api.get<OrderResponse | null>(`/order/${orderId}/response`));
 }
 
-export async function getMyResponses() {
-    try {
-        const response = await api.post<Order[]>('/order/responses');
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getResponseById(orderId: string, responseId: string) {
+  return call(
+    api.get<OrderResponse>(`/order/${orderId}/response/${responseId}`, { silent: true }),
+  );
 }
 
-export async function deleteResponse(id: string, order_id: string) {
-    try {
-        const response = await api.delete(`/order/${order_id}/response/${id}`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getResponsesOnOrder(orderId: string) {
+  return call(api.get<OrderResponse[]>(`/order/${orderId}/responses`));
 }
 
-export async function getOrdersBetweenUsers(id: string, uid: string): Promise<Order[]> {
-    const res = await api.get<Order[]>(`/chat/between/${id}/and/${uid}`);
+export function getMyResponses() {
+  return call(api.post<MyOrderResponse[]>("/order/responses"));
+}
 
-    return res.data;
+export function deleteResponse(responseId: string, orderId: string) {
+  return call(
+    api.delete<{ deleted: boolean; messageId?: string }>(
+      `/order/${orderId}/response/${responseId}`,
+    ),
+  );
+}
+
+export function getOrdersBetweenUsers(userId: string, otherId: string) {
+  return call(api.get<Order[]>(`/chat/between/${userId}/and/${otherId}`));
 }

@@ -6,9 +6,8 @@
                 <span>{{ useSliceDescription(response.description) }}</span>
             </div>
             <div class="stats_info">
-                <!-- <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)" :src="makeURL(userStore.user?.avatar)"></UIUserAvatar> -->
                 <span class="bordered">Отклик от {{ useUserCreated(response.created_at) }}</span>
-                <button class="bordered edit" @click="navigateTo(`/orders/${response.order_id}?edit=true`)">Редактировать</button>
+                <button class="bordered edit" @click.stop="navigateTo(`/orders/${response.order_id}?edit=true`)">Редактировать</button>
                 <button class="bordered delete" @click.stop="modal = true">Удалить отклик</button>
             </div>
         </div>
@@ -31,11 +30,11 @@
 </template>
 
 <script setup lang="ts">
-import { deleteResponse, type OrderResponse } from '~/shared/api/order-api';
+import { deleteResponse, type MyOrderResponse } from '~/shared/api/order-api';
 import { useNotifications } from '~/store/notiStore';
 
 const props = defineProps<{
-    response: OrderResponse
+    response: MyOrderResponse
 }>();
 
 const emit = defineEmits<{
@@ -43,6 +42,7 @@ const emit = defineEmits<{
 }>();
 
 const notifications = useNotifications();
+const chat = useChatSocket();
 
 const modal = shallowRef(false);
 
@@ -52,8 +52,11 @@ function handleOrderRedirect() {
 
 async function handleDelete() {
     const res = await deleteResponse(props.response.id, props.response.order_id);
+    modal.value = false;
 
     if (res) {
+        // Отклик был отправлен в чат отдельным сообщением — убираем и его.
+        if (res.messageId) chat.deleteMessage(res.messageId);
         emit('updateResponses')
         notifications.setNotification('Отклик успешно удален');
     }

@@ -1,6 +1,6 @@
 <template>
     <div class="input-wrapper">
-        <input :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" :type="type"
+        <input :value="modelValue" @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)" :type="type"
             class="auth-input" :placeholder="placeholder" />
         <span class="bordered border-left"></span>
         <span class="bordered border-top"></span>
@@ -10,14 +10,14 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
     type: string,
     placeholder: string,
     modelValue: string
 }>();
 
 defineEmits<{
-    (e: 'update:modelValue', value: boolean): () => void
+    (e: 'update:modelValue', value: string): void
 }>();
 </script>
 

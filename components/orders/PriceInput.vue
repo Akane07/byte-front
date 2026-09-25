@@ -1,7 +1,7 @@
 <template>
     <div class="price_input_wrapper flex justify-end items-center gap-1 w-full max-w-[200px] p-2 rounded-md">
         <input class="w-full text-end bg-transparent border-none outline-none" type="number" :value="modelValue"
-            @input="handleChange($event.target.value)" @focus="$event.target.select()">
+            @input="handleChange(($event.target as HTMLInputElement).value)" @focus="($event.target as HTMLInputElement).select()">
         <span>{{ type }}</span>
     </div>
 </template>
@@ -9,7 +9,7 @@
 <script setup lang="ts">
 const props = defineProps<{
     priceType: 'contract' | 'fixed' | 'hourly';
-    modelValue: any;
+    modelValue: number;
 }>();
 
 const emit = defineEmits<{
@@ -20,18 +20,15 @@ const type = computed(() => {
     return props.priceType === 'hourly' ? 'руб/час' : 'руб';
 });
 
-function handleChange(value: number) {
-    value = Number(String(value).replaceAll(',', '.').replaceAll('.', ''));
+const MAX_PRICE = 10_000_000;
 
-    if (+(value) < 0) {
-        emit('update:modelValue', 0);
-        return;
-    } else if (+(value) > 10000000) {
-        emit('update:modelValue', 10000000);
-        return;
-    } else {
-        emit('update:modelValue', +value);
-    }
+/**
+ * Цена — целое число рублей от 0 до MAX_PRICE. Раньше точка удалялась
+ * из строки, и «12.5» превращалось в 125.
+ */
+function handleChange(raw: string) {
+    const value = Math.trunc(Number(raw.replace(',', '.')));
+    emit('update:modelValue', Number.isFinite(value) ? Math.min(Math.max(value, 0), MAX_PRICE) : 0);
 }
 </script>
 

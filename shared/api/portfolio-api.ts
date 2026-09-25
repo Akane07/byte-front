@@ -1,97 +1,49 @@
-import { api } from ".";
+import { api, call } from ".";
 
 export interface Portfolio {
-    id: string;
-    user_id: string;
-    title: string;
-    description: string;
-    role: string;
-    images: string[];
-    skills: string[];
-    video?: File;
-    created_at: string;
-    viewed_by: number;
-    liked_by: string[];
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  role: string;
+  images: string[];
+  skills: string[];
+  /** Путь к видео на сервере, например /uploads/files/....mp4 */
+  video?: string;
+  created_at: string;
+  /** Количество просмотров. */
+  viewed_by: number;
+  liked_by: string[];
 }
 
-export async function getMyPortfolio() {
-    try {
-        const response = await api.get<Portfolio[]>('/portfolio');
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getMyPortfolio() {
+  return call(api.get<Portfolio[]>("/portfolio"));
 }
 
-export async function postPortfolio(data: FormData) {
-    try {
-        const response = await api.post<Portfolio>('/portfolio', data);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getPortfolios(userId: string) {
+  return call(api.get<Portfolio[]>(`/portfolio/user/${userId}`));
 }
 
-export async function patchPortfolio(data: FormData, id: string) {
-    try {
-        const response = await api.patch<Portfolio>(`/portfolio/${id}`, data);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function getPortfolioById(id: string) {
+  return call(api.get<Portfolio>(`/portfolio/${id}`));
 }
 
-export async function deletePortfolio(id: string) {
-    try {
-        const response = await api.delete<Portfolio>(`/portfolio/${id}`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function postPortfolio(data: FormData) {
+  return call(api.post<Portfolio>("/portfolio", data));
 }
 
-export async function getPortfolioById(id: string) {
-    try {
-        const response = await api.get<Portfolio>(`/portfolio/${id}`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function patchPortfolio(data: FormData, id: string) {
+  return call(api.patch<Portfolio>(`/portfolio/${id}`, data));
 }
 
-export async function getPortfolios(id: string) {
-    try {
-        const response = await api.get<Portfolio[]>(`/portfolio/user/${id}`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function deletePortfolio(id: string) {
+  return call(api.delete<{ deleted: boolean }>(`/portfolio/${id}`));
 }
 
-export async function viewPortfolio(id: string) {
-    try {
-        const response = await api.post<Portfolio>(`/portfolio/${id}/viewed`);
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function viewPortfolio(id: string) {
+  return call(api.post(`/portfolio/${id}/viewed`, undefined, { silent: true }));
 }
 
-export async function likePortfolio(id: string, isLike: boolean) {
-    try {
-        const response = await api.post<Portfolio>(`/portfolio/${id}/like`, {
-            liked: isLike
-        });
-
-        return response.data;
-    } catch (e: any) {
-        return e.response.data;
-    }
+export function likePortfolio(id: string, liked: boolean) {
+  return call(api.post<Portfolio>(`/portfolio/${id}/like`, { liked }));
 }

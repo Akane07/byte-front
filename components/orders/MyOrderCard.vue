@@ -38,7 +38,7 @@
       <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
       <UIButton
         v-if="plain"
-        active
+        type="active"
         @click="$emit('suggest', order.id)"
         >Предложить</UIButton
       >
@@ -49,17 +49,18 @@
         >В архиве</UIButton
       >
       <UIButton
-        v-else-if="order.is_active && !order.performer"
-        active
+        v-else-if="order.status === 'completed'"
+        type="success"
         style="min-width: 155px"
-        >Активен</UIButton
+        >Выполнен</UIButton
       >
       <UIButton
-        v-else-if="order.is_active && order.performer"
-        active
+        v-else-if="order.performer"
+        type="active"
         style="min-width: 155px"
         >Есть исполнитель</UIButton
       >
+      <UIButton v-else type="active" style="min-width: 155px">Активен</UIButton>
     </div>
   </div>
 
@@ -104,6 +105,7 @@ const modal = shallowRef(false);
 
 async function handleDelete() {
   const res = await deleteOrder(props.order.id);
+  modal.value = false;
 
   if (res) {
     emit("updateOrders");

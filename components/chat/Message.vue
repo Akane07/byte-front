@@ -1,6 +1,6 @@
 <template>
   <LazyChatMessageTypesPlain
-    v-if="!msg.is_suggest && msg.status !== 'response' && !msg.responseId"
+    v-if="!msg.is_suggest && !msg.responseId"
     :msg="msg"
   ></LazyChatMessageTypesPlain>
   <LazyChatMessageTypesSuggest
@@ -9,7 +9,7 @@
     :from="msg.senderId === userStore.user?.id ? 'sender' : 'receiver'"
     @delete-suggest="$emit('deleteSuggest', msg.id)"
     @reject-suggest="$emit('rejectResponse', msg.id)"
-    @open-modal="$emit('openModal', msg.orderId, msg.id)"
+    @open-modal="$emit('openModal', msg.orderId ?? '', msg.id)"
   >
     <div class="deadlines">
       <p>
@@ -32,12 +32,12 @@
     </div>
   </LazyChatMessageTypesSuggest>
   <LazyChatMessageTypesResponse
-    v-else-if="msg.status === 'response'"
+    v-else
     :msg="msg"
     :from="responseFrom"
-    @accept-response="$emit('acceptResponse', msg.orderId, msg.id)"
+    @accept-response="$emit('acceptResponse', msg.orderId ?? '', msg.id)"
     @delete-response="
-      $emit('deleteResponse', msg.responseId, msg.orderId, msg.id)
+      $emit('deleteResponse', msg.responseId ?? '', msg.orderId ?? '', msg.id)
     "
     @reject-response="$emit('rejectResponse', msg.id)"
   >
@@ -64,6 +64,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Order } from "~/shared/api/order-api";
 import type { Message } from "~/shared/types";
 import { useUserStore } from "~/store/userStore";
 
@@ -81,12 +82,11 @@ defineEmits<{
   (e: "rejectResponse", id: string): void;
   (e: "acceptResponse", orderId: string, msgId: string): void;
   (e: "deleteSuggest", id: string): void;
-  (e: "rejectSuggest", id: string): void;
   (e: "openModal", orderId: string, suggestId: string): void;
 }>();
 
 const userStore = useUserStore();
-const ordersInChat = inject("ordersInChat") as Ref<any[]>;
+const ordersInChat = inject<Ref<Order[]>>("ordersInChat", ref([]));
 
 const currentOrder = computed(() => {
   return ordersInChat.value.find((order) => order.id === props.msg.orderId);
@@ -94,17 +94,12 @@ const currentOrder = computed(() => {
 
 provide("currentOrder", currentOrder);
 
-const responseFrom = computed(() => {
-  if (
-    props.msg.status === "response" &&
-    props.msg.senderId === userStore.user?.id
-  ) {
-    return "sender";
-  } else if (props.msg.status === "response") {
-    return "receiver";
-  }
-  return null;
-});
+// Отклик — сообщение с responseId. Статус после ответа меняется на
+// accepted/rejected, поэтому определять тип по status === "response" нельзя:
+// раньше из-за этого принятый отклик пропадал из переписки.
+const responseFrom = computed(() =>
+  props.msg.senderId === userStore.user?.id ? "sender" : "receiver",
+);
 </script>
 
 <style lang="scss">

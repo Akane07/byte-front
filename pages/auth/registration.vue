@@ -1,60 +1,102 @@
 <template>
-    <div class="registration-wrapper">
-        <div class="registration-menu">
-            <div class="text-menu">
-                <span class="menu-hero">Регистрация</span>
-                <span class="menu-context typed-wrapper">
-                    <span class="typed-text">Присоединяйтесь к нам</span>
-                </span>
+  <div class="registration-wrapper">
+    <form v-if="!awaitingCode" class="registration-menu" @submit.prevent="handleRegister">
+      <div class="text-menu">
+        <span class="menu-hero">Регистрация</span>
+        <span class="menu-context typed-wrapper">
+          <span class="typed-text">Присоединяйтесь к нам</span>
+        </span>
+      </div>
+      <div class="nav-menu">
+        <AuthInput v-model="registerData.name" placeholder="Полное имя" type="text" />
+        <AuthInput v-model="registerData.email" placeholder="Ваша почта" type="email" />
+        <AuthInput v-model="registerData.password" placeholder="Пароль" type="password" />
+        <AuthInput v-model="confirmPassword" placeholder="Подтвердите пароль" type="password" />
+        <UINavButton type="submit" :disabled="loading">Зарегистрироваться</UINavButton>
+      </div>
+      <div class="log-and-recovery">
+        <div class="google" @click="googleUnavailable">
+            <div class="google-icon">
+              <img src="~/assets/icons/Google.svg" alt="Google" />
             </div>
-            <div class="nav-menu">
-                <DevAuthInput v-model="registerData.name" placeholder="Полное Имя" type="text" />
-                <DevAuthInput v-model="registerData.email" placeholder="Ваша почта" type="text" />
-                <DevAuthInput v-model="registerData.password" placeholder="Пароль" type="password" />
-                <DevAuthInput v-model="registerData.confirmPassword" placeholder="Подтвердите Пароль" type="password" />
-                <DevNavButton @click="handleRegister">Зарегистрироваться</DevNavButton>
+            <div class="text-google">
+              <span class="log">Войти с помощью</span>
+              <span class="google-text">Google</span>
             </div>
-            <div class="log-and-recovery">
-                <div class="google">
-                    <div class="google-icon">
-                        <img src="../../assets/icons/Google.svg" alt="google">
-                    </div>
-                    <div class="text-google">
-                        <span class="log">Войти с помощью</span>
-                        <span class="google-text">Google</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <DevAuthBoard :recovery="false"></DevAuthBoard>
-    </div>
+          </div>
+      </div>
+    </form>
+
+    <form v-else class="registration-menu" @submit.prevent="handleVerify">
+      <div class="text-menu">
+        <span class="menu-hero">Почта</span>
+        <span class="menu-context">
+          Мы отправили код подтверждения на {{ registerData.email }}
+        </span>
+      </div>
+      <div class="nav-menu">
+        <AuthInput v-model="code" placeholder="Код из письма" type="text" />
+        <UINavButton type="submit" :disabled="loading">Подтвердить</UINavButton>
+        <NuxtLink to="/orders" class="menu-context">Подтвердить позже</NuxtLink>
+      </div>
+    </form>
+
+    <AuthBoard :recovery="false" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import DevAuthInput from '~/components/auth/AuthInput.vue';
-import DevNavButton from '~/components/UI/NavButton.vue';
-import DevAuthBoard from '~/components/auth/AuthBoard.vue';
-import { register } from '~/shared/api/auth-api';
-import { setToken } from '~/shared/api';
+import { verifyEmail } from "~/shared/api/auth-api";
+import { useNotifications } from "~/store/notiStore";
+import { useUserStore } from "~/store/userStore";
 
-definePageMeta({
-    middleware: ['auth'],
-});
+const userStore = useUserStore();
+const notifications = useNotifications();
 
+const loading = shallowRef(false);
+const awaitingCode = shallowRef(false);
+const code = shallowRef("");
+const confirmPassword = shallowRef("");
 const registerData = reactive({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+  name: "",
+  email: "",
+  password: "",
 });
 
 async function handleRegister() {
-    const res = await register(registerData);
+  if (!registerData.name.trim() || !registerData.email.trim()) {
+    notifications.setNotification("Заполните имя и почту");
+    return;
+  }
+  // Раньше поле подтверждения пароля ни с чем не сравнивалось.
+  if (registerData.password !== confirmPassword.value) {
+    notifications.setNotification("Пароли не совпадают");
+    return;
+  }
 
-    if (res.access_token) {
-        localStorage.setItem('byte-accessToken', res.access_token);
-        setToken(res.access_token);
-    }
+  loading.value = true;
+  const ok = await userStore.register(registerData);
+  loading.value = false;
+
+  if (ok) awaitingCode.value = true;
+}
+
+async function handleVerify() {
+  if (!code.value.trim()) return;
+
+  loading.value = true;
+  const res = await verifyEmail(registerData.email, code.value.trim());
+  loading.value = false;
+
+  if (res) {
+    await userStore.checkAuth(true);
+    notifications.setNotification("Почта подтверждена");
+    navigateTo("/orders");
+  }
+}
+
+function googleUnavailable() {
+  notifications.setNotification("Вход через Google пока недоступен");
 }
 </script>
 

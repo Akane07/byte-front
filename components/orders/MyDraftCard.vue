@@ -9,7 +9,7 @@
                 <span v-for="skill in order.skills" :key="skill">{{ skill }}</span>
             </div>
             <div class="stats_info">
-                <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"
+                <UIUserAvatar style="cursor: pointer;" @click.stop="navigateTo(`/profile/${order.user_id}`)"
                     :src="makeURL(userStore.user?.avatar)"></UIUserAvatar>
                     <span class="bordered">От {{ useUserCreated(order.created_at) }}</span>
                 <button class="bordered delete" @click.stop="modal = true">Удалить черновик</button>
@@ -17,7 +17,7 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIButton style="min-width: 155px; color: $text-secondary; border-color: $text-secondary;">Черновик</UIButton>
+            <UIButton class="draft-badge" style="min-width: 155px">Черновик</UIButton>
         </div>
     </div>
 
@@ -206,5 +206,10 @@ async function handleDelete() {
 
 .confirm {
     max-width: 400px;
+}
+
+.draft-badge {
+    color: $text-secondary;
+    border-color: $text-secondary;
 }
 </style>

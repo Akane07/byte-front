@@ -95,8 +95,8 @@ import { useNotifications } from '~/store/notiStore';
 const notifications = useNotifications();
 
 async function copyToClipboard(text: string, type: 'card' | 'crypto') {
-    navigator.clipboard.writeText(text);
-    await notifications.setNotification(type === 'card' ? 'Номер карты скопирован!' : 'Хещ скопирован!');
+    await navigator.clipboard.writeText(text);
+    notifications.setNotification(type === 'card' ? 'Номер карты скопирован!' : 'Адрес кошелька скопирован!');
 }
 </script>
 

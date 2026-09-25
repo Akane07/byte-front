@@ -2,21 +2,23 @@
   <div>
     <NuxtPage />
   </div>
-  <Notifications></Notifications>
+  <Notifications />
 </template>
 
 <script setup lang="ts">
-import { setToken } from "./shared/api";
-import { useUserStore } from "./store/userStore";
-import { useOrderStore } from '~/store/orderStore';
+import { useOrderStore } from "~/store/orderStore";
+import { useUserStore } from "~/store/userStore";
 
 const userStore = useUserStore();
 const orderStore = useOrderStore();
 
-onMounted(async () => {
-  await userStore.checkAuth();
-  setToken();
-  if (!userStore.user?.id) return;
-  orderStore.myOrders = await orderStore.getUserOrders(userStore.user?.id);
-})
+// Свои заказы нужны на нескольких страницах (предложить заказ, мои заказы),
+// поэтому загружаются один раз после входа.
+watch(
+  () => userStore.user?.id,
+  (id) => {
+    if (id) orderStore.loadMyOrders(id);
+  },
+  { immediate: true },
+);
 </script>

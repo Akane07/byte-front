@@ -12,7 +12,7 @@
                 </div>
                 <div class="orders_list" v-if="activeOrders.length">
                     <OrdersMyOrderCard v-for="order in activeOrders" :key="order.id" :order="order"
-                        :plain="true" @suggest="suggestOrder"></OrdersMyOrderCard>
+                        plain @suggest="suggestOrder"></OrdersMyOrderCard>
                 </div>
                 <div class="orders_list" v-else>
                     <p>У вас нет активных заказов</p>
@@ -23,49 +23,29 @@
 </template>
 
 <script setup lang="ts">
-import { io } from 'socket.io-client';
 import { useOrderStore } from '~/store/orderStore';
-import { useUserStore } from '~/store/userStore';
-
-definePageMeta({
-    middleware: ['auth'],
-});
 
 const route = useRoute();
-const socket = io('http://localhost:3002', {
-    transports: ['websocket'],
-});
-
-
-const userStore = useUserStore();
 const orderStore = useOrderStore();
+const chat = useChatSocket();
 
-const activeOrders = computed(() => orderStore.myOrders.filter(order => !order.performer));
+/** Кому предлагаем заказ — id исполнителя из ?id=. */
+const receiverId = computed(() => route.query.id as string | undefined);
 
-async function suggestOrder(orderId: string) {
-    if (!route.query.id) return;
-    const userId = route.query.id as string;
+// Предложить можно только опубликованный заказ без исполнителя.
+const activeOrders = computed(() =>
+    orderStore.myOrders.filter((order) => order.is_active && !order.performer && order.status === 'active'),
+);
 
-    socket.emit('sendMessage', {
-        senderId: userStore.user?.id,
-        receiverId: userId,
-        createdAt: new Date().toISOString(),
-        is_suggest: true,
-        text: 'Предложение заказа',
-        orderId,
-    });
-    
-    navigateTo(`/chat/${userId}`);
+function suggestOrder(orderId: string) {
+    if (!receiverId.value) return;
+    chat.suggestOrder(receiverId.value, orderId);
+    navigateTo(`/chat/${receiverId.value}`);
 }
 
-onMounted(async () => {
-    await userStore.checkAuth();
-    if (!userStore.user?.id) return;
-    orderStore.myOrders = await orderStore.getUserOrders(userStore.user?.id);
-
-    if (!route.query.id) return;
-    socket.emit('joinRoom', route.query.id as string);
-})
+onMounted(() => {
+    if (!receiverId.value) navigateTo('/chat');
+});
 </script>
 
 <style scoped lang="scss">

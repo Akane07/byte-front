@@ -86,10 +86,6 @@
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
 
-definePageMeta({
-    middleware: ['auth'],
-});
-
 const userStore = useUserStore();
 const orderStore = useOrderStore();
 
@@ -100,18 +96,14 @@ async function updateResponses() {
 }
 
 async function updateOrders() {
-    if (!userStore.user?.id) return;
-    orderStore.myOrders = (await orderStore.getUserOrders(userStore.user?.id)).reverse();
-    await orderStore.getMyDrafts(userStore.user.id);
+    const id = userStore.user?.id;
+    if (!id) return;
+    await Promise.all([orderStore.loadMyOrders(id), orderStore.getMyDrafts(id)]);
 }
 
 onMounted(async () => {
-    await userStore.checkAuth();
-    if (!userStore.user?.id) return;
-    orderStore.myOrders = (await orderStore.getUserOrders(userStore.user?.id)).reverse();
-    await orderStore.getResponses();
-    await orderStore.getMyDrafts(userStore.user.id);
-})
+    await Promise.all([updateOrders(), updateResponses()]);
+});
 </script>
 
 <style scoped lang="scss">

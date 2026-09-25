@@ -26,11 +26,11 @@
 const props = defineProps<{
   label?: string;
   list: string[];
-  selected: string;
+  selected: string | undefined;
 }>();
 
 defineEmits<{
-  (e: "select", value: string): () => void;
+  (e: "select", value: string): void;
 }>();
 
 const selectRef = ref<HTMLDivElement | null>(null);

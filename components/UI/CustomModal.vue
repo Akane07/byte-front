@@ -7,27 +7,15 @@
 </template>
 
 <script setup lang="ts">
-import { useScroll } from '../../store/scrollStore';
-
-defineProps<{
-    title?: string;
-}>();
+import { useScroll } from "~/store/scrollStore";
 
 defineEmits<{
-    (e: 'close'): () => void
+  (e: "close"): void;
 }>();
 
 const scroll = useScroll();
-
-scroll.showScroll = false;
-
-onUnmounted(() => {
-    scroll.showScroll = true;
-});
-
-onMounted(() => {
-    scroll.showScroll = false;
-})
+onMounted(scroll.lock);
+onBeforeUnmount(scroll.unlock);
 </script>
 
 <style lang="scss" scoped>
