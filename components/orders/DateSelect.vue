@@ -1,9 +1,9 @@
 <template>
   <div class="modal_wrapper flex items-center justify-center w-full h-full fixed top-0 left-0 z-100000"
     @click.stop="$emit('close')">
-    <div class="date_wrapper flex flex-col gap-6 w-full max-w-[800px] p-5 rounded-md select-none" @click.stop>
-      <div class="flex gap-6 justify-between w-full">
-        <div class="flex flex-col gap-1 w-[200px]">
+    <div class="date_wrapper flex flex-col gap-6 w-full max-w-[800px] p-4 sm:p-5 rounded-md select-none" @click.stop>
+      <div class="flex flex-col md:flex-row gap-6 justify-between w-full">
+        <div class="actions flex flex-col gap-1 w-full md:w-[200px]">
           <div class="action" :class="{ active: deadlines === 'less-week' }" @click="deadlines = 'less-week'">
             <p>Менее недели</p>
           </div>
@@ -23,7 +23,7 @@
             <p>Обозначить сроки</p>
           </div>
         </div>
-        <div class="calendar flex flex-col gap-4 h-[310px]" :class="{ disabled: deadlines !== 'custom' }">
+        <div class="calendar flex flex-col gap-4 md:h-[310px]" :class="{ disabled: deadlines !== 'custom' }">
           <div class="flex items-center justify-between">
             <IconsArrowLeft style="transform: scale(1.5); cursor: pointer" @click="prevMonth">
             </IconsArrowLeft>
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <div class="footer flex justify-center items-center gap-16">
+      <div class="footer flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-16">
         <p class="footer_date whitespace-nowrap">
           {{ from ? useUserCreated(from) : "дата начала" }} -
           {{ to ? useUserCreated(to) : "дата окончания" }}
@@ -194,6 +194,8 @@ onMounted(() => {
 <style scoped lang="scss">
 .modal_wrapper {
   background: rgba(0, 0, 0, 0.3);
+  padding: 16px;
+  overflow-y: auto;
 }
 
 .date_wrapper {
@@ -244,12 +246,22 @@ onMounted(() => {
         justify-content: center;
         cursor: pointer;
         color: $text-placeholder;
+
+        @include mobile {
+          padding: 10px 0;
+        }
       }
 
       .day-name {
         color: $text-placeholder;
         padding: 10px 18px;
         margin-bottom: 16px;
+
+        @include mobile {
+          padding: 10px 0;
+          margin-bottom: 4px;
+          text-align: center;
+        }
       }
 
       .other-month {
@@ -290,6 +302,38 @@ onMounted(() => {
   .footer_date {
     color: $text-placeholder;
     font-size: 14px;
+  }
+
+  // Телефон: варианты сроков — плиткой в две колонки над календарём.
+  @include mobile {
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+    }
+
+    .action {
+      border-radius: 4px;
+      border-right: none;
+      border-bottom: 2px solid transparent;
+
+      &.active,
+      &:hover {
+        border-right: none;
+        border-bottom: 2px solid $white;
+      }
+    }
+
+    .footer > div {
+      justify-content: stretch;
+
+      button {
+        flex: 1;
+      }
+    }
   }
 }
 </style>

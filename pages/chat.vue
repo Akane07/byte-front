@@ -2,8 +2,11 @@
   <UINavMenu></UINavMenu>
   <UIBackground></UIBackground>
 
-  <div class="flex flex-col items-center w-full pt-8">
-    <div class="chat_wrapper flex w-full mt-10 rounded-md z-10">
+  <div class="chat_page flex flex-col items-center w-full pt-8 px-4 md:px-8">
+    <div
+      class="chat_wrapper flex w-full mt-10 rounded-md z-10"
+      :class="{ 'has-dialog': !!$route.params.id }"
+    >
       <div class="menu flex flex-col w-full">
         <div class="head flex items-center justify-center gap-2 p-6 w-full">
           <p>Чаты</p>
@@ -72,13 +75,20 @@ onMounted(loadChats);
 <style lang="scss" scoped>
 .chat_wrapper {
   max-width: 1440px;
+  height: 80vh;
   height: 80dvh;
   background: $bg-brand;
+  overflow: hidden;
 
   .menu {
     border-right: 1px solid $chat-border;
     max-width: 350px;
     min-width: 350px;
+
+    @include tablet {
+      max-width: 280px;
+      min-width: 280px;
+    }
 
     .head {
       border-bottom: 1px solid $chat-border;
@@ -115,7 +125,7 @@ onMounted(loadChats);
     }
 
     .users {
-      scrollbar-width: none;
+      @include hidden-scrollbar;
 
       .user {
         .info {
@@ -144,6 +154,38 @@ onMounted(loadChats);
           background: rgba(131, 85, 250, 0.06);
         }
       }
+    }
+  }
+}
+
+// Телефон: либо список диалогов, либо открытый диалог — на весь экран.
+@include mobile {
+  .chat_page {
+    padding: 0;
+  }
+
+  .chat_wrapper {
+    margin-top: 0;
+    border-radius: 0;
+    height: calc(100vh - 80px);
+    height: calc(100dvh - 80px);
+
+    .menu {
+      max-width: none;
+      min-width: 0;
+      border-right: none;
+
+      .head {
+        padding: 16px;
+      }
+
+      .users .user {
+        padding: 12px;
+      }
+    }
+
+    &.has-dialog .menu {
+      display: none;
     }
   }
 }

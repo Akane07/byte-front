@@ -24,9 +24,18 @@ const notiStore = useNotifications();
   background: $bg-gradient;
   box-shadow: 0px 0px 15px 0px $shadow;
   transition: right 0.5s ease-in-out;
+  max-width: calc(100vw - 32px);
 
   &.active {
     right: 40px;
+
+    @include mobile {
+      right: 16px;
+    }
+  }
+
+  @include mobile {
+    top: 16px;
   }
 
   .bg {

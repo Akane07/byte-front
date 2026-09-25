@@ -1,16 +1,16 @@
 <template>
   <div
-    class="wrapper w-full min-h-dvh absolute top-0 left-0 flex flex-col justify-center items-center mb-25 py-[150px] pt-[50px] pb-[300px]"
+    class="wrapper w-full min-h-dvh absolute top-0 left-0 flex flex-col justify-center items-center mb-25 py-[150px] pt-[50px] pb-[300px] px-4 md:px-8"
   >
-    <div class="head w-full max-w-[1440px] flex items-center justify-between mt-16">
-      <h3 class="font-medium text-2xl">
+    <div class="head w-full max-w-[1440px] flex items-start justify-between gap-4 mt-16">
+      <h3 class="font-medium text-xl sm:text-2xl">
         {{ editMode ? "Редактирование своего проекта" : "Добавьте новый проект в портфолио" }}
       </h3>
       <IconsCross class="cursor-pointer" @click="router.back()" />
     </div>
 
-    <div class="w-full flex gap-8 max-w-[1440px] mt-8">
-      <div class="flex flex-col gap-8 w-[40%]">
+    <div class="w-full flex flex-col md:flex-row gap-8 max-w-[1440px] mt-8">
+      <div class="flex flex-col gap-8 w-full md:w-[40%]">
         <UIInput
           v-model="portfolio.title"
           label="Название проекта"
@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-8 w-[calc(60%-32px)]">
+      <div class="flex flex-col gap-8 w-full md:w-[calc(60%-32px)]">
         <div v-if="video" class="file relative">
           <video :src="video.preview" controls style="max-width: 100%; height: auto" />
           <div class="absolute right-3.5 top-2.5">
@@ -88,9 +88,9 @@
           </div>
         </div>
 
-        <div class="file_input flex items-center justify-center rounded-md p-15 relative">
+        <div class="file_input flex items-center justify-center rounded-md p-6 sm:p-15 relative">
           <div class="flex flex-col gap-8 justify-center items-center">
-            <div class="flex items-center gap-8">
+            <div class="flex items-center gap-4 sm:gap-8">
               <IconsGallery class="icon" />
               <IconsVideo class="icon" />
               <IconsFolder class="icon" />
@@ -111,7 +111,7 @@
       </div>
     </div>
 
-    <div class="w-full flex justify-end mt-25 max-w-[1440px]">
+    <div class="submit w-full flex justify-end mt-12 md:mt-25 max-w-[1440px]">
       <UIButton type="active" :disabled="!isValid || saving" @click="submit">
         {{ editMode ? "Сохранить" : "Опубликовать" }}
       </UIButton>
@@ -266,6 +266,14 @@ onBeforeUnmount(() => {
 .wrapper {
   background: $input-auth;
 
+  @include mobile {
+    padding-bottom: 120px;
+
+    .submit :deep(button) {
+      width: 100%;
+    }
+  }
+
   .head {
     color: $text-main;
   }
@@ -303,6 +311,12 @@ onBeforeUnmount(() => {
 
     &:hover .hover {
       opacity: 1;
+    }
+
+    @include touch {
+      .hover {
+        opacity: 1;
+      }
     }
   }
 }

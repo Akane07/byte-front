@@ -23,12 +23,23 @@ defineEmits<{
 
 <style lang="scss" scoped>
 $border-thickness: 1px;
+
+@mixin autofill-fill($bg) {
+    -webkit-box-shadow: 0 0 0 1000px $bg inset;
+    box-shadow: 0 0 0 1000px $bg inset;
+    -webkit-text-fill-color: $white;
+    caret-color: $white;
+}
 $animation-duration: 0.2s;
 
 .input-wrapper {
     position: relative;
     display: inline-block;
     width: 100%;
+    // Рамка рисуется внутри этого отступа. Раньше полоски стояли за пределами
+    // обёртки (-1px), и родитель с overflow: hidden их срезал: на странице входа
+    // форма стоит вплотную к краю контейнера, и левая полоска не появлялась.
+    padding: $border-thickness;
 
     .auth-input {
         position: relative;
@@ -39,10 +50,22 @@ $animation-duration: 0.2s;
         font-size: 14px;
         letter-spacing: 0%;
         border-radius: 6px;
+        display: block;
         background: $input-auth;
         border: none;
         outline: none;
         color: $white;
+
+        // Автозаполнение браузера: вместо светло-голубого фона — цвет поля.
+        // Два отдельных правила: браузер, не знающий один из селекторов,
+        // выбросил бы общий список целиком.
+        &:-webkit-autofill {
+            @include autofill-fill($input-auth);
+        }
+
+        &:autofill {
+            @include autofill-fill($input-auth);
+        }
     }
 }
 
@@ -54,9 +77,9 @@ $animation-duration: 0.2s;
 }
 
 .border-left {
-    left: -$border-thickness;
-    top: -$border-thickness;
-    bottom: -$border-thickness;
+    left: 0;
+    top: 0;
+    bottom: 0;
     width: $border-thickness;
 
     transform: scaleY(0);
@@ -75,16 +98,15 @@ $animation-duration: 0.2s;
 }
 
 .border-top {
-    top: -$border-thickness;
-    left: -$border-thickness;
-    right: -$border-thickness;
+    top: 0;
+    left: 0;
     height: $border-thickness;
     width: 0;
     transition: width $animation-duration ease;
 }
 
 .input-wrapper:focus-within .border-top {
-    width: calc(100% + 2 * #{$border-thickness});
+    width: 100%;
     transition-delay: $animation-duration;
 }
 
@@ -94,16 +116,15 @@ $animation-duration: 0.2s;
 }
 
 .border-bottom {
-    bottom: -$border-thickness;
-    left: -$border-thickness;
-    right: -$border-thickness;
+    bottom: 0;
+    left: 0;
     height: $border-thickness;
     width: 0;
     transition: width $animation-duration ease;
 }
 
 .input-wrapper:focus-within .border-bottom {
-    width: calc(100% + 2 * #{$border-thickness});
+    width: 100%;
     transition-delay: $animation-duration;
 }
 
@@ -113,9 +134,9 @@ $animation-duration: 0.2s;
 }
 
 .border-right {
-    right: -$border-thickness;
-    top: -$border-thickness;
-    bottom: -$border-thickness;
+    right: 0;
+    top: 0;
+    bottom: 0;
     width: $border-thickness;
 
     transform: scaleY(0);

@@ -2,16 +2,16 @@
     <UINavMenu></UINavMenu>
     <UIBackground></UIBackground>
 
-    <div class="w-full flex flex-col justify-center items-center z-100 relative mb-25">
-        <div class="portfolio flex flex-col items-center gap-12 w-full max-w-[1440px] mt-8 pt-16 rounded-[20px]"
+    <div class="w-full flex flex-col justify-center items-center z-100 relative mb-25 px-4 md:px-8">
+        <div class="portfolio flex flex-col items-center gap-12 w-full max-w-[1440px] mt-8 pt-8 md:pt-16 rounded-[20px]"
             v-if="portfolio && user && userStore.user">
-            <div class="flex flex-col items-center gap-16 px-[42px]">
+            <div class="flex flex-col items-center gap-6 md:gap-16 px-4 md:px-[42px] w-full">
                 <video v-if="portfolio.video" :src="makeURL(portfolio.video)" controls
                     style="max-width: 100%; height: auto" class="w-full h-auto max-h-[500px] rounded-md"></video>
                 <img class="w-full max-w-[800px] object-cover rounded-md" v-for="image in portfolio.images" :key="image"
                     :src="makeURL(image)" />
             </div>
-            <div class="flex flex-col items-center gap-8 max-w-[900px] py-[42px]">
+            <div class="about flex flex-col items-center gap-8 max-w-[900px] py-6 md:py-[42px] px-4">
                 <div v-if="!portfolio.liked_by.includes(userStore.user.id)" class="like_button" @click="ratePortfolio">
                     <IconsLike></IconsLike>
                 </div>
@@ -41,7 +41,7 @@
                     <p>{{ portfolio.description }}</p>
                 </div>
             </div>
-            <div class="footer w-full flex flex-col gap-8 mb-25 rounded-md py-10 px-12">
+            <div class="footer w-full flex flex-col gap-8 mb-0 md:mb-25 rounded-md py-6 px-4 md:py-10 md:px-12">
                 <div class="flex items-center gap-4">
                     <UIUserAvatar size="56px" :src="makeURL(user?.avatar)"></UIUserAvatar>
                     <div class="flex flex-col gap-3">
@@ -65,7 +65,7 @@
                         </ProfilePortfolioBlock>
                     </div>
                 </div>
-                <div class="flex justify-between items-start gap-16 pb-10">
+                <div class="details flex flex-col md:flex-row justify-between items-start gap-8 md:gap-16 pb-4 md:pb-10">
                     <div class="blocks flex flex-col gap-3">
                         <p>Роль</p>
                         <div class="value">
@@ -166,6 +166,10 @@ watch(() => route.params.id as string, load, { immediate: true });
         font-size: 14px;
     }
 
+    .about p {
+        overflow-wrap: anywhere;
+    }
+
     .footer {
         background: $tag-color;
 
@@ -178,6 +182,10 @@ watch(() => route.params.id as string, load, { immediate: true });
 
         .blocks {
             width: calc(50% - 32px);
+
+            @include mobile {
+                width: 100%;
+            }
 
             p {
                 font-weight: 500;

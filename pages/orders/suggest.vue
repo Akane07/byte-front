@@ -158,4 +158,25 @@ onMounted(() => {
         }
     }
 }
+
+.wrapper {
+    @include page-gutters;
+}
+
+.orders_wrapper .orders {
+    @include mobile {
+        padding: 24px 12px;
+        border-left: none;
+
+        .orders_header {
+            padding: 0 4px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .orders_list > p {
+            font-size: 18px;
+        }
+    }
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex gap-8">
+  <div class="flex flex-wrap gap-x-6 gap-y-3 sm:gap-8">
     <p
       v-for="tab in tabs"
       :key="tab.value"

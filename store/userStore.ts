@@ -43,6 +43,9 @@ export const useUserStore = defineStore("user", () => {
   }
 
   async function startSession(token: string) {
+    // Без настоящего токена сессию не начинаем — иначе в localStorage
+    // окажется строка "undefined".
+    if (typeof token !== "string" || !token) return;
     saveToken(token);
     await checkAuth(true);
   }

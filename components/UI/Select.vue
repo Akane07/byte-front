@@ -3,7 +3,7 @@
     <p v-if="label">{{ label }}</p>
     <div class="select_wrapper relative select-none" ref="selectRef">
       <div class="flex items-center justify-between w-full h-[19px] cursor-pointer" @click.stop="handleShowMenu">
-        <div class="cursor-pointer">
+        <div class="cursor-pointer min-w-0 flex-1">
           <input ref="inputRef" v-if="showMenu" v-model="input" class="select_input" type="text" />
           <p v-else>{{ selected }}</p>
         </div>
@@ -76,7 +76,8 @@ useClickOutside(selectRef, () => {
   @include shell;
 
   .select_input {
-    width: 350px;
+    width: 100%;
+    background: transparent;
     @include input;
   }
 

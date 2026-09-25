@@ -1,6 +1,6 @@
 <template>
-    <div class="modal_wrapper flex items-center justify-center w-full h-full fixed top-0 left-0" @click="$emit('close')">
-        <div @click.stop="">
+    <div class="modal_wrapper flex items-center justify-center w-full h-full fixed top-0 left-0 p-4" @click="$emit('close')">
+        <div class="content" @click.stop="">
             <slot></slot>
         </div>
     </div>
@@ -22,5 +22,11 @@ onBeforeUnmount(scroll.unlock);
 .modal_wrapper {
     background: rgba(0, 0, 0, 0.3);
     z-index: 1000000000;
+
+    .content {
+        max-width: 100%;
+        max-height: 100%;
+        overflow-y: auto;
+    }
 }
 </style>

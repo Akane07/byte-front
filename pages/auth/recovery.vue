@@ -40,6 +40,7 @@ function handleRecovery() {
     justify-content: end;
     gap: 131px;
     height: 100vh;
+    height: 100dvh;
     width: 100%;
     overflow: hidden;
 }
@@ -90,6 +91,26 @@ function handleRecovery() {
 @media (max-width: 1100px) {
     .recovery-wrapper {
         justify-content: center;
+    }
+}
+
+@include mobile {
+    .recovery-wrapper {
+        height: auto;
+        min-height: 100dvh;
+        padding: 40px 16px;
+    }
+
+    .recovery-menu {
+        min-width: 0;
+        width: 100%;
+        max-width: 400px;
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    .menu-hero {
+        font-size: 36px;
     }
 }
 </style>

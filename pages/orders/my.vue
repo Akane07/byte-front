@@ -216,4 +216,58 @@ onMounted(async () => {
         }
     }
 }
+
+.wrapper {
+    @include page-gutters;
+}
+
+.orders_wrapper .orders {
+    @include mobile {
+        padding: 24px 12px;
+        border-left: none;
+
+        .orders_header {
+            padding: 0 4px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .orders_list > p {
+            font-size: 18px;
+        }
+    }
+}
+
+// Узкий экран: разделы — строкой вкладок над списком.
+.orders_wrapper {
+    @include tablet {
+        flex-direction: column;
+
+        .filters {
+            width: 100%;
+            padding: 16px;
+            gap: 12px;
+            border-radius: 20px 20px 0 0;
+
+            & > p {
+                display: none;
+            }
+
+            .nav_block {
+                flex-direction: row;
+                overflow-x: auto;
+                @include hidden-scrollbar;
+
+                .nav {
+                    white-space: nowrap;
+                }
+            }
+        }
+
+        .orders {
+            border-radius: 0 0 20px 20px;
+            border-left: none;
+        }
+    }
+}
 </style>

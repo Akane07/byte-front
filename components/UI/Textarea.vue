@@ -69,7 +69,6 @@ onMounted(resize);
 @include label;
 
 textarea {
-  @include custom-scrollbar;
   @include shell;
   @include input;
   @include state;
@@ -80,5 +79,6 @@ textarea {
   overflow-y: auto;
   height: auto;
   resize: none;
+  @include custom-scrollbar;
 }
 </style>

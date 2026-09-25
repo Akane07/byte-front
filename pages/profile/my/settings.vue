@@ -1,12 +1,12 @@
 <template>
   <UINavMenu></UINavMenu>
   <div
-    class="wrapper w-full min-h-dvh absolute top-0 left-0 flex justify-center pt-[150px] pb-[300px] px-[150px]"
+    class="wrapper w-full min-h-dvh absolute top-0 left-0 flex justify-center pt-[110px] md:pt-[150px] pb-[120px] md:pb-[300px] px-4 md:px-12 xl:px-[150px]"
   >
     <div class="w-full max-w-[1400px]">
       <div class="settings w-full max-w-[500px] flex flex-col gap-12">
         <div class="flex flex-col gap-6">
-          <h2 class="font-medium text-[32px]">Настройки</h2>
+          <h2 class="font-medium text-[26px] sm:text-[32px]">Настройки</h2>
           <UITabs v-model:active="active" :tabs="TABS" />
         </div>
         <div class="flex flex-col gap-6">
@@ -45,7 +45,7 @@
             <div class="block">
               <p>Аватар</p>
               <div
-                class="photo_wrapper w-[254px] h-[184px] rounded-md flex items-center justify-center cursor-pointer relative"
+                class="photo_wrapper w-[254px] max-w-full h-[184px] rounded-md flex items-center justify-center cursor-pointer relative"
               >
                 <img
                   v-if="userStore.user?.avatar"
@@ -110,7 +110,7 @@
             />
           </template>
         </div>
-        <div class="flex items-center gap-8">
+        <div class="form_buttons flex flex-wrap items-center gap-4 sm:gap-8">
           <UIButton
             type="active"
             :disabled="!canSave || saving"
@@ -277,11 +277,27 @@ onMounted(async () => {
       &.pass {
         display: grid;
         grid-template-columns: calc(50% - 6px) calc(50% - 6px);
-
         p {
           grid-column: 1 / span 2;
         }
+
+        @include small {
+          grid-template-columns: 100%;
+
+          p {
+            grid-column: auto;
+          }
+        }
       }
+    }
+  }
+}
+
+// Телефон: кнопки «Сохранить» и «Удалить аккаунт» — на всю ширину.
+.form_buttons {
+  @include small {
+    :deep(button) {
+      width: 100% !important;
     }
   }
 }

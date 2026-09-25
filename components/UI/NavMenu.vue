@@ -1,16 +1,16 @@
 <template>
   <div
-    class="nav flex items-center justify-center w-full h-20 px-15 py-0"
+    class="nav flex items-center justify-center w-full h-20 px-4 md:px-8 xl:px-15 py-0"
     :class="[absolute ? 'fixed z-1000 top-0' : '']"
   >
     <div class="w-full max-w-360 h-11 flex items-center justify-between z-1000">
       <NuxtLink to="/orders" class="flex items-center justify-center gap-2 cursor-pointer">
-        <img src="/logo.svg" alt="logo" class="w-10" />
-        <span class="byte text-center">FreelanceByte</span>
+        <img src="/logo.svg" alt="logo" class="w-8 sm:w-10" />
+        <span class="byte text-center" :class="{ guest: !userStore.isAuth }">FreelanceByte</span>
       </NuxtLink>
       <div
         v-if="!userStore.isAuth && userStore.checked"
-        class="w-37.5 flex items-center gap-3 relative select-none"
+        class="flex items-center gap-2 sm:gap-3 relative select-none"
       >
         <NuxtLink to="/auth/login">
           <UIButton>Войти</UIButton>
@@ -21,7 +21,8 @@
       </div>
       <div
         v-else-if="userStore.checked"
-        class="w-37.5 flex items-center gap-3 relative select-none"
+        ref="rootRef"
+        class="flex items-center gap-3 relative select-none"
       >
         <NuxtLink to="/orders" aria-label="Заказы">
           <IconsHome class="cursor-pointer" />
@@ -30,9 +31,11 @@
           <IconsChat class="cursor-pointer" />
         </NuxtLink>
         <div
-          class="flex items-center gap-3 relative select-none"
-          @mouseenter="show"
-          @mouseleave="hide"
+          class="flex items-center gap-3 relative select-none cursor-pointer"
+          @pointerenter="onPointerEnter"
+          @pointerleave="onPointerLeave"
+          @pointerdown="lastPointer = $event.pointerType"
+          @click="toggle"
         >
           <UIUserAvatar class="cursor-pointer" :src="makeURL(userStore.user?.avatar)" />
           <IconsArrow class="cursor-pointer arrow" :class="{ active: showMenu }" />
@@ -41,10 +44,10 @@
         <div
           v-show="showMenu"
           ref="menuRef"
-          class="menu w-60 absolute -right-5 top-13.5 p-0.5 rounded-md z-100000"
+          class="menu w-60 absolute -right-2 sm:-right-5 top-13.5 p-0.5 rounded-md z-100000"
           :class="[activeClass]"
-          @mouseenter="show"
-          @mouseleave="hide"
+          @pointerenter="onPointerEnter"
+          @pointerleave="onPointerLeave"
         >
           <div class="menu_wrapper w-full flex flex-col gap-3 rounded-md px-5 py-4">
             <div class="flex flex-col gap-3">
@@ -99,7 +102,10 @@ defineProps<{
 
 const userStore = useUserStore();
 
+const route = useRoute();
+
 const modal = shallowRef(false);
+const rootRef = ref<HTMLElement | null>(null);
 const menuRef = ref<HTMLElement | null>(null);
 const showMenu = shallowRef(false);
 const activeClass = shallowRef<"show" | "hide" | null>(null);
@@ -127,13 +133,42 @@ function hide() {
   }, 600);
 }
 
+function close() {
+  clearTimers();
+  showMenu.value = false;
+  activeClass.value = null;
+}
+
+// Мышью меню открывается наведением, как и раньше. На сенсорных экранах
+// наведения нет — там меню открывается и закрывается нажатием на аватар.
+function onPointerEnter(e: PointerEvent) {
+  if (e.pointerType === "mouse") show();
+}
+
+function onPointerLeave(e: PointerEvent) {
+  if (e.pointerType === "mouse") hide();
+}
+
+/** Тип указателя последнего нажатия: Safari до 17 не передаёт его в click. */
+let lastPointer = "";
+
+function toggle() {
+  // Клик мышью приходит, когда меню уже открыто наведением, — не закрываем его.
+  if (lastPointer === "mouse") return;
+  if (showMenu.value && activeClass.value === "show") close();
+  else show();
+}
+
+useClickOutside(rootRef, () => {
+  if (showMenu.value) close();
+});
+
+// После перехода по пункту меню оно должно закрыться.
+watch(() => route.fullPath, close);
+
 /** Закрыть меню, если вкладку свернули, пока оно было открыто. */
 function handleVisibilityChange() {
-  if (document.hidden && showMenu.value) {
-    clearTimers();
-    showMenu.value = false;
-    activeClass.value = null;
-  }
+  if (document.hidden && showMenu.value) close();
 }
 
 onMounted(() => document.addEventListener("visibilitychange", handleVisibilityChange));
@@ -153,6 +188,17 @@ onBeforeUnmount(() => {
   color: $white;
   font-weight: 700;
   font-size: 26px;
+
+  @include mobile {
+    font-size: 20px;
+  }
+
+  // На самых узких экранах гостю нужны обе кнопки — оставляем только логотип.
+  &.guest {
+    @include small {
+      display: none;
+    }
+  }
 }
 
 .arrow {

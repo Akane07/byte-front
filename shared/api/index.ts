@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse } from "axios";
+import axios, { AxiosError, type AxiosResponse } from "axios";
 
 declare module "axios" {
   interface AxiosRequestConfig {
@@ -43,9 +43,33 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+const NOT_API_CODE = "ERR_NOT_API";
+
+/**
+ * API всегда отвечает JSON. HTML с кодом 200 значит, что по адресу бэкенда
+ * отвечает что-то другое — например, сам Nuxt, если он занял порт API.
+ * Раньше такой ответ считался успешным: вход проходил с любым паролем
+ * в «пустой» аккаунт, а в базу ничего не попадало.
+ */
+api.interceptors.response.use((response) => {
+  const type = String(response.headers["content-type"] ?? "");
+  if (type.includes("text/html")) {
+    return Promise.reject(
+      new AxiosError(
+        `По адресу API (${apiOrigin}) отвечает не бэкенд. Проверьте, что сервер запущен`,
+        NOT_API_CODE,
+        response.config,
+        response.request,
+      ),
+    );
+  }
+  return response;
+});
+
 /** Текст ошибки из ответа NestJS: message бывает строкой или массивом строк. */
 export function apiErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
+    if (error.code === NOT_API_CODE) return error.message;
     if (!error.response) {
       return "Сервер недоступен. Проверьте подключение к интернету";
     }

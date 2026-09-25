@@ -23,5 +23,9 @@ function onLeave() {
 <style lang="scss" scoped>
 .button {
   background: $tag-secondary-color;
+  // Внутрь кладут невидимый <input type="file"> на всю кнопку. Без relative
+  // он растягивался на соседние кнопки, и нажатие «удалить» открывало выбор файла.
+  position: relative;
+  overflow: hidden;
 }
 </style>

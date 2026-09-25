@@ -1,0 +1,50 @@
+// Брейкпоинты адаптивной вёрстки. Вёрстка десктопная, поэтому все миксины —
+// «до ширины»: стили внутри применяются на экранах уже указанной.
+//   laptop  — до 1279px (ноутбуки)
+//   tablet  — до 1023px (планшеты, узкие окна)
+//   mobile  — до 767px  (телефоны)
+//   small   — до 479px  (узкие телефоны)
+// Те же значения, что у Tailwind (xl / lg / md / sm), чтобы классы и SCSS совпадали.
+
+@mixin laptop {
+  @media (max-width: 1279px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: 1023px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin small {
+  @media (max-width: 479px) {
+    @content;
+  }
+}
+
+// Устройства без наведения (телефоны, планшеты): всё, что показывается
+// по :hover, должно быть видно сразу.
+@mixin touch {
+  @media (hover: none) {
+    @content;
+  }
+}
+
+// Боковые отступы страницы — чтобы контент не прилипал к краям экрана.
+@mixin page-gutters {
+  padding-left: 32px;
+  padding-right: 32px;
+
+  @include mobile {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

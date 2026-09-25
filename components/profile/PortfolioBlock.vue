@@ -91,5 +91,12 @@ async function handleDelete() {
       opacity: 1;
     }
   }
+
+  // Без мыши наведения нет — название и кнопки видны всегда.
+  @include touch {
+    .hover {
+      opacity: 1;
+    }
+  }
 }
 </style>

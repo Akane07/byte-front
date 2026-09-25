@@ -83,6 +83,7 @@ function googleUnavailable() {
     align-items: center;
     gap: 131px;
     height: 100vh;
+    height: 100dvh;
     width: 100%;
     max-width: 1440px;
     overflow: hidden;
@@ -203,6 +204,29 @@ function googleUnavailable() {
 @media (max-width: 1100px) {
   .login-wrapper {
     justify-content: center;
+  }
+}
+
+@include mobile {
+  .wrapper {
+    margin-bottom: 0;
+  }
+
+  .wrapper .login-wrapper {
+    height: auto;
+    min-height: 100dvh;
+    padding: 40px 16px;
+
+    .login-menu {
+      min-width: 0;
+      width: 100%;
+      max-width: 400px;
+      margin-left: 0;
+    }
+  }
+
+  .menu-hero {
+    font-size: 36px;
   }
 }
 </style>

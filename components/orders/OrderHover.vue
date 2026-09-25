@@ -108,7 +108,8 @@
 <script setup lang="ts">
 import type { Order } from "~/shared/api/order-api";
 import type { User } from "~/shared/api/user-api";
-import { makeURL } from "~/shared/utils/helpers";
+import { copyText, makeURL } from "~/shared/utils/helpers";
+import { useNotifications } from "~/store/notiStore";
 import { useOrderStore } from "~/store/orderStore";
 import { useScroll } from "~/store/scrollStore";
 import { useUserStore } from "~/store/userStore";
@@ -124,6 +125,7 @@ defineEmits<{
 const userStore = useUserStore();
 const orderStore = useOrderStore();
 const scroll = useScroll();
+const notifications = useNotifications();
 const siteUrl = useRuntimeConfig().public.siteUrl;
 
 const user = ref<User | null>(null);
@@ -132,7 +134,10 @@ const showCopiedText = shallowRef(false);
 const orderLink = computed(() => `${siteUrl}/orders/${props.order?.id}`);
 
 async function copyLink() {
-  await navigator.clipboard.writeText(orderLink.value);
+  if (!(await copyText(orderLink.value))) {
+    notifications.setNotification("Не удалось скопировать ссылку");
+    return;
+  }
   showCopiedText.value = true;
   setTimeout(() => {
     showCopiedText.value = false;
@@ -184,8 +189,12 @@ onBeforeUnmount(() => {
 
   .order_hover {
     position: absolute;
-    right: -755px;
+    right: 0;
+    transform: translateX(calc(100% + 10px));
+    height: 100vh;
     height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     width: 100%;
     max-width: 750px;
     box-shadow: -7px 7px 12.9px 0px rgba(0, 0, 0, 0.25);
@@ -196,10 +205,17 @@ onBeforeUnmount(() => {
         rgba(70, 144, 213, 0) 100%
       ),
       linear-gradient(0deg, rgba(52, 49, 49, 0.2), rgba(52, 49, 49, 0.2));
+    -webkit-backdrop-filter: blur(25px);
     backdrop-filter: blur(25px);
-    transition: right 0.4s ease-in-out;
+    transition: transform 0.4s ease-in-out;
     padding: 40px 16px 40px 40px;
     display: flex;
+    @include custom-scrollbar;
+
+    @include mobile {
+      flex-direction: column;
+      padding: 56px 16px 32px;
+    }
 
     & > .bordered {
       width: 1px;
@@ -228,7 +244,7 @@ onBeforeUnmount(() => {
     }
 
     &.active {
-      right: 0;
+      transform: translateX(0);
     }
 
     .left_part {
@@ -251,6 +267,7 @@ onBeforeUnmount(() => {
 
         .stats_info {
           display: flex;
+          flex-wrap: wrap;
           align-items: center;
           font-size: 12px;
           gap: 12px;
@@ -272,8 +289,13 @@ onBeforeUnmount(() => {
         border-bottom: 1px solid $border-color;
       }
 
+      .description {
+        overflow-wrap: anywhere;
+      }
+
       .preferences {
         display: flex;
+        flex-wrap: wrap;
         gap: 16px;
 
         .block {
@@ -290,6 +312,10 @@ onBeforeUnmount(() => {
               font-weight: 600;
               font-size: 12px;
               white-space: nowrap;
+
+              @include mobile {
+                white-space: normal;
+              }
             }
 
             span {
@@ -340,6 +366,18 @@ onBeforeUnmount(() => {
       flex-direction: column;
       gap: 48px;
       padding: 32px 0 32px 16px;
+
+      @include mobile {
+        width: 100%;
+        min-width: 0;
+        border-left: none;
+        padding: 24px 0 0;
+        gap: 32px;
+
+        .price {
+          align-items: stretch;
+        }
+      }
 
       .price {
         display: flex;

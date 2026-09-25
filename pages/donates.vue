@@ -5,6 +5,7 @@
     <div class="wrapper">
         <div class="donations">
             <div class="animation_wrapper">
+                <div class="animation_box">
                 <div class="animation">
                     <div class="circle outer"></div>
                     <div class="circle one">
@@ -21,6 +22,7 @@
                     <div class="circle center">
                         <IconsLogo></IconsLogo>
                     </div>
+                </div>
                 </div>
                 <div class="text">
                     <div class="text_block">
@@ -90,12 +92,16 @@
 </template>
 
 <script setup lang="ts">
+import { copyText } from '~/shared/utils/helpers';
 import { useNotifications } from '~/store/notiStore';
 
 const notifications = useNotifications();
 
 async function copyToClipboard(text: string, type: 'card' | 'crypto') {
-    await navigator.clipboard.writeText(text);
+    if (!(await copyText(text))) {
+        notifications.setNotification('Не удалось скопировать — выделите текст вручную');
+        return;
+    }
     notifications.setNotification(type === 'card' ? 'Номер карты скопирован!' : 'Адрес кошелька скопирован!');
 }
 </script>
@@ -345,6 +351,124 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+}
+
+// Круги анимации свёрстаны в абсолютных пикселях (678px), поэтому на узких
+// экранах они уменьшаются целиком через scale, а место под них — через .animation_box.
+.animation_box {
+    width: 678px;
+    height: 678px;
+    flex-shrink: 0;
+}
+
+.wrapper {
+    @include page-gutters;
+}
+
+.wrapper .donations {
+    .donation .detail {
+        min-width: 0;
+
+        span {
+            overflow-wrap: anywhere;
+        }
+    }
+
+    @include laptop {
+        gap: 48px;
+
+        .animation_wrapper {
+            flex-direction: column;
+            align-items: center;
+            gap: 48px;
+
+            .text {
+                max-width: none;
+            }
+        }
+
+        .second_text_block {
+            flex-direction: column;
+            gap: 48px;
+
+            .left_part {
+                max-width: none;
+            }
+
+            .right_part {
+                margin-top: 0;
+            }
+        }
+    }
+
+    @include mobile {
+        margin-top: 40px;
+
+        .animation_wrapper .text .text_block,
+        .second_text_block .left_part .text_block,
+        .second_text_block .right_part .text_block {
+            p {
+                font-size: 30px;
+            }
+
+            span,
+            ul {
+                font-size: 16px;
+            }
+        }
+
+        .second_text_block .right_part .donation_block .donation_border .donation {
+            flex-wrap: wrap;
+            padding: 12px 12px 0;
+
+            .detail {
+                flex: 1;
+                padding: 0 0 12px 12px;
+            }
+
+            .copy {
+                width: calc(100% + 24px);
+                margin: 0 -12px;
+                padding: 12px;
+                text-align: center;
+                border-radius: 0 0 6px 6px;
+            }
+        }
+    }
+}
+
+@include tablet {
+    .animation_box {
+        width: 542px;
+        height: 542px;
+    }
+
+    .animation {
+        transform: scale(0.8);
+        transform-origin: top left;
+    }
+}
+
+@include mobile {
+    .animation_box {
+        width: 339px;
+        height: 339px;
+    }
+
+    .animation {
+        transform: scale(0.5);
+    }
+}
+
+@media (max-width: 370px) {
+    .animation_box {
+        width: 271px;
+        height: 271px;
+    }
+
+    .animation {
+        transform: scale(0.4);
     }
 }
 </style>

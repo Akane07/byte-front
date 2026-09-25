@@ -403,6 +403,16 @@ onMounted(async () => {
             }
         }
 
+        .description {
+            overflow-wrap: anywhere;
+        }
+
+        .stats_info,
+        .preferences,
+        .right_part .actions {
+            flex-wrap: wrap;
+        }
+
         @media screen and (max-width: 1200px) {
             flex-direction: column;
 
@@ -426,5 +436,35 @@ onMounted(async () => {
 .confirm {
     max-width: 400px;
     color: $white;
+}
+
+@include mobile {
+    .wrapper {
+        padding: 0 16px;
+
+        .order_response {
+            margin-top: 16px;
+            padding: 24px 16px 0;
+
+            .left_part .preferences .block .text p {
+                white-space: normal;
+            }
+
+            .left_part .title span,
+            .right_part > p {
+                font-size: 18px;
+            }
+
+            .right_part .actions {
+                gap: 12px;
+
+                .edit,
+                .delete {
+                    flex: 1;
+                    width: auto;
+                }
+            }
+        }
+    }
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
   <UICustomModal @close="$emit('close')">
-    <div class="accept_modal w-full max-w-[600px] h-full p-8 rounded-[20px]">
+    <div class="accept_modal w-full max-w-[600px] h-full p-5 sm:p-8 rounded-[20px]">
       <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
       <div class="main_info flex flex-col gap-6 pb-4 mt-4">
         <p>{{ order?.title }}</p>
-        <div class="stats_info flex items-center gap-3">
+        <div class="stats_info flex flex-wrap items-center gap-3">
           <UIUserAvatar
             class="cursor-pointer"
             @click="navigateTo(`/profile/${order.user_id}`)"
@@ -23,7 +23,7 @@
       <div class="type">
         <p>Тип проекта: {{ useOrderType(order.type) }}</p>
       </div>
-      <div class="preferences flex gap-4">
+      <div class="preferences flex flex-wrap gap-4">
         <div class="flex items-center gap-3">
           <IconsCalendar
             style="min-width: 40px; min-height: 40px"
@@ -125,11 +125,19 @@ const ownerAvatar = computed(() =>
     border-bottom: 1px solid $border-color;
   }
 
+  .description {
+    overflow-wrap: anywhere;
+  }
+
   .text {
     p {
       font-weight: 600;
       font-size: 12px;
       white-space: nowrap;
+
+      @include mobile {
+        white-space: normal;
+      }
     }
 
     span {

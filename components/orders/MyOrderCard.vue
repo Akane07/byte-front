@@ -264,6 +264,9 @@ async function handleDelete() {
       }
     }
   }
+
+  // Адаптив — последним, чтобы перекрыть десктопные правила выше.
+  @include order-card-adaptive;
 }
 
 .confirm {

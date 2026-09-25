@@ -1,7 +1,10 @@
 <template>
-  <div class="flex flex-col w-full" v-if="user">
-    <div class="head flex justify-between gap-6 w-full px-6 py-3.25">
-      <div class="info flex items-center gap-4">
+  <div class="dialog flex flex-col w-full min-w-0" v-if="user">
+    <div class="head flex flex-wrap justify-between gap-3 md:gap-6 w-full px-4 md:px-6 py-3.25">
+      <div class="info flex items-center gap-3 md:gap-4 min-w-0">
+        <NuxtLink to="/chat" class="back" aria-label="К списку чатов">
+          <IconsWideArrow />
+        </NuxtLink>
         <UIUserAvatar class="cursor-pointer" :src="makeURL(user.avatar)" @click="navigateTo(`/profile/${user.id}`)" />
         <div class="flex flex-col gap-1">
           <p class="cursor-pointer" @click="navigateTo(`/profile/${user.id}`)">
@@ -19,7 +22,7 @@
           </div>
         </div>
       </div>
-      <div class="flex gap-3">
+      <div class="actions flex gap-3">
         <button class="button view" @click="navigateTo(`/mutual/${user.id}`)">
           <IconsSuggest></IconsSuggest>
           Активные заказы ({{ ordersBetweenUsers.length }})
@@ -30,7 +33,7 @@
         </button>
       </div>
     </div>
-    <div ref="messagesRef" class="w-full h-full flex flex-col gap-3 p-6 overflow-y-scroll" style="scrollbar-width: none">
+    <div ref="messagesRef" class="messages w-full h-full flex flex-col gap-3 p-4 md:p-6 overflow-y-auto">
       <div
         v-for="msg in messages"
         :key="msg.id"
@@ -50,7 +53,7 @@
         />
       </div>
     </div>
-    <div class="input_wrapper flex items-center gap-3 w-full px-6 py-3">
+    <div class="input_wrapper flex items-center gap-3 w-full px-4 md:px-6 py-3">
       <label class="relative flex items-center gap-2 cursor-pointer" :title="file?.name ?? 'Прикрепить файл'">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -81,7 +84,7 @@
       </form>
     </div>
   </div>
-  <div class="flex flex-col w-full items-center justify-center" v-else>
+  <div class="dialog flex flex-col w-full min-w-0 items-center justify-center" v-else>
     <UILoader />
   </div>
 
@@ -285,8 +288,17 @@ watch(
 </script>
 
 <style lang="scss" scoped>
+.messages {
+  @include hidden-scrollbar;
+}
+
 .head {
   border-bottom: 1px solid $chat-border;
+
+  .back {
+    display: none;
+    padding: 8px 4px;
+  }
 
   .info {
     p {
@@ -313,6 +325,39 @@ watch(
     border: none;
     outline: none;
     font-weight: 600;
+    white-space: nowrap;
+  }
+
+  // Узкий экран: кнопки заказов — отдельной строкой на всю ширину.
+  @include tablet {
+    .actions {
+      width: 100%;
+
+      .button {
+        flex: 1;
+        min-width: 0;
+        white-space: normal;
+      }
+    }
+  }
+
+  @include mobile {
+    .back {
+      display: flex;
+    }
+    .info p {
+      font-size: 16px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .actions {
+      .button {
+        padding: 8px;
+        font-size: 13px;
+      }
+    }
   }
 
   .request {

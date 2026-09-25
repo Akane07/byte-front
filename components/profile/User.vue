@@ -1,8 +1,8 @@
 <template>
-  <div class="w-full flex justify-center items-center z-100 relative mb-25">
+  <div class="profile w-full flex justify-center items-center z-100 relative mb-25">
     <DevCard v-if="user">
       <div class="main_info flex gap-6">
-        <div class="flex flex-col gap-4 min-w-[230px] pb-4.5">
+        <div class="side flex flex-col gap-4 min-w-[230px] pb-4.5">
           <div class="flex flex-col gap-3">
             <UIProfileAvatar :src="makeURL(user?.avatar)"></UIProfileAvatar>
             <p>{{ user.nickname || "Ник не задан" }}</p>
@@ -23,7 +23,7 @@
           </div>
         </div>
         <div class="bordered"></div>
-        <div class="middle_part flex flex-col gap-3 w-full pb-4.5">
+        <div class="middle_part flex flex-col gap-3 w-full min-w-0 pb-4.5">
           <p class="name">{{ user.name }}</p>
           <p class="font-medium text-[22px]">{{ user.speciality }}</p>
           <span class="description mt-3">{{
@@ -34,7 +34,7 @@
           </div>
         </div>
         <div class="bordered"></div>
-        <div class="w-full flex flex-col gap-8 pb-4.5 pt-3 max-w-[230px]">
+        <div class="aside w-full flex flex-col gap-8 pb-4.5 pt-3 max-w-[230px]">
           <UIButton
             v-if="isOwnProfile"
             type="active"
@@ -102,7 +102,7 @@
         </div>
       </div>
       <div class="portfolio">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-wrap gap-4 justify-between items-center">
           <p>Портфолио</p>
           <UIButton
             v-if="isOwnProfile"
@@ -116,7 +116,7 @@
             Добавить проект в портфолио
           </UIButton>
         </div>
-        <div class="flex flex-wrap gap-6" v-if="portfolios.length">
+        <div class="works flex flex-wrap gap-6" v-if="portfolios.length">
           <ProfilePortfolioBlock
             v-for="portfolio in portfolios"
             :key="portfolio.id"
@@ -177,6 +177,18 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+.profile {
+  @include page-gutters;
+
+  :deep(.card) {
+    @include mobile {
+      padding: 20px 16px;
+      gap: 32px;
+      margin-top: 16px;
+    }
+  }
+}
+
 .main_info {
   border-bottom: 1px solid $border-color;
 
@@ -189,6 +201,58 @@ onMounted(async () => {
   .stats, .description {
     color: $text-secondary;
     font-size: 14px;
+  }
+
+  .description {
+    overflow-wrap: anywhere;
+  }
+
+  // Планшет: аватар и описание рядом, кнопки и статистика — строкой ниже.
+  @include tablet {
+    flex-wrap: wrap;
+
+    & > .bordered:nth-child(4) {
+      display: none;
+    }
+
+    .middle_part {
+      flex: 1;
+    }
+
+    .aside {
+      max-width: none;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 24px;
+      border-top: 1px solid $border-color;
+      padding-top: 24px;
+
+      & > :deep(button) {
+        align-self: flex-start;
+      }
+    }
+  }
+
+  // Телефон: всё в одну колонку.
+  @include mobile {
+    flex-direction: column;
+
+    & > .bordered {
+      display: none;
+    }
+
+    .side {
+      min-width: 0;
+      padding-bottom: 0;
+    }
+
+    .aside {
+      flex-direction: column;
+
+      & > :deep(button) {
+        align-self: stretch;
+      }
+    }
   }
 
   .name {
@@ -227,6 +291,25 @@ onMounted(async () => {
   .add-button {
     border-color: $select-enabled;
     color: $select-enabled;
+
+    @include mobile {
+      width: 100%;
+      white-space: normal;
+    }
+  }
+}
+
+// Телефон: проекты портфолио — во всю ширину.
+.works {
+  @include mobile {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+
+    :deep(.work) {
+      width: 100%;
+      min-width: 0;
+    }
   }
 }
 </style>

@@ -3,14 +3,14 @@
     <UIBackground></UIBackground>
 
     <div class="w-full flex flex-col justify-center items-center z-100 relative mb-25">
-        <div class="w-full max-w-360 flex justify-end relative mt-8">
+        <div class="w-full max-w-360 flex flex-col lg:flex-row justify-end relative mt-8 pt-20 lg:pt-0">
             <OrdersFilters v-model:filters="filters" @change="applyFilters"></OrdersFilters>
-            <div class="orders w-[75%] flex flex-col gap-6 px-5 py-11.5 mt-12">
-                <div class="flex justify-between items-center">
+            <div class="orders w-full lg:w-[75%] flex flex-col gap-6 px-4 md:px-5 pt-4 pb-11.5 lg:py-11.5 mt-0 lg:mt-12">
+                <div class="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
                     <div class="title">
                         <p>Все предложения</p>
                     </div>
-                    <UIButton class="w-[250px]" type="active" @click="navigateTo('/orders/create')">
+                    <UIButton class="w-full sm:w-[250px]" type="active" @click="navigateTo('/orders/create')">
                         Разместить заказ
                     </UIButton>
                 </div>
@@ -61,6 +61,10 @@ async function getOrders(page: number) {
 .orders {
     border-left: 1px solid $border-color;
     height: fit-content;
+
+    @include tablet {
+        border-left: none;
+    }
 }
 
 .title {

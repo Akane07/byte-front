@@ -1,10 +1,10 @@
 <template>
   <div
-    class="order_card w-full flex gap-5 cursor-pointer rounded-lg"
+    class="order_card w-full flex flex-col md:flex-row md:gap-5 cursor-pointer rounded-lg"
     @click="$emit('showOrder', order)"
   >
     <div
-      class="order flex flex-col gap-4 w-full py-4 px-8"
+      class="order flex flex-col gap-4 w-full min-w-0 py-4 px-4 md:px-8"
       :class="{ viewed: viewed }"
     >
       <p>{{ order.title }}</p>
@@ -22,12 +22,12 @@
           >+{{ order.skills.length - 5 }}</LazyUIChip
         >
       </div>
-      <div class="flex items-end gap-4 text-white opacity-60 text-[14px]">
+      <div class="flex flex-wrap items-end gap-x-4 gap-y-1 text-white opacity-60 text-[14px]">
         <span v-if="order.category" class="border-r-[#9E9E9F] border-r pr-4 mr-4">{{ categoryStore.getCategoryTitleById(order.category) }}</span>
         <span>Опубликовано {{ useOrderCreated(order.created_at) }}</span>
       </div>
     </div>
-    <div class="info-block flex flex-col justify-between py-4 px-5">
+    <div class="info-block flex flex-col justify-between gap-3 py-4 px-4 md:px-5">
       <div class="price flex flex-col gap-2">
         <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
         <div class="flex gap-1 items-center">
@@ -78,9 +78,18 @@ const viewed = computed(() => {
       transition: color 0.3s ease-in-out;
     }
 
+    // Две строки описания; раньше высота была жёсткой (40px), и на узких
+    // экранах текст наезжал на теги ниже.
     & > span {
       color: $white;
+      line-height: 20px;
       height: 40px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      overflow-wrap: anywhere;
     }
 
     &:hover {
@@ -100,6 +109,20 @@ const viewed = computed(() => {
     border-left: 1px solid $border-color;
     color: $white;
     width: 280px;
+    flex-shrink: 0;
+
+    @include tablet {
+      width: 220px;
+    }
+
+    @include mobile {
+      width: 100%;
+      border-left: none;
+      border-top: 1px solid $border-color;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
 
     .info {
       font-size: 12px;

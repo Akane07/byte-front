@@ -377,13 +377,28 @@ async function save(draft: boolean) {
   return res !== null;
 }
 
+/**
+ * Шаги стоят в ряд, видимый — прокручивается в окно. Сдвиг берётся из
+ * положения самого шага: раньше он считался как «ширина + 270px» и
+ * расходился с вёрсткой, как только менялись отступы.
+ */
 function goToStep(target: number) {
   step.value = target;
-  const first = wrapperRef.value?.firstElementChild as HTMLElement | null;
-  if (wrapperRef.value && first) {
-    wrapperRef.value.scrollLeft = (first.clientWidth + 270) * (target - 1);
+  alignStep();
+}
+
+function alignStep() {
+  const wrapper = wrapperRef.value;
+  const first = wrapper?.children[0] as HTMLElement | undefined;
+  const current = wrapper?.children[step.value - 1] as HTMLElement | undefined;
+  if (wrapper && first && current) {
+    wrapper.scrollLeft = current.offsetLeft - first.offsetLeft;
   }
 }
+
+// При изменении ширины окна шаги меняют размер — возвращаем текущий на место.
+onMounted(() => window.addEventListener("resize", alignStep));
+onBeforeUnmount(() => window.removeEventListener("resize", alignStep));
 
 function prevStep() {
   if (step.value > 1) {
@@ -496,30 +511,47 @@ onMounted(async () => {
   top: 0;
   left: 0;
   padding: 150px 150px 0px 150px;
+  // Место под фиксированный футер с кнопками.
+  padding-bottom: 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 100px;
   overflow-x: hidden;
 
+  @include laptop {
+    padding: 130px 48px 140px;
+  }
+
+  @include mobile {
+    padding: 104px 16px 180px;
+  }
+
   .step_wrapper {
     width: 100%;
-    max-width: 1620px;
+    max-width: 1440px;
     overflow-x: hidden;
     display: flex;
     gap: 180px;
     scroll-behavior: smooth;
 
+    // Шаг занимает всю ширину окна формы. Раньше у него был ещё margin-left
+    // 90px, и на экранах до ~1600px правая колонка обрезалась.
     .step_block {
       width: 100%;
-      max-width: 1440px;
       display: flex;
       align-items: start;
       gap: 64px;
       justify-content: space-between;
       font-weight: 500;
-      flex: 0 0 auto;
-      margin-left: 90px;
+      flex: 0 0 100%;
+      min-width: 0;
+
+      @include tablet {
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 24px;
+      }
 
       .left_part {
         display: flex;
@@ -536,6 +568,10 @@ onMounted(async () => {
         h2 {
           font-size: 32px;
           color: $text-main;
+
+          @include mobile {
+            font-size: 24px;
+          }
         }
 
         p {
@@ -551,6 +587,11 @@ onMounted(async () => {
         max-width: 600px;
         margin-top: 43px;
         width: 100%;
+
+        @include tablet {
+          margin-top: 0;
+          max-width: none;
+        }
 
         .block {
           display: flex;
@@ -577,10 +618,6 @@ onMounted(async () => {
             color: $text-secondary;
           }
         }
-      }
-
-      &:last-child {
-        padding-right: 90px;
       }
 
       &.second {
@@ -684,8 +721,13 @@ onMounted(async () => {
           display: flex;
           gap: 32px;
 
+          @include mobile {
+            gap: 12px;
+          }
+
           .price {
             width: 100%;
+            min-width: 0;
             max-width: 220px;
             display: flex;
             flex-direction: column;
@@ -757,7 +799,8 @@ onMounted(async () => {
 
         .input_block_wrapper {
           display: flex;
-          gap: 32px;
+          flex-wrap: wrap;
+          gap: 16px 32px;
         }
 
         .contract {
@@ -802,6 +845,15 @@ onMounted(async () => {
     z-index: 100;
     background: #18181c;
 
+    @include laptop {
+      padding: 24px 48px;
+    }
+
+    @include mobile {
+      padding: 12px 16px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    }
+
     .progress {
       position: absolute;
       top: 0;
@@ -840,6 +892,27 @@ onMounted(async () => {
 
       .next {
         width: 220px;
+      }
+
+      // Телефон: «черновик» — строкой сверху, «Назад» и «Далее» — пополам.
+      @include mobile {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+
+        .right {
+          display: contents;
+
+          .draft {
+            grid-row: 1;
+            grid-column: 1 / -1;
+            padding: 4px;
+          }
+        }
+
+        .next {
+          width: 100%;
+        }
       }
     }
   }

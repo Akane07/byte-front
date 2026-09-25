@@ -109,6 +109,7 @@ function googleUnavailable() {
     justify-content: end;
     gap: 131px;
     height: 100vh;
+    height: 100dvh;
     width: 100%;
     overflow: hidden;
 }
@@ -219,6 +220,26 @@ function googleUnavailable() {
 @media (max-width: 1100px) {
     .registration-wrapper {
         justify-content: center;
+    }
+}
+
+@include mobile {
+    .registration-wrapper {
+        height: auto;
+        min-height: 100dvh;
+        padding: 40px 16px;
+    }
+
+    .registration-menu {
+        min-width: 0;
+        width: 100%;
+        max-width: 400px;
+        margin-left: 0;
+        margin-top: 0;
+    }
+
+    .menu-hero {
+        font-size: 36px;
     }
 }
 </style>

@@ -7,8 +7,15 @@
   font-family: Inter, system-ui, sans-serif;
 }
 
+html {
+  /* iOS Safari не увеличивает шрифт сам при повороте экрана */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
+  -webkit-tap-highlight-color: transparent;
   background: radial-gradient(81.79% 49.97% at 50% 50.03%, #2e2b2b 0%, #212121 100%);
   overflow-x: hidden;
 }
@@ -22,6 +29,32 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+/* iOS Safari приближает страницу при фокусе на поле со шрифтом меньше 16px.
+   На сенсорных экранах поднимаем шрифт полей до 16px. !important нужен,
+   чтобы перебить scoped-стили компонентов. */
+@media (hover: none) and (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Автозаполнение: Chrome, Edge, Brave и Safari красят поле в светло-голубой
+   с тёмным текстом, и перебить это обычным background нельзя (у браузера
+   !important). Цвет текста задаём явно, а смену фона откладываем на «вечность» —
+   поле остаётся своего цвета. Полям со сплошным фоном этого мало: там фон
+   закрашивается внутренней тенью (см. AuthInput). */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #f1ecff;
+  caret-color: #f1ecff;
+  transition: background-color 600000s 0s, color 600000s 0s;
 }
 
 svg,

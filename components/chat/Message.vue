@@ -112,10 +112,25 @@ const responseFrom = computed(() =>
     padding: 8px 16px;
     max-width: 45%;
     color: $white !important;
+    overflow-wrap: anywhere;
     font-size: 15px;
     display: flex;
     flex-direction: column;
     gap: 2px;
+
+    @include tablet {
+      max-width: 70%;
+    }
+
+    @include mobile {
+      max-width: 85%;
+    }
+
+    img,
+    video {
+      max-width: 100%;
+      height: auto;
+    }
   }
 
   &.suggest,
@@ -192,6 +207,7 @@ const responseFrom = computed(() =>
 
     .buttons {
       display: flex;
+      flex-wrap: wrap;
       gap: 12px;
       align-items: center;
       justify-content: center;

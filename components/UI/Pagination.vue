@@ -1,6 +1,6 @@
 <template>
-    <div class="pagination_wrapper max-w-[500px] flex gap-3 select-none">
-        <div class="pagination_button" @click="go(1)">
+    <div class="pagination_wrapper max-w-[500px] flex gap-1.5 sm:gap-3 select-none">
+        <div class="pagination_button edge" @click="go(1)">
             <IconsDoubleArrowLeft></IconsDoubleArrowLeft>
         </div>
         <div class="pagination_button" @click="go(currentPage - 1)">
@@ -14,7 +14,7 @@
         <div class="pagination_button" @click="go(currentPage + 1)">
             <IconsArrowLeft class="reverse"></IconsArrowLeft>
         </div>
-        <div class="pagination_button" @click="go(total)">
+        <div class="pagination_button edge" @click="go(total)">
             <IconsDoubleArrowLeft class="reverse"></IconsDoubleArrowLeft>
         </div>
     </div>
@@ -47,6 +47,7 @@ const pages = computed(() => generatePagination(props.currentPage, props.total))
     height: 42px;
     border-radius: 8px;
     border: 1px solid $pagination-color;
+    color: $pagination-color;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -72,6 +73,18 @@ const pages = computed(() => generatePagination(props.currentPage, props.total))
         border: none;
         font-size: 20px;
         cursor: default;
+    }
+
+    @include mobile {
+        width: 36px;
+        height: 36px;
+    }
+
+    // На узком экране «в начало» / «в конец» не помещаются — хватает стрелок.
+    &.edge {
+        @include small {
+            display: none;
+        }
     }
 }
 </style>

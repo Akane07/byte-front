@@ -62,3 +62,35 @@ export function openExternal(link: string) {
   const url = /^https?:\/\//.test(link) ? link : `https://${link}`;
   window.open(url, "_blank", "noopener,noreferrer");
 }
+
+/**
+ * Скопировать текст в буфер обмена. navigator.clipboard есть только
+ * в защищённом контексте (HTTPS или localhost) — на сайте по http://IP
+ * его нет, поэтому запасной путь через скрытое поле и execCommand.
+ */
+export async function copyText(text: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // пробуем запасной способ ниже
+  }
+
+  const field = document.createElement("textarea");
+  field.value = text;
+  field.setAttribute("readonly", "");
+  field.style.position = "fixed";
+  field.style.opacity = "0";
+  document.body.appendChild(field);
+  field.select();
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch {
+    ok = false;
+  }
+  field.remove();
+  return ok;
+}

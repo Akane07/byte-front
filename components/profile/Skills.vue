@@ -11,7 +11,7 @@
     <UIModal v-if="showModal" title="Какими навыками вы обладаете?" @close="showModal = false" >
         <template #body>
             <p class="mb-3">Навыки</p>
-            <div class="skills w-[500px] flex flex-wrap gap-3 rounded-md p-4" @click="handleFocus" @blur="handleBlur" @mousedown.prevent="handleMouseDown">
+            <div class="skills w-[500px] max-w-full flex flex-wrap gap-3 rounded-md p-4" @click="handleFocus" @blur="handleBlur" @mousedown.prevent="handleMouseDown">
                 <LazyUIChip v-for="(skill, index) in copySkills" :key="skill" :text="skill" removable :hover="false"
                     @delete="deleteSkill(index)"></LazyUIChip>
                 <input ref="inputRef" v-model="newSkill" class="cursor-pointer bg-transparent border-none outline-none"

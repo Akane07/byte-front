@@ -15,7 +15,7 @@
             <div class="icon-cont"></div>
             <div class="icon-cont">
                 <img src="../../assets/icons/keyboard_right.svg" alt="" v-if="recovery">
-                <img src="../../assets/icons/desk_plant.svg" alt="" v-else>
+                <img src="../../assets/icons/desk_plant.png" alt="" v-else>
             </div>
             <div class="icon-cont"></div>
             <div class="icon-cont"></div>
