@@ -57,7 +57,7 @@
           @pointerdown="lastPointer = $event.pointerType"
           @click="toggle"
         >
-          <UIUserAvatar class="cursor-pointer" :src="makeURL(userStore.user?.avatar)" />
+          <UIUserAvatar class="cursor-pointer" :src="makeURL(userStore.user?.avatar)" :name="userStore.user?.name" />
           <IconsArrow class="cursor-pointer arrow" :class="{ active: showMenu }" />
         </div>
 

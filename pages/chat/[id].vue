@@ -5,7 +5,7 @@
         <NuxtLink to="/chat" class="back" aria-label="К списку чатов">
           <IconsWideArrow />
         </NuxtLink>
-        <UIUserAvatar class="cursor-pointer" :src="makeURL(user.avatar)" @click="navigateTo(`/profile/${user.id}`)" />
+        <UIUserAvatar class="cursor-pointer" :src="makeURL(user.avatar)" :name="user.name" @click="navigateTo(`/profile/${user.id}`)" />
         <div class="flex flex-col gap-1">
           <p class="cursor-pointer" @click="navigateTo(`/profile/${user.id}`)">
             {{ user.nickname || user.name }}

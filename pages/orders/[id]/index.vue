@@ -13,7 +13,7 @@
                     <p>{{ order.title }}</p>
                     <div class="stats_info">
                         <UIUserAvatar class="cursor-pointer" @click="navigateTo(`/profile/${order.user_id}`)"
-                            :src="makeURL(owner?.avatar)"></UIUserAvatar>
+                            :src="makeURL(owner?.avatar)" :name="owner?.name"></UIUserAvatar>
                         <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                         <span>Предложений: {{ order.response_count }}</span>
                     </div>
@@ -73,7 +73,7 @@
             <div class="right_part" v-else-if="userStore.user">
                 <p>Ваше предложение</p>
                 <div class="block">
-                    <UIUserAvatar :src="makeURL(userStore.user.avatar)"
+                    <UIUserAvatar :src="makeURL(userStore.user.avatar)" :name="userStore.user.name"
                         @click="navigateTo(`/profile/${userStore.user.id}`)"></UIUserAvatar>
                     <span>Отклик от {{ useUserCreated(response.created_at) }}</span>
                 </div>

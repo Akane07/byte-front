@@ -8,7 +8,8 @@
           <UIUserAvatar
             class="cursor-pointer"
             @click="navigateTo(`/profile/${order.user_id}`)"
-            :src="makeURL(ownerAvatar)"
+            :src="makeURL(owner?.avatar)"
+            :name="owner?.name"
           >
           </UIUserAvatar>
           <span class="bordered pr-3"
@@ -78,9 +79,9 @@ defineEmits<{
 const userStore = useUserStore();
 const chatUser = inject<Ref<User | null>>("user", ref(null));
 
-/** Аватар владельца заказа — раньше здесь всегда был аватар текущего пользователя. */
-const ownerAvatar = computed(() =>
-  props.order.user_id === userStore.user?.id ? userStore.user?.avatar : chatUser.value?.avatar,
+/** Владелец заказа — для аватара. Раньше здесь всегда был аватар текущего пользователя. */
+const owner = computed(() =>
+  props.order.user_id === userStore.user?.id ? userStore.user : chatUser.value,
 );
 </script>
 

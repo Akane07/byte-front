@@ -10,7 +10,8 @@
             </div>
             <div class="stats_info">
                 <UIUserAvatar style="cursor: pointer;" @click="navigateTo(`/profile/${order.user_id}`)"
-                    :src="order.user_id === userStore.user?.id ? makeURL(userStore.user?.avatar) : undefined"></UIUserAvatar>
+                    :src="order.user_id === userStore.user?.id ? makeURL(userStore.user?.avatar) : undefined"
+                    :name="order.user_id === userStore.user?.id ? userStore.user?.name : undefined"></UIUserAvatar>
                 <span class="bordered">Опубликовано {{ useOrderCreated(order.created_at) }}</span>
                 <button class="bordered edit" @click="navigateTo(`/orders/${order.id}`)" v-if="user_performer">Просмотреть заказ</button>
             </div>

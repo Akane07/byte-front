@@ -27,7 +27,7 @@
             class="user flex items-center gap-4 p-4 cursor-pointer"
             :class="{ active: $route.params.id === chat.userId }"
           >
-            <UIUserAvatar :src="makeURL(chat.avatar)" size="48px" class="rounded-md" />
+            <UIUserAvatar :src="makeURL(chat.avatar)" :name="chat.name" size="48px" class="rounded-md" />
             <div class="info flex flex-col gap-1 w-full">
               <p>{{ chat.nickname || chat.name }}</p>
               <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>

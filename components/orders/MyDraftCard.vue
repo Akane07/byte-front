@@ -10,7 +10,7 @@
             </div>
             <div class="stats_info">
                 <UIUserAvatar style="cursor: pointer;" @click.stop="navigateTo(`/profile/${order.user_id}`)"
-                    :src="makeURL(userStore.user?.avatar)"></UIUserAvatar>
+                    :src="makeURL(userStore.user?.avatar)" :name="userStore.user?.name"></UIUserAvatar>
                     <span class="bordered">От {{ useUserCreated(order.created_at) }}</span>
                 <button class="bordered delete" @click.stop="modal = true">Удалить черновик</button>
             </div>

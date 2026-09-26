@@ -19,6 +19,7 @@
               class="cursor-pointer"
               @click="navigateTo(`/profile/${order.user_id}`)"
               :src="makeURL(user?.avatar)"
+              :name="user?.name"
             ></UIUserAvatar>
             <span class="bordered"
               >Опубликовано {{ useOrderCreated(order.created_at) }}</span

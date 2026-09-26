@@ -4,7 +4,7 @@
       <div class="main_info flex gap-6">
         <div class="side flex flex-col gap-4 min-w-[230px] pb-4.5">
           <div class="flex flex-col gap-3">
-            <UIProfileAvatar :src="makeURL(user?.avatar)"></UIProfileAvatar>
+            <UIProfileAvatar :src="makeURL(user?.avatar)" :name="user?.name"></UIProfileAvatar>
             <p>{{ user.nickname || "Ник не задан" }}</p>
           </div>
           <div class="stats flex flex-col gap-2">

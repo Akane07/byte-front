@@ -42,7 +42,7 @@
             </div>
             <div class="footer w-full flex flex-col gap-8 mb-0 md:mb-25 rounded-md py-6 px-4 md:py-10 md:px-12">
                 <div class="flex items-center gap-4">
-                    <UIUserAvatar size="56px" :src="makeURL(user?.avatar)"></UIUserAvatar>
+                    <UIUserAvatar size="56px" :src="makeURL(user?.avatar)" :name="user?.name"></UIUserAvatar>
                     <div class="flex flex-col gap-3">
                         <p class="text-white font-semibold text-[14px]">{{ user?.nickname || "Без имени" }}</p>
                         <UIButton v-if="user?.id === userStore.user?.id" type="active" @click.stop="

@@ -94,3 +94,16 @@ export async function copyText(text: string): Promise<boolean> {
   field.remove();
   return ok;
 }
+
+/**
+ * Инициалы для заглушки аватара: «Алина Соколова» → «АС», «newbie» → «N».
+ * Пустое имя — пустая строка (тогда показывается силуэт).
+ */
+export function avatarInitials(name?: string | null): string {
+  const words = (name ?? "").trim().split(/[\s._-]+/).filter(Boolean);
+  return words
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
+}
