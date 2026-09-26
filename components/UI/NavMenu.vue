@@ -28,10 +28,14 @@
         v-else-if="!userStore.isAuth && userStore.checked"
         class="flex items-center gap-2 sm:gap-3 relative select-none"
       >
-        <NuxtLink to="/auth/login">
+        <!-- Гость смотрит заказы и профили без входа: в шапке — донаты и вход. -->
+        <NuxtLink to="/donates" class="guest-link" aria-label="Донаты">
+          <IconsBlocks class="w-5" /><span>Донаты</span>
+        </NuxtLink>
+        <NuxtLink :to="{ path: '/auth/login', query: authQuery }">
           <UIButton>Войти</UIButton>
         </NuxtLink>
-        <NuxtLink to="/auth/registration">
+        <NuxtLink :to="{ path: '/auth/registration', query: authQuery }">
           <UINavButton>Регистрация</UINavButton>
         </NuxtLink>
       </div>
@@ -121,6 +125,9 @@ defineProps<{
 const userStore = useUserStore();
 
 const route = useRoute();
+
+/** После входа из шапки — обратно на эту же страницу (с главной — в ленту). */
+const authQuery = computed(() => (route.path === "/" ? {} : { redirect: route.fullPath }));
 
 const modal = shallowRef(false);
 const rootRef = ref<HTMLElement | null>(null);
@@ -280,6 +287,42 @@ onBeforeUnmount(() => {
   // На самых узких экранах гостю нужны обе кнопки — оставляем только логотип.
   &.guest {
     @include small {
+      display: none;
+    }
+  }
+}
+
+// Ссылка «Донаты» у гостя. На узких экранах — только иконка.
+.guest-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 8px;
+  font-size: 14px;
+  color: $text-header;
+  transition: color 0.15s ease;
+
+  :deep(svg path) {
+    stroke: $text-header;
+    transition: stroke 0.15s ease;
+  }
+
+  &:hover {
+    color: $select-enabled;
+
+    :deep(svg path) {
+      stroke: $select-enabled;
+    }
+  }
+
+  &.router-link-active {
+    color: $white;
+  }
+
+  @include mobile {
+    margin-right: 0;
+
+    span {
       display: none;
     }
   }

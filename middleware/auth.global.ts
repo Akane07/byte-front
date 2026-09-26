@@ -1,4 +1,4 @@
-import { isAuthPath, isPublicPath } from "~/shared/utils/routes";
+import { isAuthPath, isPublicPath, safeRedirect } from "~/shared/utils/routes";
 import { useUserStore } from "~/store/userStore";
 
 /**
@@ -10,10 +10,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
   await userStore.checkAuth();
 
   if (isAuthPath(to.path)) {
-    return userStore.isAuth ? navigateTo("/orders") : undefined;
+    return userStore.isAuth ? navigateTo(safeRedirect(to.query.redirect)) : undefined;
   }
 
+  // Гость открыл закрытую страницу (например, по ссылке) — на вход,
+  // а после входа обратно сюда.
   if (!userStore.isAuth && !isPublicPath(to.path)) {
-    return navigateTo("/auth/login");
+    return navigateTo({ path: "/auth/login", query: { redirect: to.fullPath } });
   }
 });

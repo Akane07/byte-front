@@ -16,7 +16,7 @@
 
     <template #footer>
       <span v-if="step === 'email'" class="auth-note">
-        Вспомнили пароль? <NuxtLink to="/auth/login">Войти</NuxtLink>
+        Вспомнили пароль? <NuxtLink :to="{ path: '/auth/login', query: route.query }">Войти</NuxtLink>
       </span>
       <template v-else-if="step === 'code'">
         <span class="auth-note">
@@ -33,6 +33,7 @@
 
 <script setup lang="ts">
 import { checkRecoveryCode, requestRecovery, resetPassword } from "~/shared/api/auth-api";
+import { safeRedirect } from "~/shared/utils/routes";
 import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";
 
@@ -49,6 +50,7 @@ const TEXT: Record<Step, { title: string; subtitle: string }> = {
   },
 };
 
+const route = useRoute();
 const userStore = useUserStore();
 const notifications = useNotifications();
 const countdown = useCountdown();
@@ -115,7 +117,7 @@ async function savePassword() {
   if (res) {
     await userStore.startSession(res.access_token);
     notifications.setNotification("Пароль изменён");
-    navigateTo("/orders");
+    navigateTo(safeRedirect(route.query.redirect));
   }
   loading.value = false;
 }

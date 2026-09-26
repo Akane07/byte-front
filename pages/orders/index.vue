@@ -10,7 +10,7 @@
                     <div class="title">
                         <p>Все предложения</p>
                     </div>
-                    <UIButton class="w-full sm:w-[250px]" type="active" @click="navigateTo('/orders/create')">
+                    <UIButton class="w-full sm:w-[250px]" type="active" @click="createOrder">
                         Разместить заказ
                     </UIButton>
                 </div>
@@ -35,9 +35,19 @@
 <script setup lang="ts">
 import type { Order } from '~/shared/api/order-api';
 import type { Filter } from '~/shared/types';
+import { useGuestStore } from '~/store/guestStore';
 import { useOrderStore } from '~/store/orderStore';
 
 const orderStore = useOrderStore();
+const guest = useGuestStore();
+
+// Гость впервые в ленте (обычно — с кнопки «Начать» на главной):
+// один раз предлагаем присоединиться, но смотреть можно и так.
+onMounted(guest.welcomeOnce);
+
+function createOrder() {
+    if (guest.requireAuth('разместить заказ')) navigateTo('/orders/create');
+}
 
 const hoverOrder = ref<Order | null>(null);
 const filters = ref<Filter[]>([]);

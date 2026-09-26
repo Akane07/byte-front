@@ -46,7 +46,7 @@
           <UIButton
             v-else
             type="active"
-            @click="navigateTo(`/chat/${user.id}`)"
+            @click="guest.requireAuth('написать пользователю') && navigateTo(`/chat/${user.id}`)"
           >
             Отправить сообщение
           </UIButton>
@@ -121,6 +121,7 @@
             v-for="portfolio in portfolios"
             :key="portfolio.id"
             :portfolio="portfolio"
+            :other="!isOwnProfile"
           ></ProfilePortfolioBlock>
         </div>
       </div>
@@ -138,6 +139,7 @@ import DevCard from "~/components/UI/Card.vue";
 import type { Portfolio } from "~/shared/api/portfolio-api";
 import type { User } from "~/shared/api/user-api";
 import { makeURL, openExternal } from "~/shared/utils/helpers";
+import { useGuestStore } from "~/store/guestStore";
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
 
@@ -145,6 +147,7 @@ import { useUserStore } from "~/store/userStore";
 const route = useRoute();
 const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
+const guest = useGuestStore();
 
 const user = ref<User | null>(null);
 const otherPortfolios = ref<Portfolio[]>([]);

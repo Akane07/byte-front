@@ -22,7 +22,10 @@ export default defineNuxtPlugin(() => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       useUserStore().resetSession();
       if (!isPublicPath(router.currentRoute.value.path)) {
-        navigateTo("/auth/login");
+        navigateTo({
+          path: "/auth/login",
+          query: { redirect: router.currentRoute.value.fullPath },
+        });
       }
       return Promise.reject(error);
     }

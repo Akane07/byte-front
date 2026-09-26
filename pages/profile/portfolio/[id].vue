@@ -4,7 +4,7 @@
 
     <div class="w-full flex flex-col justify-center items-center z-100 relative mb-25 px-4 md:px-8">
         <div class="portfolio flex flex-col items-center gap-12 w-full max-w-[1440px] mt-8 pt-8 md:pt-16 rounded-[20px]"
-            v-if="portfolio && user && userStore.user">
+            v-if="portfolio && user">
             <div class="flex flex-col items-center gap-6 md:gap-16 px-4 md:px-[42px] w-full">
                 <video v-if="portfolio.video" :src="makeURL(portfolio.video)" controls
                     style="max-width: 100%; height: auto" class="w-full h-auto max-h-[500px] rounded-md"></video>
@@ -12,11 +12,10 @@
                     :src="makeURL(image)" />
             </div>
             <div class="about flex flex-col items-center gap-8 max-w-[900px] py-6 md:py-[42px] px-4">
-                <div v-if="!portfolio.liked_by.includes(userStore.user.id)" class="like_button" @click="ratePortfolio">
+                <div v-if="!isLiked" class="like_button" @click="ratePortfolio">
                     <IconsLike></IconsLike>
                 </div>
-                <div v-if="portfolio.liked_by.includes(userStore.user.id)" class="like_button liked"
-                    @click="ratePortfolio">
+                <div v-else class="like_button liked" @click="ratePortfolio">
                     <div class="like_wrapper w-full h-full flex items-center justify-center rounded-[100%]">
                         <IconsLike></IconsLike>
                     </div>
@@ -90,22 +89,28 @@
 import { likePortfolio, viewPortfolio, type Portfolio } from "~/shared/api/portfolio-api";
 import type { User } from "~/shared/api/user-api";
 import { makeURL } from "~/shared/utils/helpers";
+import { useGuestStore } from "~/store/guestStore";
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
 
 const route = useRoute();
 const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
+const guest = useGuestStore();
 
 const portfolio = ref<Portfolio | null>(null);
 /** Другие проекты автора — без текущего. */
 const portfolios = ref<Portfolio[]>([]);
 const user = ref<User | null>(null);
 
+/** У гостя лайка нет — раньше страница падала на userStore.user.id. */
+const isLiked = computed(
+  () => !!userStore.user && !!portfolio.value?.liked_by.includes(userStore.user.id),
+);
+
 async function ratePortfolio() {
-  if (!userStore.user || !portfolio.value) return;
-  const isLiked = portfolio.value.liked_by.includes(userStore.user.id);
-  const res = await likePortfolio(portfolio.value.id, !isLiked);
+  if (!portfolio.value || !guest.requireAuth("оценить проект")) return;
+  const res = await likePortfolio(portfolio.value.id, !isLiked.value);
   if (res) portfolio.value = res;
 }
 
@@ -124,7 +129,8 @@ async function load(id: string) {
   // из списка пропадал последний проект.
   portfolios.value = list.filter((p) => p.id !== id);
 
-  if (!isMine) await viewPortfolio(id);
+  // Просмотры считаются только у вошедших: эндпоинт требует токен.
+  if (!isMine && userStore.isAuth) await viewPortfolio(id);
 }
 
 // Переход между проектами автора переиспользует страницу — грузим заново.

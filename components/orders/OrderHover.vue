@@ -109,6 +109,7 @@
 import type { Order } from "~/shared/api/order-api";
 import type { User } from "~/shared/api/user-api";
 import { copyText, makeURL } from "~/shared/utils/helpers";
+import { useGuestStore } from "~/store/guestStore";
 import { useNotifications } from "~/store/notiStore";
 import { useOrderStore } from "~/store/orderStore";
 import { useScroll } from "~/store/scrollStore";
@@ -126,6 +127,7 @@ const userStore = useUserStore();
 const orderStore = useOrderStore();
 const scroll = useScroll();
 const notifications = useNotifications();
+const guest = useGuestStore();
 const siteUrl = useRuntimeConfig().public.siteUrl;
 
 const user = ref<User | null>(null);
@@ -144,8 +146,9 @@ async function copyLink() {
   }, 3000);
 }
 
+/** Гость — сразу окно «нужен аккаунт», без перехода к форме отклика. */
 function handleOrderRedirect() {
-  navigateTo(`/orders/${props.order?.id}`);
+  if (guest.requireAuth("откликнуться на заказ")) navigateTo(`/orders/${props.order?.id}`);
 }
 
 watch(

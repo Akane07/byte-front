@@ -3,6 +3,7 @@
     <NuxtPage />
   </div>
   <Notifications />
+  <GuestPrompt />
 </template>
 
 <script setup lang="ts">

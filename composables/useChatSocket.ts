@@ -39,13 +39,16 @@ function getSocket(origin: string): ChatSocket {
   if (!socket) {
     socket = io(origin, {
       transports: ["websocket"],
+      // Гость смотрит заказы без входа — соединяться ему не с чем:
+      // сервер закрывает сокет без токена.
+      autoConnect: !!getToken(),
       // Функция, а не значение: токен читается заново при каждом переподключении.
       auth: (cb) => cb({ token: getToken() }),
     });
     socket.on("exception", ({ message }) => {
       useNotifications().setNotification(Array.isArray(message) ? message.join(". ") : message);
     });
-  } else if (socket.disconnected) {
+  } else if (socket.disconnected && getToken()) {
     socket.connect();
   }
   return socket;

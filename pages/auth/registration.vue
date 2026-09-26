@@ -19,7 +19,7 @@
     <template #footer>
       <template v-if="step === 'form'">
         <AuthGoogle />
-        <span class="auth-note">Уже есть аккаунт? <NuxtLink to="/auth/login">Войти</NuxtLink></span>
+        <span class="auth-note">Уже есть аккаунт? <NuxtLink :to="{ path: '/auth/login', query: route.query }">Войти</NuxtLink></span>
       </template>
       <template v-else>
         <span class="auth-note">
@@ -28,7 +28,7 @@
             {{ countdown.left.value > 0 ? `Отправить ещё раз через ${countdown.label.value}` : "Отправить код ещё раз" }}
           </button>
         </span>
-        <span class="auth-note"><NuxtLink to="/orders">Подтвердить позже</NuxtLink></span>
+        <span class="auth-note"><NuxtLink :to="nextPage">Подтвердить позже</NuxtLink></span>
       </template>
     </template>
   </AuthScreen>
@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import { resendVerification, verifyEmail } from "~/shared/api/auth-api";
+import { safeRedirect } from "~/shared/utils/routes";
 import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";
 
@@ -52,6 +53,9 @@ const TEXT: Record<Step, { title: string; subtitle?: string }> = {
   code: { title: "Подтверждение" },
 };
 
+const route = useRoute();
+/** Куда после регистрации: туда, откуда гостя попросили войти, иначе в ленту. */
+const nextPage = computed(() => safeRedirect(route.query.redirect));
 const userStore = useUserStore();
 const notifications = useNotifications();
 const countdown = useCountdown();
@@ -102,7 +106,7 @@ async function handleVerify() {
   if (res) {
     await userStore.checkAuth(true);
     notifications.setNotification("Почта подтверждена");
-    navigateTo("/orders");
+    navigateTo(nextPage.value);
   } else {
     code.value = "";
   }

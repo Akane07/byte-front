@@ -6,7 +6,7 @@
         <div class="order_response" v-if="order">
             <div class="left_part">
                 <div class="title">
-                    <span>{{ isOwner ? 'Ваш заказ' : 'Отклик на заказ' }}</span>
+                    <span>{{ isOwner ? 'Ваш заказ' : userStore.isAuth ? 'Отклик на заказ' : 'Заказ' }}</span>
                     <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
                 </div>
                 <div class="main_info">
@@ -55,6 +55,14 @@
                 <p>Это ваш заказ</p>
                 <UIButton style="align-self: flex-start;" type="active"
                     @click="navigateTo(`/orders/${order.id}/edit`)">Редактировать заказ</UIButton>
+            </div>
+            <!-- Гость (например, по ссылке на заказ) формы не видит: кнопка
+                 сразу предлагает войти. -->
+            <div class="right_part" v-else-if="!userStore.isAuth">
+                <p>Хотите взяться за этот заказ?</p>
+                <span class="guest_hint">Откликаться могут только зарегистрированные пользователи.</span>
+                <UIButton style="align-self: flex-start;" type="active"
+                    @click="guest.requireAuth('откликнуться на заказ')">Откликнуться</UIButton>
             </div>
             <div class="right_part" v-else-if="!response">
                 <p>Ваше предложение</p>
@@ -114,6 +122,7 @@ import {
 } from '~/shared/api/order-api';
 import type { User } from '~/shared/api/user-api';
 import { makeURL } from '~/shared/utils/helpers';
+import { useGuestStore } from '~/store/guestStore';
 import { useNotifications } from '~/store/notiStore';
 import { useOrderStore } from '~/store/orderStore';
 import { useUserStore } from '~/store/userStore';
@@ -122,6 +131,7 @@ const route = useRoute();
 const orderStore = useOrderStore();
 const userStore = useUserStore();
 const notifications = useNotifications();
+const guest = useGuestStore();
 const chat = useChatSocket();
 
 const orderId = computed(() => route.params.id as string);
@@ -188,7 +198,8 @@ onMounted(async () => {
     const me = userStore.user?.id;
     const [ownerProfile, myResponse] = await Promise.all([
         userStore.getUserId(order.value.user_id),
-        isOwner.value ? Promise.resolve(null) : getResponse(order.value.id),
+        // Свой отклик есть только у вошедшего и только на чужой заказ.
+        isOwner.value || !me ? Promise.resolve(null) : getResponse(order.value.id),
     ]);
     owner.value = ownerProfile;
     response.value = myResponse;
@@ -202,6 +213,11 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+.guest_hint {
+    color: $text-secondary;
+    font-size: 14px;
+}
+
 
 
 .wrapper {

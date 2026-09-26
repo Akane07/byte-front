@@ -31,13 +31,9 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "~/store/userStore";
-
-const userStore = useUserStore();
-
-/** Гостя — на регистрацию, вошедшего — сразу к заказам. */
+/** В ленту заказов — и гостю тоже: смотреть заказы можно без входа. */
 function start() {
-  navigateTo(userStore.isAuth ? "/orders" : "/auth/registration");
+  navigateTo("/orders");
 }
 </script>
 

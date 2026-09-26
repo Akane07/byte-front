@@ -11,16 +11,18 @@
 
     <template #footer>
       <AuthGoogle />
-      <span class="auth-note">Забыли пароль? <NuxtLink to="/auth/recovery">Восстановить</NuxtLink></span>
-      <span class="auth-note">Нет аккаунта? <NuxtLink to="/auth/registration">Зарегистрироваться</NuxtLink></span>
+      <span class="auth-note">Забыли пароль? <NuxtLink :to="{ path: '/auth/recovery', query: route.query }">Восстановить</NuxtLink></span>
+      <span class="auth-note">Нет аккаунта? <NuxtLink :to="{ path: '/auth/registration', query: route.query }">Зарегистрироваться</NuxtLink></span>
     </template>
   </AuthScreen>
 </template>
 
 <script setup lang="ts">
+import { safeRedirect } from "~/shared/utils/routes";
 import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";
 
+const route = useRoute();
 const userStore = useUserStore();
 const notifications = useNotifications();
 
@@ -39,6 +41,7 @@ async function handleLogin() {
   const ok = await userStore.login({ email: email.value, password: password.value });
   loading.value = false;
 
-  if (ok) navigateTo("/orders");
+  // Гостя, которого попросили войти, возвращаем туда, где он был.
+  if (ok) navigateTo(safeRedirect(route.query.redirect));
 }
 </script>
