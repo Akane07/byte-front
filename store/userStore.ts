@@ -73,7 +73,7 @@ export const useUserStore = defineStore("user", () => {
   function logout() {
     resetSession();
     disconnectChatSocket();
-    navigateTo("/auth/login");
+    navigateTo("/");
   }
 
   function getUserId(id: string) {

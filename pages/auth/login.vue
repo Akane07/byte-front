@@ -27,6 +27,9 @@
             >Забыли пароль?
             <NuxtLink to="/auth/recovery" class="recovery">Восстановить</NuxtLink></span
           >
+          <span class="recovery-text"
+            >Нет аккаунта?
+            <NuxtLink to="/auth/registration" class="recovery">Зарегистрироваться</NuxtLink></span>
         </div>
       </form>
       <AuthBoard :recovery="false" />
@@ -190,7 +193,13 @@ function googleUnavailable() {
   color: $white;
   cursor: pointer;
 }
-
+.recovery:hover {
+  text-decoration: underline;
+}
+.google:hover .google-icon img {
+  transform: scale(1.1);
+  transition: transform 0.2s ease-in-out;
+}
 @media (max-width: 1250px) {
   .login-menu {
     margin-left: 26px;

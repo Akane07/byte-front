@@ -44,4 +44,15 @@ export default defineNuxtConfig({
       "@tailwindcss/postcss": {},
     },
   },
+
+  // Сборка для `npm run share` (scripts/share.mjs) — в свои папки, чтобы не
+  // мешать запущенному `npm run dev`: оба пишут в .nuxt, если их не развести.
+  // Сами эти папки dev-сервер не отслеживает, иначе сборка его перезапускает.
+  ignore: [".nuxt-share/**", ".output-share/**", ".share/**"],
+  $env: {
+    share: {
+      buildDir: ".nuxt-share",
+      nitro: { output: { dir: ".output-share" } },
+    },
+  },
 });

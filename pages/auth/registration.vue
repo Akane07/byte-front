@@ -24,6 +24,9 @@
               <span class="google-text">Google</span>
             </div>
           </div>
+          <span class="login-text"
+            >Уже есть аккаунт?
+            <NuxtLink to="/auth/login" class="login">Войти</NuxtLink></span>
       </div>
     </form>
 
@@ -176,7 +179,10 @@ function googleUnavailable() {
 .google:hover {
     opacity: 0.9;
 }
-
+.google:hover .google-icon img {
+  transform: scale(1.1);
+  transition: transform 0.2s ease-in-out;
+}
 .google-icon {
     border-right: 1px solid #3D3D49;
     padding-right: 9px;
@@ -206,7 +212,17 @@ function googleUnavailable() {
     color: $text-secondary;
     cursor: pointer;
 }
-
+.login-text {
+color: $text-secondary;
+  font-size: 14px;
+}
+.login {
+  color: $white;
+  cursor: pointer;
+}
+.login:hover {
+  text-decoration: underline;
+}
 @media (max-width: 1250px) {
     .registration-menu {
         margin-left: 26px;

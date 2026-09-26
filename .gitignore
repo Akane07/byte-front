@@ -1,5 +1,9 @@
 # Nuxt dev/build outputs
 .output
+# npm run share: отдельная сборка и скачанный cloudflared
+.output-share
+.nuxt-share
+.share
 .data
 .nuxt
 .nitro

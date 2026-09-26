@@ -1,15 +1,31 @@
 <template>
   <div
-    class="nav flex items-center justify-center w-full h-20 px-4 md:px-8 xl:px-15 py-0"
-    :class="[absolute ? 'fixed z-1000 top-0' : '']"
+    class="nav flex items-center justify-center w-full h-20 px-4 md:px-8 py-0"
+    :class="[absolute ? 'fixed z-1000 top-0' : '', landing ? 'nav--landing' : 'xl:px-15']"
   >
-    <div class="w-full max-w-360 h-11 flex items-center justify-between z-1000">
-      <NuxtLink to="/orders" class="flex items-center justify-center gap-2 cursor-pointer">
+    <div
+      class="w-full h-11 flex items-center justify-between z-1000"
+      :class="{ 'max-w-360': !landing }"
+    >
+      <NuxtLink
+        :to="landing ? '/' : '/orders'"
+        class="flex items-center justify-center gap-2 cursor-pointer"
+      >
         <img src="/logo.svg" alt="logo" class="w-8 sm:w-10" />
         <span class="byte text-center" :class="{ guest: !userStore.isAuth }">FreelanceByte</span>
       </NuxtLink>
+      <!-- Гость на главной: кнопки по макету, «Войти» — с текстурой. -->
       <div
-        v-if="!userStore.isAuth && userStore.checked"
+        v-if="landing && !userStore.isAuth && userStore.checked"
+        class="landing-actions flex items-center gap-2 sm:gap-3 relative select-none"
+      >
+        <NuxtLink to="/auth/registration" class="ghost">Регистрация</NuxtLink>
+        <NuxtLink to="/auth/login" tabindex="-1">
+          <UINavButton texture class="login" style="--texture-position: 36% 60%">Войти</UINavButton>
+        </NuxtLink>
+      </div>
+      <div
+        v-else-if="!userStore.isAuth && userStore.checked"
         class="flex items-center gap-2 sm:gap-3 relative select-none"
       >
         <NuxtLink to="/auth/login">
@@ -98,6 +114,8 @@ import { useUserStore } from "~/store/userStore";
 
 defineProps<{
   absolute?: boolean;
+  /** Шапка главной страницы по новому макету. */
+  landing?: boolean;
 }>();
 
 const userStore = useUserStore();
@@ -179,6 +197,72 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+// --- Шапка главной (макет) ---
+// Двойной класс — чтобы перекрыть общие стили .nav и .byte ниже.
+.nav.nav--landing {
+  background: #232325;
+  box-shadow: none;
+  border-bottom: 1px solid $border-color;
+  padding-left: 96px;
+  padding-right: 96px;
+
+  @include laptop {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  @include mobile {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  // Логотип — Mont Light. Mont платный, поэтому запасной — близкий
+  // по рисунку Montserrat (подгружается только для слова «FreelanceByte»).
+  .byte {
+    font-family: "Mont", "Montserrat", Inter, sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    letter-spacing: 0;
+  }
+
+  .landing-actions {
+    .ghost,
+    .login {
+      width: 190px;
+      height: 45px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+
+      @include mobile {
+        width: auto;
+        height: 40px;
+        font-size: 14px;
+      }
+    }
+
+    .ghost {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $white;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.45);
+      }
+
+      @include mobile {
+        padding: 0 14px;
+      }
+    }
+  }
+}
+
 .nav {
   background: #2b2a2a;
   box-shadow: 0px 0px 9.7px 1px #1f1f1f5c;
