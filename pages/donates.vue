@@ -8,15 +8,21 @@
                 <div class="animation_box">
                 <div class="animation">
                     <div class="circle outer"></div>
+                    <!-- Иконки летают по орбитам. Угол — стартовая позиция на окружности
+                         (0° — справа, по часовой стрелке), как было на макете. -->
                     <div class="circle one">
-                        <IconsHeart class="heart"></IconsHeart>
+                        <div class="orbit reverse" style="--angle: -138deg">
+                            <div class="spin"><div class="satellite"><div class="upright">
+                                <IconsHeart />
+                            </div></div></div>
+                        </div>
                     </div>
                     <div class="circle two">
-                        <IconsCard class="card"></IconsCard>
-                        <IconsCoin class="coin"></IconsCoin>
-                        <IconsGradientCircle class="gradient_one"></IconsGradientCircle>
-                        <IconsGradientCircle class="gradient_two"></IconsGradientCircle>
-                        <IconsGradientCircle class="gradient_three"></IconsGradientCircle>
+                        <div v-for="item in ORBIT_TWO" :key="item.angle" class="orbit" :style="{ '--angle': `${item.angle}deg` }">
+                            <div class="spin"><div class="satellite"><div class="upright">
+                                <component :is="item.icon" />
+                            </div></div></div>
+                        </div>
                     </div>
                     <div class="circle inner"></div>
                     <div class="circle center">
@@ -92,8 +98,20 @@
 </template>
 
 <script setup lang="ts">
+import IconsCard from '~/components/icons/Card.vue';
+import IconsCoin from '~/components/icons/Coin.vue';
+import IconsGradientCircle from '~/components/icons/GradientCircle.vue';
 import { copyText } from '~/shared/utils/helpers';
 import { useNotifications } from '~/store/notiStore';
+
+/** Иконки на средней орбите: стартовый угол снят с прежней раскладки макета. */
+const ORBIT_TWO = [
+    { icon: IconsCard, angle: -30 },
+    { icon: IconsGradientCircle, angle: 67 },
+    { icon: IconsCoin, angle: 110 },
+    { icon: IconsGradientCircle, angle: 157 },
+    { icon: IconsGradientCircle, angle: -80 },
+];
 
 const notifications = useNotifications();
 
@@ -270,6 +288,10 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
     }
 }
 
+// Один оборот: внешняя орбита (сердце) и средняя (карта, монета, точки).
+$orbit-one-duration: 90s;
+$orbit-two-duration: 60s;
+
 .animation {
     width: 678px;
     height: 678px;
@@ -290,52 +312,19 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
         border: 1px solid $bg-brand;
     }
 
+    // --radius — радиус орбиты: на нём стоят иконки.
     .one {
+        --radius: 255px;
         width: 510px;
         height: 510px;
         border: 1px solid $bg-brand;
-
-        .heart {
-            position: absolute;
-            top: 40px;
-            left: 20px;
-        }
     }
 
     .two {
+        --radius: 190px;
         width: 380px;
         height: 380px;
         border: 1px solid $bg-brand;
-
-        .card {
-            position: absolute;
-            top: 60px;
-            right: -35px;
-        }
-
-        .coin {
-            position: absolute;
-            bottom: -20px;
-            left: 80px;
-        }
-
-        .gradient_one {
-            position: absolute;
-            top: -13px;
-            right: 140px;
-        }
-
-        .gradient_two {
-            position: absolute;
-            bottom: 0px;
-            right: 100px;
-        }
-
-        .gradient_three {
-            position: absolute;
-            bottom: 100px;
-            left: 0px;
-        }
     }
 
     .inner {
@@ -351,6 +340,102 @@ async function copyToClipboard(text: string, type: 'card' | 'crypto') {
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    // Орбита. Вложенность такая:
+    //   .orbit     — точка в центре окружности, поворот на стартовый угол (статично);
+    //   .spin      — вращение по кругу (анимация);
+    //   .satellite — иконка на расстоянии радиуса вправо, поворот на -угол;
+    //   .upright   — обратное вращение, чтобы иконка не кувыркалась.
+    // Сумма поворотов иконки всегда 0. Только transform и обычные @keyframes
+    // без var() внутри — это одинаково работает в Chrome, Firefox, Safari и Edge.
+    // Вращаются точки нулевого размера, а не слои размером с круг: повёрнутый
+    // квадрат по диагонали больше круга и давал горизонтальную прокрутку.
+    .orbit {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        transform: rotate(var(--angle));
+        pointer-events: none;
+    }
+
+    .spin {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+        -webkit-animation: orbit-spin $orbit-two-duration linear infinite;
+        animation: orbit-spin $orbit-two-duration linear infinite;
+        will-change: transform;
+    }
+
+    .satellite {
+        position: absolute;
+        top: 0;
+        left: var(--radius);
+        transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle)));
+    }
+
+    .upright {
+        display: flex;
+
+        // У .satellite нет своей ширины (он по размеру содержимого), а Tailwind
+        // даёт img max-width: 100% — вместе это схлопывает картинку в 0.
+        :deep(img) {
+            max-width: none;
+            flex-shrink: 0;
+        }
+
+        -webkit-animation: orbit-spin $orbit-two-duration linear infinite reverse;
+        animation: orbit-spin $orbit-two-duration linear infinite reverse;
+        will-change: transform;
+    }
+
+    // Внешняя орбита медленнее и крутится в другую сторону.
+    .orbit.reverse {
+        .spin {
+            -webkit-animation: orbit-spin $orbit-one-duration linear infinite reverse;
+            animation: orbit-spin $orbit-one-duration linear infinite reverse;
+        }
+
+        .upright {
+            -webkit-animation: orbit-spin $orbit-one-duration linear infinite;
+            animation: orbit-spin $orbit-one-duration linear infinite;
+        }
+    }
+}
+
+@-webkit-keyframes orbit-spin {
+    from {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes orbit-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Кто отключил анимацию в системе — видит иконки неподвижно на своих местах.
+@media (prefers-reduced-motion: reduce) {
+    .animation .spin,
+    .animation .upright,
+    .animation .orbit.reverse .spin,
+    .animation .orbit.reverse .upright {
+        -webkit-animation: none;
+        animation: none;
     }
 }
 
