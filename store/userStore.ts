@@ -116,6 +116,7 @@ export const useUserStore = defineStore("user", () => {
     checkAuth,
     login,
     register,
+    startSession,
     logout,
     resetSession,
     getUserId,

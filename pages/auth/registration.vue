@@ -1,261 +1,118 @@
 <template>
-  <div class="registration-wrapper">
-    <form v-if="!awaitingCode" class="registration-menu" @submit.prevent="handleRegister">
-      <div class="text-menu">
-        <span class="menu-hero">Регистрация</span>
-        <span class="menu-context typed-wrapper">
-          <span class="typed-text">Присоединяйтесь к нам</span>
-        </span>
-      </div>
-      <div class="nav-menu">
-        <AuthInput v-model="registerData.name" placeholder="Полное имя" type="text" />
-        <AuthInput v-model="registerData.email" placeholder="Ваша почта" type="email" />
-        <AuthInput v-model="registerData.password" placeholder="Пароль" type="password" />
-        <AuthInput v-model="confirmPassword" placeholder="Подтвердите пароль" type="password" />
-        <UINavButton type="submit" :disabled="loading">Зарегистрироваться</UINavButton>
-      </div>
-      <div class="log-and-recovery">
-        <div class="google" @click="googleUnavailable">
-            <div class="google-icon">
-              <img src="~/assets/icons/Google.svg" alt="Google" />
-            </div>
-            <div class="text-google">
-              <span class="log">Войти с помощью</span>
-              <span class="google-text">Google</span>
-            </div>
-          </div>
-          <span class="login-text"
-            >Уже есть аккаунт?
-            <NuxtLink to="/auth/login" class="login">Войти</NuxtLink></span>
-      </div>
-    </form>
+  <AuthScreen variant="register" :step="step" v-bind="TEXT[step]" @submit="onSubmit">
+    <template v-if="step === 'form'">
+      <AuthInput v-model="email" placeholder="Ваша почта" type="email" autocomplete="email" />
+      <AuthInput v-model="password" placeholder="Пароль" type="password" autocomplete="new-password" />
+      <AuthInput v-model="confirmPassword" placeholder="Повторите пароль" type="password" autocomplete="new-password" />
+      <AuthSubmit :loading="loading">Зарегистрироваться</AuthSubmit>
+    </template>
+    <!-- Аккаунт уже создан и вход выполнен: подтвердить почту можно и позже. -->
+    <template v-else>
+      <AuthCodeInput v-model="code" @complete="handleVerify" />
+      <AuthSubmit :loading="loading">Подтвердить</AuthSubmit>
+    </template>
 
-    <form v-else class="registration-menu" @submit.prevent="handleVerify">
-      <div class="text-menu">
-        <span class="menu-hero">Почта</span>
-        <span class="menu-context">
-          Мы отправили код подтверждения на {{ registerData.email }}
-        </span>
-      </div>
-      <div class="nav-menu">
-        <AuthInput v-model="code" placeholder="Код из письма" type="text" />
-        <UINavButton type="submit" :disabled="loading">Подтвердить</UINavButton>
-        <NuxtLink to="/orders" class="menu-context">Подтвердить позже</NuxtLink>
-      </div>
-    </form>
+    <template #subtitle>
+      <template v-if="step === 'code'">На почту {{ email }} пришёл код подтверждения, введите его</template>
+    </template>
 
-    <AuthBoard :recovery="false" />
-  </div>
+    <template #footer>
+      <template v-if="step === 'form'">
+        <AuthGoogle />
+        <span class="auth-note">Уже есть аккаунт? <NuxtLink to="/auth/login">Войти</NuxtLink></span>
+      </template>
+      <template v-else>
+        <span class="auth-note">
+          Не получили код?
+          <button type="button" :disabled="countdown.left.value > 0" @click="resend">
+            {{ countdown.left.value > 0 ? `Отправить ещё раз через ${countdown.label.value}` : "Отправить код ещё раз" }}
+          </button>
+        </span>
+        <span class="auth-note"><NuxtLink to="/orders">Подтвердить позже</NuxtLink></span>
+      </template>
+    </template>
+  </AuthScreen>
 </template>
 
 <script setup lang="ts">
-import { verifyEmail } from "~/shared/api/auth-api";
+import { resendVerification, verifyEmail } from "~/shared/api/auth-api";
 import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";
 
+type Step = "form" | "code";
+
+const RESEND_SECONDS = 60;
+
+const TEXT: Record<Step, { title: string; subtitle?: string }> = {
+  form: {
+    title: "Регистрация",
+    subtitle: "Откройте доступ к проектам, проверенным заказчикам и инструментам для продуктивной работы.",
+  },
+  // Подзаголовок с адресом почты — в слоте #subtitle.
+  code: { title: "Подтверждение" },
+};
+
 const userStore = useUserStore();
 const notifications = useNotifications();
+const countdown = useCountdown();
 
+const step = shallowRef<Step>("form");
 const loading = shallowRef(false);
-const awaitingCode = shallowRef(false);
-const code = shallowRef("");
+const email = shallowRef("");
+const password = shallowRef("");
 const confirmPassword = shallowRef("");
-const registerData = reactive({
-  name: "",
-  email: "",
-  password: "",
-});
+const code = shallowRef("");
+
+function onSubmit() {
+  if (step.value === "form") handleRegister();
+  else handleVerify();
+}
 
 async function handleRegister() {
-  if (!registerData.name.trim() || !registerData.email.trim()) {
-    notifications.setNotification("Заполните имя и почту");
+  if (!email.value.trim() || !password.value) {
+    notifications.setNotification("Введите почту и пароль");
     return;
   }
-  // Раньше поле подтверждения пароля ни с чем не сравнивалось.
-  if (registerData.password !== confirmPassword.value) {
+  if (password.value !== confirmPassword.value) {
     notifications.setNotification("Пароли не совпадают");
     return;
   }
 
   loading.value = true;
-  const ok = await userStore.register(registerData);
+  const ok = await userStore.register({ email: email.value, password: password.value });
   loading.value = false;
 
-  if (ok) awaitingCode.value = true;
+  if (ok) {
+    step.value = "code";
+    countdown.start(RESEND_SECONDS);
+  }
 }
 
 async function handleVerify() {
-  if (!code.value.trim()) return;
+  if (loading.value) return;
+  if (code.value.length !== 6) {
+    notifications.setNotification("Введите все 6 цифр кода");
+    return;
+  }
 
   loading.value = true;
-  const res = await verifyEmail(registerData.email, code.value.trim());
+  const res = await verifyEmail(email.value.trim(), code.value);
   loading.value = false;
 
   if (res) {
     await userStore.checkAuth(true);
     notifications.setNotification("Почта подтверждена");
     navigateTo("/orders");
+  } else {
+    code.value = "";
   }
 }
 
-function googleUnavailable() {
-  notifications.setNotification("Вход через Google пока недоступен");
+async function resend() {
+  const res = await resendVerification();
+  if (res) {
+    notifications.setNotification("Новый код отправлен");
+    countdown.start(RESEND_SECONDS);
+  }
 }
 </script>
-
-<style scoped lang="scss">
-
-
-.registration-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: end;
-    gap: 131px;
-    height: 100vh;
-    height: 100dvh;
-    width: 100%;
-    overflow: hidden;
-}
-
-.registration-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 32px;
-    min-width: 359px;
-}
-
-.text-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.menu-hero {
-    font-weight: 600;
-    font-size: 48px;
-    color: $white;
-}
-
-.nav-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-}
-
-.menu-context {
-    color: $text-secondary;
-    display: inline-block;
-}
-
-.typed-wrapper {
-    display: inline-flex;
-    align-items: baseline;
-}
-
-.typed-text {
-    color: $text-secondary;
-    font-size: 18px;
-}
-
-.log-and-recovery {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.google {
-    background: $input-auth;
-    display: flex;
-    padding: 14px 13px;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    cursor: pointer;
-    border-radius: 6px;
-}
-
-.google:hover {
-    opacity: 0.9;
-}
-.google:hover .google-icon img {
-  transform: scale(1.1);
-  transition: transform 0.2s ease-in-out;
-}
-.google-icon {
-    border-right: 1px solid #3D3D49;
-    padding-right: 9px;
-    cursor: pointer;
-}
-
-.google-icon img {
-    cursor: pointer;
-}
-
-.text-google {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    cursor: pointer;
-}
-
-.google-text {
-    color: $white;
-    font-size: 14px;
-    letter-spacing: 0%;
-    cursor: pointer;
-}
-
-.log {
-    font-size: 10px;
-    color: $text-secondary;
-    cursor: pointer;
-}
-.login-text {
-color: $text-secondary;
-  font-size: 14px;
-}
-.login {
-  color: $white;
-  cursor: pointer;
-}
-.login:hover {
-  text-decoration: underline;
-}
-@media (max-width: 1250px) {
-    .registration-menu {
-        margin-left: 26px;
-    }
-
-    .registration-wrapper {
-        gap: 50px;
-    }
-}
-
-@media (max-width: 1100px) {
-    .registration-wrapper {
-        justify-content: center;
-    }
-}
-
-@include mobile {
-    .registration-wrapper {
-        height: auto;
-        min-height: 100dvh;
-        padding: 40px 16px;
-    }
-
-    .registration-menu {
-        min-width: 0;
-        width: 100%;
-        max-width: 400px;
-        margin-left: 0;
-        margin-top: 0;
-    }
-
-    .menu-hero {
-        font-size: 36px;
-    }
-}
-</style>

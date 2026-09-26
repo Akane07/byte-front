@@ -8,6 +8,10 @@ export default defineNuxtConfig({
   // расхождение серверной и клиентской разметки и предупреждения гидратации.
   ssr: false,
 
+  // По умолчанию dev-сервер слушает только IPv6 (::1). На этой машине
+  // подключения к ::1 блокируются (сеть/фильтр), и localhost:3000 не открывается.
+  devServer: { host: "127.0.0.1" },
+
   modules: ["@pinia/nuxt"],
   css: ["~/assets/styles/main.css"],
 

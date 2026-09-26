@@ -1,116 +1,135 @@
 <template>
-  <div class="recovery-wrapper">
-    <form class="recovery-menu" @submit.prevent="handleRecovery">
-      <div class="text-menu">
-        <span class="menu-hero">Восстановление</span>
-        <span class="menu-context">Чтобы восстановить пароль, введите вашу почту</span>
-      </div>
-      <div class="nav-menu">
-        <AuthInput v-model="email" placeholder="Ваша почта" type="email" />
-        <UINavButton type="submit">Восстановить</UINavButton>
-        <NuxtLink to="/auth/login" class="menu-context">Вернуться ко входу</NuxtLink>
-      </div>
-    </form>
-    <AuthBoard :recovery="true" />
-  </div>
+  <AuthScreen variant="recovery" :step="step" v-bind="TEXT[step]" @submit="onSubmit">
+    <template v-if="step === 'email'">
+      <AuthInput v-model="email" placeholder="Ваша почта" type="email" autocomplete="email" />
+      <AuthSubmit :loading="loading">Далее</AuthSubmit>
+    </template>
+    <template v-else-if="step === 'code'">
+      <AuthCodeInput v-model="code" @complete="checkCode" />
+      <AuthSubmit :loading="loading">Восстановить</AuthSubmit>
+    </template>
+    <template v-else>
+      <AuthInput v-model="password" placeholder="Новый пароль" type="password" autocomplete="new-password" />
+      <AuthInput v-model="confirmPassword" placeholder="Повторите пароль" type="password" autocomplete="new-password" />
+      <AuthSubmit :loading="loading">Сохранить и войти</AuthSubmit>
+    </template>
+
+    <template #footer>
+      <span v-if="step === 'email'" class="auth-note">
+        Вспомнили пароль? <NuxtLink to="/auth/login">Войти</NuxtLink>
+      </span>
+      <template v-else-if="step === 'code'">
+        <span class="auth-note">
+          Не получили код?
+          <button type="button" :disabled="countdown.left.value > 0" @click="resend">
+            {{ countdown.left.value > 0 ? `Отправить ещё раз через ${countdown.label.value}` : "Отправить код ещё раз" }}
+          </button>
+        </span>
+        <span class="auth-note"><button type="button" @click="changeEmail">Изменить почту</button></span>
+      </template>
+    </template>
+  </AuthScreen>
 </template>
 
 <script setup lang="ts">
+import { checkRecoveryCode, requestRecovery, resetPassword } from "~/shared/api/auth-api";
 import { useNotifications } from "~/store/notiStore";
+import { useUserStore } from "~/store/userStore";
 
+type Step = "email" | "code" | "password";
+
+const RESEND_SECONDS = 60;
+
+const TEXT: Record<Step, { title: string; subtitle: string }> = {
+  email: { title: "Восстановление", subtitle: "Чтобы восстановить пароль, введите вашу почту" },
+  code: { title: "Восстановление", subtitle: "На вашу почту пришёл код восстановления, введите его" },
+  password: {
+    title: "Новый пароль",
+    subtitle: "Не менее 8 символов, хотя бы одна латинская буква и одна цифра",
+  },
+};
+
+const userStore = useUserStore();
 const notifications = useNotifications();
-const email = shallowRef("");
+const countdown = useCountdown();
 
-// На бэкенде пока нет эндпоинта восстановления пароля (есть только шаблон
-// письма в MailService.sendRestoreEmail). Раньше кнопка «Войти» здесь
-// молча ничего не делала — теперь пользователь хотя бы видит, почему.
-function handleRecovery() {
-  notifications.setNotification(
-    "Восстановление пароля пока недоступно. Обратитесь в поддержку",
-  );
+const step = shallowRef<Step>("email");
+const loading = shallowRef(false);
+const email = shallowRef("");
+const code = shallowRef("");
+const password = shallowRef("");
+const confirmPassword = shallowRef("");
+
+function onSubmit() {
+  if (step.value === "email") sendCode();
+  else if (step.value === "code") checkCode();
+  else savePassword();
+}
+
+async function sendCode() {
+  if (!email.value.trim()) {
+    notifications.setNotification("Введите почту");
+    return;
+  }
+
+  loading.value = true;
+  // Бэкенд отвечает одинаково, есть такая почта или нет, — поэтому здесь
+  // всегда переходим к вводу кода.
+  const res = await requestRecovery(email.value.trim());
+  loading.value = false;
+
+  if (res) {
+    code.value = "";
+    step.value = "code";
+    countdown.start(RESEND_SECONDS);
+  }
+}
+
+async function checkCode() {
+  if (loading.value) return;
+  if (code.value.length !== 6) {
+    notifications.setNotification("Введите все 6 цифр кода");
+    return;
+  }
+
+  loading.value = true;
+  const res = await checkRecoveryCode(email.value.trim(), code.value);
+  loading.value = false;
+
+  if (res) step.value = "password";
+  else code.value = "";
+}
+
+async function savePassword() {
+  if (!password.value) {
+    notifications.setNotification("Введите новый пароль");
+    return;
+  }
+  if (password.value !== confirmPassword.value) {
+    notifications.setNotification("Пароли не совпадают");
+    return;
+  }
+
+  loading.value = true;
+  const res = await resetPassword(email.value.trim(), code.value, password.value);
+  if (res) {
+    await userStore.startSession(res.access_token);
+    notifications.setNotification("Пароль изменён");
+    navigateTo("/orders");
+  }
+  loading.value = false;
+}
+
+async function resend() {
+  const res = await requestRecovery(email.value.trim());
+  if (res) {
+    notifications.setNotification("Если почта зарегистрирована, мы отправили новый код");
+    countdown.start(RESEND_SECONDS);
+  }
+}
+
+function changeEmail() {
+  code.value = "";
+  step.value = "email";
 }
 </script>
-
-<style scoped lang="scss">
-
-
-.recovery-wrapper {
-    display: flex;
-    // align-items: center;
-    justify-content: end;
-    gap: 131px;
-    height: 100vh;
-    height: 100dvh;
-    width: 100%;
-    overflow: hidden;
-}
-
-.recovery-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    gap: 32px;
-    min-width: 359px;
-    margin-top: 100px;
-}
-
-.text-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.menu-hero {
-    font-weight: 600;
-    font-size: 48px;
-    color: $white;
-}
-
-.nav-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
-}
-
-.menu-context {
-    color: $text-secondary;
-    display: inline-block;
-}
-
-@media (max-width: 1250px) {
-    .recovery-menu {
-        margin-left: 26px;
-    }
-
-    .recovery-wrapper {
-        gap: 50px;
-    }
-}
-
-@media (max-width: 1100px) {
-    .recovery-wrapper {
-        justify-content: center;
-    }
-}
-
-@include mobile {
-    .recovery-wrapper {
-        height: auto;
-        min-height: 100dvh;
-        padding: 40px 16px;
-    }
-
-    .recovery-menu {
-        min-width: 0;
-        width: 100%;
-        max-width: 400px;
-        margin-left: 0;
-        margin-top: 0;
-    }
-
-    .menu-hero {
-        font-size: 36px;
-    }
-}
-</style>

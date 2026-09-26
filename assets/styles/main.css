@@ -1,7 +1,7 @@
 /* @import внешнего шрифта обязан идти до остальных правил, иначе браузер его игнорирует */
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 /* Замена платного Mont для логотипа: грузятся только буквы слова FreelanceByte */
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300&text=FreelanceByte&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&text=FreelanceByte&display=swap");
 @import "tailwindcss";
 
 * {
