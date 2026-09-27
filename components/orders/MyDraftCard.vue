@@ -17,7 +17,7 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIButton class="draft-badge" style="min-width: 155px">Черновик</UIButton>
+            <UIStatusBadge>Черновик</UIStatusBadge>
         </div>
     </div>
 
@@ -209,10 +209,5 @@ async function handleDelete() {
 
 .confirm {
     max-width: 400px;
-}
-
-.draft-badge {
-    color: $text-secondary;
-    border-color: $text-secondary;
 }
 </style>

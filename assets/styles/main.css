@@ -13,12 +13,20 @@ html {
   /* iOS Safari не увеличивает шрифт сам при повороте экрана */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Цвет фона обязателен: у body только градиент, и без цвета холст белый.
+     Safari на iPhone красит этим цветом полосу статуса сверху и область
+     под нижней панелью — там были белые полосы. Он же виден при «оттягивании»
+     страницы за край. */
+  background-color: #212121;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
   -webkit-tap-highlight-color: transparent;
-  background: radial-gradient(81.79% 49.97% at 50% 50.03%, #2e2b2b 0%, #212121 100%);
+  /* Фона у body нет намеренно. Пока у html есть свой цвет, фон body рисуется
+     на самом body и перекрывает слой UIBackground (z-index: -1) — шары и свечения
+     пропадали. Цвет — у html, градиент и декор — в UIBackground. */
   overflow-x: hidden;
 }
 

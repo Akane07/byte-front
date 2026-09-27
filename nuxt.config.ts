@@ -29,6 +29,8 @@ export default defineNuxtConfig({
       title: "Freelance Byte",
       htmlAttrs: { lang: "ru" },
       link: [{ rel: "icon", href: "/logo.svg", type: "image/svg+xml" }],
+      // Цвет панелей браузера на телефонах (Safari, Chrome на Android).
+      meta: [{ name: "theme-color", content: "#212121" }],
     },
   },
 

@@ -14,7 +14,7 @@
             </div>
             <div class="flex items-center gap-2">
               <IconsClock></IconsClock>
-              <span>На сайте с {{ useUserCreated(user.created_at) }}</span>
+              <span :title="useUserCreated(user.created_at)">На сайте с {{ memberSince(user.created_at) }}</span>
             </div>
             <div class="flex items-center gap-2">
               <IconsSun></IconsSun>
@@ -138,7 +138,7 @@
 import DevCard from "~/components/UI/Card.vue";
 import type { Portfolio } from "~/shared/api/portfolio-api";
 import type { User } from "~/shared/api/user-api";
-import { makeURL, openExternal } from "~/shared/utils/helpers";
+import { makeURL, memberSince, openExternal } from "~/shared/utils/helpers";
 import { useGuestStore } from "~/store/guestStore";
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";

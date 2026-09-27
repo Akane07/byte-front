@@ -107,3 +107,17 @@ export function avatarInitials(name?: string | null): string {
     .join("")
     .toUpperCase();
 }
+
+/**
+ * «августа 2025» — для строки «На сайте с …». Полная дата с числом
+ * не помещалась в колонку профиля и переносила «г.» на новую строку.
+ */
+export function memberSince(date: string | Date | undefined | null): string {
+  if (!date) return "";
+  const d = new Date(date);
+  // Месяц в родительном падеже берём из формата «число + месяц».
+  const month = new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long" })
+    .formatToParts(d)
+    .find((part) => part.type === "month")?.value;
+  return `${month} ${d.getFullYear()}`;
+}

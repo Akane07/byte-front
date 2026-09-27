@@ -10,8 +10,12 @@
         {{ filter.title }}
       </UICheckbox>
     </div>
-    <div class="actions flex flex-col items-center justify-self-end mt-3">
+    <div class="actions flex flex-col items-center gap-3 justify-self-end mt-3">
       <UIButton class="w-full max-w-[250px]" type="success" @click="saveFilters">Сохранить</UIButton>
+      <!-- Видна, когда есть что сбрасывать: отмеченные или сохранённые категории. -->
+      <button v-if="checkedCount || hasSaved" type="button" class="reset" @click="resetFilters">
+        Сбросить фильтры
+      </button>
     </div>
   </div>
 </template>
@@ -34,6 +38,8 @@ const filters = defineModel<Filter[]>("filters", { default: () => [] });
 /** На планшетах и телефонах список категорий сворачивается над лентой. */
 const open = shallowRef(false);
 const checkedCount = computed(() => filters.value.filter((f) => f.checked).length);
+/** В хранилище есть сохранённый фильтр — лента сейчас отфильтрована. */
+const hasSaved = shallowRef(false);
 
 /** id выбранных категорий. Поддерживает и старый формат — массив объектов Filter. */
 function readSavedIds(): number[] {
@@ -50,6 +56,20 @@ function readSavedIds(): number[] {
 function saveFilters() {
   const ids = filters.value.filter((f) => f.checked).map((f) => f.id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+  hasSaved.value = ids.length > 0;
+  open.value = false;
+  emit("change");
+}
+
+/** Снять все отметки и сразу показать ленту без фильтра. */
+function resetFilters() {
+  filters.value.forEach((f) => (f.checked = false));
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Хранилище недоступно — фильтр просто не был сохранён.
+  }
+  hasSaved.value = false;
   open.value = false;
   emit("change");
 }
@@ -57,6 +77,7 @@ function saveFilters() {
 onMounted(async () => {
   await category.getAllCategories();
   const savedIds = readSavedIds();
+  hasSaved.value = savedIds.length > 0;
   filters.value = category.categories.map((c) => ({
     id: c.id,
     title: c.title,
@@ -67,6 +88,21 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+.reset {
+  padding: 4px 8px;
+  border: none;
+  background: none;
+  color: $text-secondary;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: $white;
+    text-decoration: underline;
+  }
+}
+
 .filters {
   width: 25%;
   position: sticky;

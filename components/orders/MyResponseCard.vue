@@ -13,8 +13,8 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(response.price_type, response.price) }}</p>
-            <UIButton v-if="response.viewed" type="active" @click.stop="">Просмотрено</UIButton>
-            <UIButton v-if="!response.viewed" @click.stop="">Не просмотрено</UIButton>
+            <UIStatusBadge v-if="response.viewed" tone="active">Просмотрено</UIStatusBadge>
+            <UIStatusBadge v-else>Не просмотрено</UIStatusBadge>
         </div>
     </div>
 

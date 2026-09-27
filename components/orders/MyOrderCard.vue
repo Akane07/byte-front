@@ -43,25 +43,10 @@
         @click="$emit('suggest', order.id)"
         >Предложить</UIButton
       >
-      <UIButton
-        v-else-if="!order.is_active"
-       
-        style="min-width: 155px"
-        >В архиве</UIButton
-      >
-      <UIButton
-        v-else-if="order.status === 'completed'"
-        type="success"
-        style="min-width: 155px"
-        >Выполнен</UIButton
-      >
-      <UIButton
-        v-else-if="order.performer"
-        type="active"
-        style="min-width: 155px"
-        >Есть исполнитель</UIButton
-      >
-      <UIButton v-else type="active" style="min-width: 155px">Активен</UIButton>
+      <UIStatusBadge v-else-if="!order.is_active">В архиве</UIStatusBadge>
+      <UIStatusBadge v-else-if="order.status === 'completed'" tone="success">Выполнен</UIStatusBadge>
+      <UIStatusBadge v-else-if="order.performer" tone="progress">Есть исполнитель</UIStatusBadge>
+      <UIStatusBadge v-else tone="active">Активен</UIStatusBadge>
     </div>
   </div>
 
