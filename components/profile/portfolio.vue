@@ -264,7 +264,8 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .wrapper {
-  background: $input-auth;
+  // Тон формы тот же, но полупрозрачный — сквозь него видно фон (UIBackground).
+  background: rgba(24, 24, 28, 0.82);
 
   @include mobile {
     padding-bottom: 120px;

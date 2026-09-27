@@ -1,5 +1,6 @@
 <template>
   <UINavMenu />
+  <UIBackground />
 
   <div class="wrapper">
     <div ref="wrapperRef" class="step_wrapper">
@@ -506,7 +507,8 @@ onMounted(async () => {
 .wrapper {
   width: 100%;
   min-height: 100dvh;
-  background: $input-auth;
+  // Тон формы тот же, но полупрозрачный — сквозь него видно фон (UIBackground).
+  background: rgba(24, 24, 28, 0.82);
   position: absolute;
   top: 0;
   left: 0;

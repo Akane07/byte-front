@@ -1,5 +1,6 @@
 <template>
   <UINavMenu></UINavMenu>
+  <UIBackground></UIBackground>
   <div
     class="wrapper w-full min-h-dvh absolute top-0 left-0 flex justify-center pt-[110px] md:pt-[150px] pb-[120px] md:pb-[300px] px-4 md:px-12 xl:px-[150px]"
   >
@@ -257,7 +258,8 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .wrapper {
-  background: $input-auth;
+  // Тон формы тот же, но полупрозрачный — сквозь него видно фон (UIBackground).
+  background: rgba(24, 24, 28, 0.82);
 
   .settings {
     color: $text-main;
