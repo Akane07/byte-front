@@ -121,3 +121,17 @@ export function memberSince(date: string | Date | undefined | null): string {
     .find((part) => part.type === "month")?.value;
   return `${month} ${d.getFullYear()}`;
 }
+
+/** Подпись дня для разделителя в чате: «Сегодня», «Вчера», «25 сентября», «3 марта 2025». */
+export function messageDayLabel(created: string | Date): string {
+  const date = new Date(created);
+  const startOf = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const days = Math.round((startOf(new Date()) - startOf(date)) / 86_400_000);
+  if (days === 0) return "Сегодня";
+  if (days === 1) return "Вчера";
+  return date.toLocaleDateString("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
+  });
+}

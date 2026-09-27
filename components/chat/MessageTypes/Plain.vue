@@ -1,20 +1,11 @@
 <template>
-  <div class="message" :class="[!isServer && 'chat_message']">
+  <!-- Служебное сообщение — плашка по центру, остальные — пузыри. -->
+  <div v-if="isServer" class="server-note">{{ msg.text }}</div>
+  <div v-else class="message chat_message">
+    <img v-if="msg.mediaType === 'image'" :src="makeURL(msg.mediaUrl)" alt="" />
+    <video v-if="msg.mediaType === 'video'" :src="makeURL(msg.mediaUrl)" controls playsinline />
     <p v-if="msg.text">{{ msg.text }}</p>
-    <img
-      v-if="msg.mediaType === 'image' && !isServer"
-      :src="makeURL(msg.mediaUrl)"
-      width="200"
-    />
-    <video
-      v-if="msg.mediaType === 'video' && !isServer"
-      :src="makeURL(msg.mediaUrl)"
-      width="200"
-      controls
-    />
-    <span class="time" v-if="!isServer">{{
-      parseMessageDate(msg.createdAt)
-    }}</span>
+    <span class="time">{{ parseMessageDate(msg.createdAt) }}</span>
   </div>
 </template>
 
@@ -26,7 +17,5 @@ const { msg } = defineProps<{
   msg: Message;
 }>();
 
-const isServer = computed (() => {
-  return msg.status === 'server';
-});
+const isServer = computed(() => msg.status === "server");
 </script>

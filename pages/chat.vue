@@ -8,35 +8,38 @@
       :class="{ 'has-dialog': !!$route.params.id }"
     >
       <div class="menu flex flex-col w-full">
-        <div class="head flex items-center justify-center gap-2 p-6 w-full">
+        <div class="head flex items-center gap-2 w-full">
           <p>Чаты</p>
-          <span class="px-2 py-0.5 rounded-3xl">{{ chats.length }}</span>
+          <span v-if="chats.length" class="count">{{ chats.length }}</span>
         </div>
-        <div class="px-6 py-3 w-full">
+        <div class="search w-full">
           <UIInput v-model="searchString" type="text" placeholder="Поиск">
             <template #prepend>
               <IconsSearch></IconsSearch>
             </template>
           </UIInput>
         </div>
-        <div class="users flex flex-col gap-2 w-full px-4 overflow-y-scroll">
+        <div class="users flex flex-col gap-1 w-full">
           <NuxtLink
             v-for="chat in searchedChats"
             :key="chat.userId"
             :to="`/chat/${chat.userId}`"
-            class="user flex items-center gap-4 p-4 cursor-pointer"
+            class="user"
             :class="{ active: $route.params.id === chat.userId }"
           >
-            <UIUserAvatar :src="makeURL(chat.avatar)" :name="chat.name" size="48px" class="rounded-md" />
-            <div class="info flex flex-col gap-1 w-full">
-              <p>{{ chat.nickname || chat.name }}</p>
-              <span>{{ useSliceDescription(chat.lastMessage, 20) }}</span>
+            <UIUserAvatar :src="makeURL(chat.avatar)" :name="chat.name" size="48px" />
+            <div class="info">
+              <div class="top">
+                <p class="name">{{ chat.nickname || chat.name }}</p>
+                <span class="time">{{ useTimeAgo(chat.lastMessageDate) }}</span>
+              </div>
+              <span class="last">{{ chat.lastMessage }}</span>
             </div>
-            <span>{{ useTimeAgo(chat.lastMessageDate) }}</span>
           </NuxtLink>
-          <p v-if="loaded && !chats.length" class="empty px-4">
+          <p v-if="loaded && !chats.length" class="empty">
             Диалогов пока нет. Написать исполнителю можно из его профиля.
           </p>
+          <p v-else-if="loaded && !searchedChats.length" class="empty">Никого не нашли</p>
         </div>
       </div>
       <NuxtPage></NuxtPage>
@@ -77,13 +80,16 @@ onMounted(loadChats);
   max-width: 1440px;
   height: 80vh;
   height: 80dvh;
-  background: $bg-brand;
+  background: rgba(34, 34, 40, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
   overflow: hidden;
 
   .menu {
     border-right: 1px solid $chat-border;
-    max-width: 350px;
-    min-width: 350px;
+    max-width: 340px;
+    min-width: 340px;
 
     @include tablet {
       max-width: 280px;
@@ -91,67 +97,106 @@ onMounted(loadChats);
     }
 
     .head {
-      border-bottom: 1px solid $chat-border;
+      padding: 22px 24px 14px;
 
       & > p {
         font-weight: 600;
-        font-size: 20px;
+        font-size: 22px;
         color: $text-main;
       }
 
-      & > span {
-        background: #edf2f7;
-        color: $black;
+      .count {
+        min-width: 22px;
+        padding: 0 7px;
+        border-radius: 11px;
+        background: rgba(131, 85, 250, 0.2);
+        color: #c3adff;
         font-size: 12px;
         font-weight: 600;
+        line-height: 22px;
+        text-align: center;
       }
     }
 
-    .input {
-      background: $tag-secondary-color;
-
-      input {
-        width: 100%;
-        background: transparent;
-        border: none;
-        outline: none;
-        color: $text-main;
-        font-size: 14px;
-
-        &::placeholder {
-          color: #929292;
-        }
-      }
+    .search {
+      padding: 0 16px 12px;
+      border-bottom: 1px solid $chat-border;
     }
 
     .users {
+      flex: 1;
+      padding: 8px;
+      overflow-y: auto;
       @include hidden-scrollbar;
 
       .user {
-        .info {
-          p {
-            font-weight: 600;
-            font-size: 14px;
-            color: $text-main;
-          }
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        transition: background 0.15s ease;
 
-          & > span {
-            font-size: 12px;
-            color: $text-placeholder;
+        @media (hover: hover) {
+          &:hover {
+            background: rgba(255, 255, 255, 0.04);
           }
         }
 
-        & > span {
-          color: rgb(255, 255, 255, 0.3);
-          font-size: 12px;
-          font-weight: 600;
-          height: 100%;
-          padding-top: 8px;
-        }
-
+        // Открытый диалог — подсветка и полоска слева.
         &.active {
-          border-radius: 6px;
-          background: rgba(131, 85, 250, 0.06);
+          background: rgba(131, 85, 250, 0.12);
+
+          &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 14px;
+            bottom: 14px;
+            width: 3px;
+            border-radius: 2px;
+            background: $primary;
+          }
+        }
+
+        .info {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .top {
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+        }
+
+        .name,
+        .last {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .name {
+          flex: 1;
+          font-weight: 600;
+          font-size: 15px;
+          color: $text-main;
+        }
+
+        .time {
+          flex-shrink: 0;
+          color: rgba(255, 255, 255, 0.35);
+          font-size: 12px;
+        }
+
+        .last {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.5);
         }
       }
     }
@@ -166,7 +211,9 @@ onMounted(loadChats);
 
   .chat_wrapper {
     margin-top: 0;
+    border: none;
     border-radius: 0;
+    box-shadow: none;
     height: calc(100vh - 80px);
     height: calc(100dvh - 80px);
 
@@ -176,21 +223,23 @@ onMounted(loadChats);
       border-right: none;
 
       .head {
-        padding: 16px;
-      }
-
-      .users .user {
-        padding: 12px;
+        padding: 16px 16px 12px;
       }
     }
 
     &.has-dialog .menu {
       display: none;
     }
+
+    // Без открытого диалога на телефоне — только список, без заглушки.
+    &:not(.has-dialog) :deep(.dialog-placeholder) {
+      display: none;
+    }
   }
 }
 
 .empty {
+  padding: 16px 12px;
   color: $text-placeholder;
   font-size: 14px;
 }

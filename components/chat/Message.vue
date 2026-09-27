@@ -1,9 +1,11 @@
 <template>
-  <LazyChatMessageTypesPlain
+  <!-- Типы сообщений подключены обычным образом, не Lazy: ленивые догружались
+       после прокрутки вниз, и диалог открывался не на последних сообщениях. -->
+  <ChatMessageTypesPlain
     v-if="!msg.is_suggest && !msg.responseId"
     :msg="msg"
-  ></LazyChatMessageTypesPlain>
-  <LazyChatMessageTypesSuggest
+  ></ChatMessageTypesPlain>
+  <ChatMessageTypesSuggest
     v-else-if="msg.is_suggest"
     :msg="msg"
     :from="msg.senderId === userStore.user?.id ? 'sender' : 'receiver'"
@@ -11,27 +13,18 @@
     @reject-suggest="$emit('rejectResponse', msg.id)"
     @open-modal="$emit('openModal', msg.orderId ?? '', msg.id)"
   >
-    <div class="deadlines">
-      <p>
-        Срок выполнения:
-        <span>{{
-          useOrderDeadlines(
-            currentOrder?.deadlines,
-            currentOrder?.deadline_date
-          )
-        }}</span>
-      </p>
+    <div class="facts">
+      <div class="fact">
+        <span>Срок</span>
+        <b>{{ useOrderDeadlines(currentOrder?.deadlines, currentOrder?.deadline_date) || "—" }}</b>
+      </div>
+      <div class="fact">
+        <span>Оплата</span>
+        <b class="price">{{ useOrderPrice(currentOrder?.price_type, currentOrder?.price) || "—" }}</b>
+      </div>
     </div>
-    <div class="amount">
-      <p>
-        Сумма оплаты:
-        <span>{{
-          useOrderPrice(currentOrder?.price_type, currentOrder?.price)
-        }}</span>
-      </p>
-    </div>
-  </LazyChatMessageTypesSuggest>
-  <LazyChatMessageTypesResponse
+  </ChatMessageTypesSuggest>
+  <ChatMessageTypesResponse
     v-else
     :msg="msg"
     :from="responseFrom"
@@ -41,26 +34,17 @@
     "
     @reject-response="$emit('rejectResponse', msg.id)"
   >
-    <div class="deadlines">
-      <p>
-        Срок выполнения:
-        <span>{{
-          useOrderDeadlines(
-            currentOrder?.deadlines,
-            currentOrder?.deadline_date
-          )
-        }}</span>
-      </p>
+    <div class="facts">
+      <div class="fact">
+        <span>Срок</span>
+        <b>{{ useOrderDeadlines(currentOrder?.deadlines, currentOrder?.deadline_date) || "—" }}</b>
+      </div>
+      <div class="fact">
+        <span>Оплата</span>
+        <b class="price">{{ useOrderPrice(currentOrder?.price_type, currentOrder?.price) || "—" }}</b>
+      </div>
     </div>
-    <div class="amount">
-      <p>
-        Сумма оплаты:
-        <span>{{
-          useOrderPrice(currentOrder?.price_type, currentOrder?.price)
-        }}</span>
-      </p>
-    </div>
-  </LazyChatMessageTypesResponse>
+  </ChatMessageTypesResponse>
 </template>
 
 <script setup lang="ts">
@@ -103,135 +87,244 @@ const responseFrom = computed(() =>
 </script>
 
 <style lang="scss">
-.chat_message {
-  color: $text-placeholder !important;
+// Общие стили сообщений чата (без scoped: их используют Plain, Response, Suggest).
 
-  &.message {
-    background: $primary;
-    border-radius: 6px;
-    padding: 8px 16px;
-    max-width: 45%;
-    color: $white !important;
-    overflow-wrap: anywhere;
-    font-size: 15px;
+// --- Обычное сообщение: пузырь с «хвостиком» со стороны автора ---
+.chat_message.message {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: min(520px, 60%);
+  padding: 9px 14px 7px;
+  border-radius: 18px 18px 18px 6px;
+  background: #2f2f36;
+  color: $text-main;
+  font-size: 15px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+
+  @include tablet {
+    max-width: 75%;
+  }
+
+  @include mobile {
+    max-width: 85%;
+  }
+
+  p {
+    white-space: pre-wrap;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+    width: 280px;
+    height: auto;
+    margin: 3px -8px 0;
+    border-radius: 12px;
+  }
+
+  .time {
+    align-self: flex-end;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+// Свои сообщения — справа, фиолетовые, «хвостик» справа.
+.message_wrapper.right .chat_message.message {
+  border-radius: 18px 18px 6px 18px;
+  background: linear-gradient(135deg, #8b5dff 0%, #7447f2 100%);
+  color: $white;
+
+  .time {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+// Служебное сообщение («Предложение было принято…») — плашка по центру.
+.server-note {
+  max-width: 90%;
+  padding: 6px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  text-align: center;
+}
+
+// --- Отклик и предложение: карточка ---
+.chat_message.card {
+  width: 100%;
+  max-width: 420px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: #26262c;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: $text-main;
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(56, 161, 105, 0.16);
+  }
+
+  &.suggest .card-icon {
+    background: rgba(131, 85, 250, 0.18);
+  }
+
+  .card-title {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    flex: 1;
+    min-width: 0;
 
-    @include tablet {
-      max-width: 70%;
+    p {
+      font-size: 15px;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    @include mobile {
-      max-width: 85%;
-    }
-
-    img,
-    video {
-      max-width: 100%;
-      height: auto;
+    span {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
-  &.suggest,
-  &.response {
-    width: 100%;
-    max-width: 440px;
-    padding: 22px 16px;
-    background: #c6f6d51a;
-    border-radius: 6px;
+  // Статус: ждёт ответа / принят / отклонён.
+  .card-status {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    background: rgba(245, 180, 70, 0.14);
+    color: #f3c46b;
+
+    &.accepted {
+      background: rgba(56, 161, 105, 0.16);
+      color: #7fd9a6;
+    }
+
+    &.rejected {
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  .order-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #c3adff;
+    overflow-wrap: anywhere;
+  }
+
+  .card-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .fact {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    overflow: hidden;
+    gap: 3px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
 
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid $bg-button-success;
-
-      p {
-        font-weight: 600;
-        font-size: 16px;
-        color: $bg-button-success;
-      }
+    span {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.45);
     }
 
-    .description {
-      width: 100%;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgb(255, 255, 255, 0.4);
-      overflow: hidden;
-
-      p {
-        font-size: 14px;
-        color: $white;
-      }
+    b {
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-main;
     }
 
-    .deadlines {
-      overflow: hidden;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgb(255, 255, 255, 0.4);
+    .price {
+      color: #c3adff;
+    }
+  }
 
-      p {
-        font-size: 14px;
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    button {
+      flex: 1;
+      min-width: 120px;
+      height: 40px;
+      padding: 0 16px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+
+      &.view {
+        background: $primary;
         color: $white;
+      }
 
-        span {
-          font-weight: 600;
-          font-size: 15px;
-          color: $text-accent;
+      &.delete {
+        border-color: rgba(255, 105, 105, 0.35);
+        background: transparent;
+        color: #ff8a8a;
+      }
+
+      @media (hover: hover) {
+        &.view:hover {
+          background: $primary-hover;
+        }
+
+        &.delete:hover {
+          background: rgba(255, 105, 105, 0.1);
         }
       }
     }
+  }
 
-    .amount {
-      overflow: hidden;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgb(255, 255, 255, 0.4);
-
-      p {
-        font-size: 14px;
-        color: $white;
-
-        span {
-          font-weight: 600;
-          font-size: 15px;
-          color: $primary;
-        }
-      }
-    }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: center;
-
-      button {
-        border: none;
-        outline: none;
-        border-radius: 6px;
-        padding: 12px 28px;
-        color: $white;
-        font-weight: 600;
-        cursor: pointer;
-        width: 100%;
-        max-width: 180px;
-
-        &.delete {
-          background: $text-red;
-        }
-
-        &.view {
-          background: $select-enabled;
-        }
-      }
-    }
+  .time {
+    align-self: flex-end;
+    margin-top: -6px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.4);
   }
 }
 </style>
