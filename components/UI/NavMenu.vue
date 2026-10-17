@@ -47,8 +47,15 @@
         <NuxtLink to="/orders" aria-label="Заказы">
           <IconsHome class="cursor-pointer" />
         </NuxtLink>
-        <NuxtLink to="/chat" aria-label="Чаты">
+        <NuxtLink
+          to="/chat"
+          class="chat-link"
+          :aria-label="chatStore.totalUnread ? `Чаты, непрочитанных: ${chatStore.totalUnread}` : 'Чаты'"
+        >
           <IconsChat class="cursor-pointer" />
+          <span v-if="chatStore.totalUnread" class="unread">{{
+            chatStore.totalUnread > 99 ? "99+" : chatStore.totalUnread
+          }}</span>
         </NuxtLink>
         <div
           class="flex items-center gap-3 relative select-none cursor-pointer"
@@ -114,6 +121,7 @@
 
 <script setup lang="ts">
 import { makeURL } from "~/shared/utils/helpers";
+import { useChatStore } from "~/store/chatStore";
 import { useUserStore } from "~/store/userStore";
 
 defineProps<{
@@ -123,6 +131,7 @@ defineProps<{
 }>();
 
 const userStore = useUserStore();
+const chatStore = useChatStore();
 
 const route = useRoute();
 
@@ -204,6 +213,30 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+// Счётчик непрочитанных на иконке чата.
+.chat-link {
+  position: relative;
+  display: flex;
+
+  .unread {
+    position: absolute;
+    top: -6px;
+    right: -9px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border: 2px solid #1d1d22;
+    border-radius: 9px;
+    background: $primary;
+    color: $white;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 14px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+}
+
 // --- Шапка главной (макет) ---
 // Двойной класс — чтобы перекрыть общие стили .nav и .byte ниже.
 .nav.nav--landing {

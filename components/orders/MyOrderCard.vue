@@ -45,6 +45,7 @@
       >
       <UIStatusBadge v-else-if="!order.is_active">В архиве</UIStatusBadge>
       <UIStatusBadge v-else-if="order.status === 'completed'" tone="success">Выполнен</UIStatusBadge>
+      <UIStatusBadge v-else-if="order.status === 'review'" tone="progress">На проверке</UIStatusBadge>
       <UIStatusBadge v-else-if="order.performer" tone="progress">Есть исполнитель</UIStatusBadge>
       <UIStatusBadge v-else tone="active">Активен</UIStatusBadge>
     </div>

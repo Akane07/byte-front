@@ -23,19 +23,39 @@ export interface DateRange {
 
 export type MessageStatus = "rejected" | "accepted" | "server" | "response";
 
+export type MediaType = "image" | "video" | "file" | "none";
+
+/** Цитата сообщения, на которое ответили. */
+export interface ReplySnapshot {
+  id: string;
+  senderId: string;
+  text: string;
+  mediaType: MediaType;
+}
+
 export interface Message {
   id: string;
   senderId: string;
   receiverId: string;
   text: string;
-  mediaType: "image" | "video" | "none";
+  mediaType: MediaType;
   mediaUrl?: string;
+  fileName?: string;
+  fileSize?: number;
   createdAt: string;
+  editedAt?: string;
   is_suggest: boolean;
+  /** Исполнитель сдал работу по заказу. */
+  is_delivery?: boolean;
   isRead: boolean;
   status?: MessageStatus;
   orderId?: string;
   responseId?: string;
+  replyTo?: ReplySnapshot;
+  /** Временный id сообщения, пока сервер его не подтвердил. */
+  clientId?: string;
+  /** Только на клиенте: сообщение ещё отправляется или не ушло. */
+  pending?: "sending" | "failed";
 }
 
 export interface ChatPreview {
@@ -43,9 +63,18 @@ export interface ChatPreview {
   name: string;
   nickname?: string;
   avatar: string;
+  last_seen?: string;
   lastMessage: string;
   lastMessageDate: string;
+  /** Последнее сообщение — своё (тогда isRead — прочитал ли его собеседник). */
+  lastMessageMine?: boolean;
   isRead?: boolean;
+  unreadCount: number;
+}
+
+export interface ChatHistoryPage {
+  messages: Message[];
+  hasMore: boolean;
 }
 
 export interface Filter {

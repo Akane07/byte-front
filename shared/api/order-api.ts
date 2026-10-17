@@ -1,7 +1,8 @@
 import { api, call } from ".";
 import type { DateRange, Deadline, Price, PriceType } from "../types";
 
-export type OrderStatus = "active" | "pending" | "completed" | "cancelled";
+/** active — ищет исполнителя, pending — в работе, review — работа на проверке у заказчика. */
+export type OrderStatus = "active" | "pending" | "review" | "completed" | "cancelled";
 
 export interface Order {
   id: string;

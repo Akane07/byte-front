@@ -10,7 +10,17 @@
       <div class="menu flex flex-col w-full">
         <div class="head flex items-center gap-2 w-full">
           <p>Чаты</p>
-          <span v-if="chats.length" class="count">{{ chats.length }}</span>
+          <span v-if="chatStore.totalUnread" class="count" title="Непрочитанные">{{ chatStore.totalUnread }}</span>
+          <button
+            type="button"
+            class="bell"
+            :class="{ on: chatStore.browserNotify }"
+            :title="chatStore.browserNotify ? 'Уведомления включены' : 'Включить уведомления о сообщениях'"
+            :aria-pressed="chatStore.browserNotify"
+            @click="chatStore.toggleBrowserNotify()"
+          >
+            <IconsNotifications />
+          </button>
         </div>
         <div class="search w-full">
           <UIInput v-model="searchString" type="text" placeholder="Поиск">
@@ -25,21 +35,36 @@
             :key="chat.userId"
             :to="`/chat/${chat.userId}`"
             class="user"
-            :class="{ active: $route.params.id === chat.userId }"
+            :class="{ active: $route.params.id === chat.userId, unread: chat.unreadCount > 0 }"
           >
-            <UIUserAvatar :src="makeURL(chat.avatar)" :name="chat.name" size="48px" />
+            <div class="avatar" :class="{ online: chatStore.online[chat.userId] }">
+              <UIUserAvatar :src="makeURL(chat.avatar)" :name="chat.name" size="48px" />
+            </div>
             <div class="info">
               <div class="top">
                 <p class="name">{{ chat.nickname || chat.name }}</p>
                 <span class="time">{{ useTimeAgo(chat.lastMessageDate) }}</span>
               </div>
-              <span class="last">{{ chat.lastMessage }}</span>
+              <div class="bottom">
+                <span v-if="chatStore.typing[chat.userId]" class="last typing">печатает…</span>
+                <span v-else class="last">
+                  <template v-if="chat.lastMessageMine">
+                    <svg class="ticks" :class="{ read: chat.isRead }" viewBox="0 0 20 16" aria-hidden="true">
+                      <path d="M1.5 8.5l3.5 3.5 7-8" />
+                      <path v-if="chat.isRead" d="M8.5 12l7-8" />
+                    </svg>
+                    <b>Вы:</b>
+                  </template>
+                  {{ chat.lastMessage }}
+                </span>
+                <span v-if="chat.unreadCount" class="badge">{{ chat.unreadCount > 99 ? "99+" : chat.unreadCount }}</span>
+              </div>
             </div>
           </NuxtLink>
-          <p v-if="loaded && !chats.length" class="empty">
+          <p v-if="chatStore.chatsLoaded && !chatStore.chats.length" class="empty">
             Диалогов пока нет. Написать исполнителю можно из его профиля.
           </p>
-          <p v-else-if="loaded && !searchedChats.length" class="empty">Никого не нашли</p>
+          <p v-else-if="chatStore.chatsLoaded && !searchedChats.length" class="empty">Никого не нашли</p>
         </div>
       </div>
       <NuxtPage></NuxtPage>
@@ -48,31 +73,21 @@
 </template>
 
 <script setup lang="ts">
-import { api, call } from "~/shared/api";
-import type { ChatPreview } from "~/shared/types";
 import { makeURL } from "~/shared/utils/helpers";
+import { useChatStore } from "~/store/chatStore";
 
-const chat = useChatSocket();
+const chatStore = useChatStore();
 
-const chats = ref<ChatPreview[]>([]);
 const searchString = shallowRef("");
-const loaded = shallowRef(false);
 
 const searchedChats = computed(() => {
   const query = searchString.value.trim().toLowerCase();
-  return chats.value.filter((c) => (c.nickname || c.name).toLowerCase().includes(query));
+  return chatStore.chats.filter((c) => (c.nickname || c.name).toLowerCase().includes(query));
 });
 
-async function loadChats() {
-  chats.value = (await call(api.get<ChatPreview[]>("/chat/all"))) ?? [];
-  loaded.value = true;
-}
-
-// Новое сообщение — обновляем последний текст и порядок диалогов.
-chat.on("receiveMessage", loadChats);
-chat.on("messageDeleted", loadChats);
-
-onMounted(loadChats);
+// Список живёт в сторе и обновляется по событиям сокета на месте —
+// раньше на каждое новое сообщение он целиком перезапрашивался с сервера.
+onMounted(chatStore.loadChats);
 </script>
 
 <style lang="scss" scoped>
@@ -103,6 +118,39 @@ onMounted(loadChats);
         font-weight: 600;
         font-size: 22px;
         color: $text-main;
+      }
+
+      .bell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        margin-left: auto;
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        opacity: 0.45;
+        cursor: pointer;
+        transition:
+          opacity 0.15s ease,
+          background 0.15s ease;
+
+        :deep(svg) {
+          width: 20px;
+          height: 20px;
+        }
+
+        &.on {
+          opacity: 1;
+          background: rgba(131, 85, 250, 0.16);
+        }
+
+        @media (hover: hover) {
+          &:hover {
+            opacity: 1;
+          }
+        }
       }
 
       .count {
@@ -160,12 +208,91 @@ onMounted(loadChats);
           }
         }
 
+        .avatar {
+          position: relative;
+          display: flex;
+
+          &.online::after {
+            content: "";
+            position: absolute;
+            right: 1px;
+            bottom: 1px;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #222228;
+            border-radius: 50%;
+            background: #38d17a;
+          }
+        }
+
         .info {
           display: flex;
           flex-direction: column;
           gap: 4px;
           flex: 1;
           min-width: 0;
+        }
+
+        .bottom {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .badge {
+          flex-shrink: 0;
+          min-width: 20px;
+          margin-left: auto;
+          padding: 0 6px;
+          border-radius: 10px;
+          background: $primary;
+          color: $white;
+          font-size: 11px;
+          font-weight: 700;
+          line-height: 20px;
+          text-align: center;
+        }
+
+        .last {
+          flex: 1;
+          min-width: 0;
+
+          b {
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+          }
+
+          &.typing {
+            color: #c3adff;
+          }
+        }
+
+        .ticks {
+          display: inline-block;
+          width: 15px;
+          height: 12px;
+          margin-right: 2px;
+          vertical-align: -1px;
+          fill: none;
+          stroke: rgba(255, 255, 255, 0.5);
+          stroke-width: 1.7;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+
+          &.read {
+            stroke: #7fd9a6;
+          }
+        }
+
+        // Есть непрочитанные — текст ярче.
+        &.unread {
+          .last {
+            color: rgba(255, 255, 255, 0.85);
+          }
+
+          .time {
+            color: #c3adff;
+          }
         }
 
         .top {

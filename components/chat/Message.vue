@@ -2,9 +2,22 @@
   <!-- Типы сообщений подключены обычным образом, не Lazy: ленивые догружались
        после прокрутки вниз, и диалог открывался не на последних сообщениях. -->
   <ChatMessageTypesPlain
-    v-if="!msg.is_suggest && !msg.responseId"
+    v-if="!msg.is_suggest && !msg.responseId && !msg.is_delivery"
     :msg="msg"
+    :selected="selected"
   ></ChatMessageTypesPlain>
+  <ChatMessageTypesDelivery v-else-if="msg.is_delivery" :msg="msg">
+    <div class="facts">
+      <div class="fact">
+        <span>Срок</span>
+        <b>{{ useOrderDeadlines(currentOrder?.deadlines, currentOrder?.deadline_date) || "—" }}</b>
+      </div>
+      <div class="fact">
+        <span>Оплата</span>
+        <b class="price">{{ useOrderPrice(currentOrder?.price_type, currentOrder?.price) || "—" }}</b>
+      </div>
+    </div>
+  </ChatMessageTypesDelivery>
   <ChatMessageTypesSuggest
     v-else-if="msg.is_suggest"
     :msg="msg"
@@ -54,6 +67,7 @@ import { useUserStore } from "~/store/userStore";
 
 const props = defineProps<{
   msg: Message;
+  selected?: boolean;
 }>();
 
 defineEmits<{

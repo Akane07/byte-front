@@ -36,15 +36,23 @@ const chat = useChatSocket();
 const activeOrders = ref<Order[]>([]);
 
 /**
- * Исполнитель сообщает, что заказ выполнен. Раньше здесь отправлялось
- * событие postResponse без responseId, сервер его игнорировал,
- * и кнопка «Завершить заказ» ничего не делала.
+ * Исполнитель сдаёт работу: заказ уходит заказчику на проверку, в чате
+ * появляется карточка «Работа сдана». Заказ остаётся в списке со статусом
+ * «На проверке», пока заказчик не примет работу.
  */
 function finishOrder(order: Order) {
     chat.finishOrder(order.id);
-    activeOrders.value = activeOrders.value.filter((o) => o.id !== order.id);
-    notifications.setNotification('Заказчик получил уведомление о выполнении');
+    notifications.setNotification('Работа отправлена заказчику на проверку');
 }
+
+chat.on('orderUpdated', (updated) => {
+    if (updated.status === 'completed' || updated.status === 'cancelled') {
+        activeOrders.value = activeOrders.value.filter((o) => o.id !== updated.id);
+        return;
+    }
+    const index = activeOrders.value.findIndex((o) => o.id === updated.id);
+    if (index !== -1) activeOrders.value.splice(index, 1, updated);
+});
 
 onMounted(async () => {
     const me = userStore.user?.id;
