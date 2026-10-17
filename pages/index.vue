@@ -6,7 +6,7 @@
       <div class="hero__content">
         <IconsSparkle class="sparkle reveal" />
         <h1 class="reveal">Виртуальный мир реальных возможностей</h1>
-        <p class="reveal">Работай с проверенными заказчиками, получай честную оплату и развивай свои навыки каждый день.</p>
+        <p class="reveal">Работа через интернет и услуги рядом с домом: находи заказы и исполнителей, получай честную оплату и развивай свои навыки каждый день.</p>
         <UINavButton texture class="cta reveal" @click="start">Начать сейчас</UINavButton>
       </div>
 

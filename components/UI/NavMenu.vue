@@ -29,6 +29,9 @@
         class="flex items-center gap-2 sm:gap-3 relative select-none"
       >
         <!-- Гость смотрит заказы и профили без входа: в шапке — донаты и вход. -->
+        <NuxtLink to="/specialists" class="guest-link" aria-label="Исполнители">
+          <IconsPeople class="w-5" /><span>Исполнители</span>
+        </NuxtLink>
         <NuxtLink to="/donates" class="guest-link" aria-label="Донаты">
           <IconsBlocks class="w-5" /><span>Донаты</span>
         </NuxtLink>
@@ -46,6 +49,9 @@
       >
         <NuxtLink to="/orders" aria-label="Заказы">
           <IconsHome class="cursor-pointer" />
+        </NuxtLink>
+        <NuxtLink to="/specialists" aria-label="Найти исполнителя" title="Найти исполнителя">
+          <IconsPeople class="cursor-pointer" />
         </NuxtLink>
         <NuxtLink
           to="/chat"

@@ -10,7 +10,7 @@
           <div class="stats flex flex-col gap-2">
             <div class="flex items-center gap-2">
               <IconsMap></IconsMap>
-              <span>{{ user.country || "страна не указана" }}</span>
+              <span>{{ [user.city, user.country].filter(Boolean).join(", ") || "страна не указана" }}</span>
             </div>
             <div class="flex items-center gap-2">
               <IconsClock></IconsClock>
@@ -18,7 +18,8 @@
             </div>
             <div class="flex items-center gap-2">
               <IconsSun></IconsSun>
-              <span>В сети</span>
+              <!-- Раньше здесь всегда было «В сети». -->
+              <span>{{ presenceLabel(!!chatStore.online[user.id], user.last_seen) }}</span>
             </div>
           </div>
         </div>
@@ -32,6 +33,17 @@
           <div class="flex flex-wrap gap-2 pt-3">
             <LazyUIChip v-for="skill in user.skills" :key="skill" :text="skill"></LazyUIChip>
           </div>
+          <!-- Исполнитель: формат работы, категории услуг, цена. -->
+          <div v-if="user.is_performer" class="services">
+            <div class="services_head">
+              <span class="accepting">Принимает заказы</span>
+              <span>{{ usePerformerFormat(user.work_format) }}</span>
+              <span v-if="user.price_from" class="price">от {{ user.price_from.toLocaleString("ru-RU") }} ₽</span>
+            </div>
+            <div v-if="serviceCategories.length" class="flex flex-wrap gap-2">
+              <span v-for="title in serviceCategories" :key="title" class="service">{{ title }}</span>
+            </div>
+          </div>
         </div>
         <div class="bordered"></div>
         <div class="aside w-full flex flex-col gap-8 pb-4.5 pt-3 max-w-[230px]">
@@ -43,13 +55,20 @@
             <!-- <IconsSettings></IconsSettings> -->
             Настройки профиля
           </UIButton>
-          <UIButton
-            v-else
-            type="active"
-            @click="guest.requireAuth('написать пользователю') && navigateTo(`/chat/${user.id}`)"
-          >
-            Отправить сообщение
-          </UIButton>
+          <template v-else>
+            <UIButton
+              type="active"
+              @click="guest.requireAuth('написать пользователю') && navigateTo(`/chat/${user.id}`)"
+            >
+              Отправить сообщение
+            </UIButton>
+            <UIButton
+              v-if="user.is_performer"
+              @click="guest.requireAuth('предложить заказ') && navigateTo(`/orders/suggest?id=${user.id}`)"
+            >
+              Предложить заказ
+            </UIButton>
+          </template>
           <div class="flex flex-col gap-4">
             <div
               v-if="!isOwnProfile"
@@ -138,7 +157,9 @@
 import DevCard from "~/components/UI/Card.vue";
 import type { Portfolio } from "~/shared/api/portfolio-api";
 import type { User } from "~/shared/api/user-api";
-import { makeURL, memberSince, openExternal } from "~/shared/utils/helpers";
+import { makeURL, memberSince, openExternal, presenceLabel } from "~/shared/utils/helpers";
+import { useCategory } from "~/store/categoryStore";
+import { useChatStore } from "~/store/chatStore";
 import { useGuestStore } from "~/store/guestStore";
 import { usePortfolioStore } from "~/store/portfolioStore";
 import { useUserStore } from "~/store/userStore";
@@ -148,10 +169,25 @@ const route = useRoute();
 const userStore = useUserStore();
 const portfolioStore = usePortfolioStore();
 const guest = useGuestStore();
+const categoryStore = useCategory();
+const chatStore = useChatStore();
 
 const user = ref<User | null>(null);
 const otherPortfolios = ref<Portfolio[]>([]);
 const feedbacks = ref([]);
+
+const serviceCategories = computed(() =>
+  (user.value?.categories ?? []).map((id) => categoryStore.getCategoryTitleById(id)).filter(Boolean),
+);
+
+// Статус «в сети» знает сокет; гостю он недоступен — тогда по last_seen.
+watch(
+  () => user.value?.id,
+  (id) => {
+    if (id && userStore.isAuth) chatStore.queryPresence([id]);
+  },
+);
+onMounted(categoryStore.getAllCategories);
 
 const profileId = computed(() => route.params.id as string | undefined);
 const isOwnProfile = computed(
@@ -190,6 +226,47 @@ onMounted(async () => {
       margin-top: 16px;
     }
   }
+}
+
+.services {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.services_head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  font-size: 14px;
+  color: $text-secondary;
+
+  .accepting {
+    padding: 4px 10px;
+    border-radius: 10px;
+    background: rgba(56, 161, 105, 0.16);
+    color: #7fd9a6;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .price {
+    color: #c3adff;
+    font-weight: 600;
+  }
+}
+
+.service {
+  padding: 6px 12px;
+  border-radius: 14px;
+  background: rgba(131, 85, 250, 0.14);
+  color: #c3adff;
+  font-size: 13px;
 }
 
 .main_info {

@@ -9,9 +9,9 @@ import {
   postOrder,
   type MyOrderResponse,
   type Order,
+  type OrderFilters,
   type OrderInput,
 } from "~/shared/api/order-api";
-import type { Filter } from "~/shared/types";
 
 export const useOrderStore = defineStore("order", () => {
   const orders = ref<Order[]>([]);
@@ -23,9 +23,8 @@ export const useOrderStore = defineStore("order", () => {
   const myResponses = ref<MyOrderResponse[]>([]);
   const myDrafts = ref<Order[]>([]);
 
-  async function getAllOrders(filters: Filter[] = []) {
-    const categories = filters.filter((f) => f.checked).map((f) => f.id);
-    const res = await getOrders(page.value, categories);
+  async function getAllOrders(filters: OrderFilters = {}) {
+    const res = await getOrders(page.value, filters);
     if (!res) return;
 
     orders.value = res.orders;

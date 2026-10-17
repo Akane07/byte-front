@@ -7,7 +7,8 @@
       class="order flex flex-col gap-4 w-full min-w-0 py-4 px-4 md:px-8"
       :class="{ viewed: viewed }"
     >
-      <p>{{ order.title }}</p>
+      <OrdersPlaceBadges :format="order.work_format" :city="order.city" :urgent="order.urgent" />
+      <p class="-mt-2">{{ order.title }}</p>
       <span class="mb-1">{{
         useSliceDescription(order.description, 175)
       }}</span>

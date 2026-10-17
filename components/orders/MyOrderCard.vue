@@ -2,6 +2,7 @@
   <div class="order_card">
     <div class="order_info">
       <div class="text_info">
+        <OrdersPlaceBadges :format="order.work_format" :city="order.city" :urgent="order.urgent" />
         <p>{{ order.title }}</p>
         <span>{{ useSliceDescription(order.description) }}</span>
       </div>

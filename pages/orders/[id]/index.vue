@@ -10,6 +10,7 @@
                     <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
                 </div>
                 <div class="main_info">
+                    <OrdersPlaceBadges :format="order.work_format" :city="order.city" :urgent="order.urgent" />
                     <p>{{ order.title }}</p>
                     <div class="stats_info">
                         <UIUserAvatar class="cursor-pointer" @click="navigateTo(`/profile/${order.user_id}`)"
@@ -29,14 +30,28 @@
                         <IconsCalendar style="min-width: 40px; min-height: 40px;"></IconsCalendar>
                         <div class="text">
                             <p>{{ useOrderDeadlines(order.deadlines, order.deadline_date) }}</p>
-                            <span>Продолжительность проекта</span>
+                            <span>{{ useDeadlineCaption(order.work_format) }}</span>
+                        </div>
+                    </div>
+                    <!-- Место работы. Точный адрес сервер отдаёт только заказчику
+                         и выбранному исполнителю — остальные видят город. -->
+                    <div class="block" v-if="order.work_format === 'onsite'">
+                        <span class="place-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 21s7-6.3 7-12a7 7 0 00-14 0c0 5.7 7 12 7 12z" />
+                                <circle cx="12" cy="9" r="2.5" />
+                            </svg>
+                        </span>
+                        <div class="text">
+                            <p>{{ order.address ? `${order.city}, ${order.address}` : order.city || 'Город не указан' }}</p>
+                            <span>{{ order.address ? 'Адрес видите только вы и исполнитель' : 'Точный адрес заказчик сообщит выбранному исполнителю' }}</span>
                         </div>
                     </div>
                     <div class="block" v-if="order.for_experts">
                         <IconsExpert style="min-width: 40px; min-height: 40px;"></IconsExpert>
                         <div class="text">
                             <p>Для экспертов</p>
-                            <span>Я готов платить более высокую ставку опытным фрилансерам.</span>
+                            <span>Я готов платить более высокую ставку опытным исполнителям.</span>
                         </div>
                     </div>
                 </div>
@@ -213,6 +228,27 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+.place-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(56, 161, 105, 0.14);
+
+    svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: #7fd9a6;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
 .guest_hint {
     color: $text-secondary;
     font-size: 14px;

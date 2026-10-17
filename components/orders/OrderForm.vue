@@ -4,7 +4,7 @@
 
   <div class="wrapper">
     <div ref="wrapperRef" class="step_wrapper">
-      <div class="step_block">
+      <div class="step_block first">
         <div class="left_part">
           <span class="step">1/5 Название</span>
           <h2>Для начала придумайте отличное название</h2>
@@ -15,18 +15,63 @@
           </p>
         </div>
         <div class="right_part">
+          <!-- Формат — первым: от него зависят категории, примеры и место. -->
+          <div class="block">
+            <p>Где нужно выполнить работу<span class="required">*</span></p>
+            <div class="price_block format_block">
+              <div
+                class="price"
+                :class="{ active: form.work_format === 'remote' }"
+                @click="setFormat('remote')"
+              >
+                <div class="checkbox">
+                  <svg class="format_icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M3 12h18M12 3c2.5 2.5 3.6 5.6 3.6 9s-1.1 6.5-3.6 9M12 3C9.5 5.5 8.4 8.6 8.4 12s1.1 6.5 3.6 9" />
+                  </svg>
+                  <div class="checkbox_wrapper">
+                    <div v-if="form.work_format === 'remote'" class="circle"></div>
+                  </div>
+                </div>
+                <p>Удалённо</p>
+                <span class="format_hint">Через интернет: сайты, дизайн, тексты, консультации</span>
+              </div>
+              <div
+                class="price"
+                :class="{ active: form.work_format === 'onsite' }"
+                @click="setFormat('onsite')"
+              >
+                <div class="checkbox">
+                  <svg class="format_icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 21s7-6.3 7-12a7 7 0 00-14 0c0 5.7 7 12 7 12z" />
+                    <circle cx="12" cy="9" r="2.5" />
+                  </svg>
+                  <div class="checkbox_wrapper">
+                    <div v-if="form.work_format === 'onsite'" class="circle"></div>
+                  </div>
+                </div>
+                <p>На месте</p>
+                <span class="format_hint">Исполнитель приедет: ремонт, уборка, переезд, репетитор</span>
+              </div>
+            </div>
+          </div>
           <UIInput
             v-model="form.title"
             type="text"
             label="Напишите название для своего заказа"
-            placeholder="Например, создание адаптивного сайта"
+            :placeholder="form.work_format === 'onsite' ? 'Например, собрать шкаф и повесить полки' : 'Например, создание адаптивного сайта'"
             maxlength="200"
             :rules="rules.notEmpty"
             required
           />
           <div class="description">
             <p>Примеры названий</p>
-            <ul>
+            <ul v-if="form.work_format === 'onsite'">
+              <li>Собрать кухонный гарнитур и подключить посудомоечную машину</li>
+              <li>Генеральная уборка двухкомнатной квартиры после ремонта</li>
+              <li>Перевезти диван и холодильник на соседнюю улицу, нужны 2 грузчика</li>
+            </ul>
+            <ul v-else>
               <li>Создайте адаптивный сайт на WordPress с функцией бронирования/оплаты</li>
               <li>Опыт работы с AR необходим для виртуальных демонстраций продукта (ARCore)</li>
               <li>
@@ -40,20 +85,45 @@
 
       <div class="step_block second">
         <div class="left_part">
-          <span class="step">2/5 Навыки</span>
-          <h2>Добавьте навыки, которые требуются для вашего заказа</h2>
+          <span class="step">2/5 {{ form.work_format === 'onsite' ? 'Категория и место' : 'Навыки' }}</span>
+          <h2>
+            {{ form.work_format === 'onsite'
+              ? 'Укажите категорию и где нужно выполнить работу'
+              : 'Добавьте навыки, которые требуются для вашего заказа' }}
+          </h2>
           <p>Навыки помогут понять кандидату, подходит ли он для этого заказа или нет.</p>
+          <p v-if="form.work_format === 'onsite'">
+            В ленте исполнители увидят только город. Точный адрес получит тот, кого вы выберете.
+          </p>
         </div>
         <div class="right_part">
           <div class="block">
             <p>Категория заказа<span class="required">*</span></p>
             <UISelect
               style="width: 100%"
-              :list="categoryStore.titles"
+              :list="categoryTitles"
               :selected="categoryTitle"
               @select="handleSelectCategory"
             />
           </div>
+          <template v-if="form.work_format === 'onsite'">
+            <div class="block">
+              <p>Город<span class="required">*</span></p>
+              <UISelect
+                style="width: 100%"
+                :list="categoryStore.cities"
+                :selected="form.city || 'Выберите город'"
+                @select="form.city = $event"
+              />
+            </div>
+            <UIInput
+              v-model="form.address"
+              type="text"
+              label="Адрес (увидит только выбранный исполнитель)"
+              placeholder="Улица, дом — квартиру можно сообщить в чате"
+              maxlength="300"
+            />
+          </template>
           <div class="block">
             <p>Добавьте навыки или напишите свои (до {{ MAX_SKILLS }})</p>
             <div class="skills_block" @click="inputRef?.focus()">
@@ -89,8 +159,12 @@
       <div class="step_block third">
         <div class="left_part">
           <span class="step">3/5 Сроки</span>
-          <h2>Оцените объем вашего заказа</h2>
-          <p>Подумайте о размере вашего заказа и времени, которое он займет.</p>
+          <h2>{{ form.work_format === 'onsite' ? 'Когда нужно выполнить заказ?' : 'Оцените объем вашего заказа' }}</h2>
+          <p>
+            {{ form.work_format === 'onsite'
+              ? 'Укажите удобные даты — исполнители предложат время визита в отклике.'
+              : 'Подумайте о размере вашего заказа и времени, которое он займет.' }}
+          </p>
         </div>
         <div class="right_part">
           <div class="block">
@@ -99,7 +173,7 @@
                 <IconsCalendar style="transform: scale(1.4)" />
                 <div class="text">
                   <p>{{ deadlineLabel }}</p>
-                  <span>Продолжительность проекта<span class="required">*</span></span>
+                  <span>{{ useDeadlineCaption(form.work_format) }}<span class="required">*</span></span>
                 </div>
               </div>
               <div class="checkbox" @click="dateModal = true">
@@ -108,10 +182,24 @@
             </div>
             <div class="custom_checkbox">
               <div class="text_wrapper">
+                <svg class="urgent_icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M13.5 2L5 13.5h6.5L10 22l8.5-11.5H12L13.5 2z" />
+                </svg>
+                <div class="text">
+                  <p>Срочно</p>
+                  <span>Заказ поднимется выше в ленте и получит пометку «Срочно»</span>
+                </div>
+              </div>
+              <div class="checkbox" @click="form.urgent = !form.urgent">
+                <IconsBluePencil v-if="form.urgent" style="transform: scale(1.5)" />
+              </div>
+            </div>
+            <div class="custom_checkbox">
+              <div class="text_wrapper">
                 <IconsExpert style="transform: scale(1.4)" />
                 <div class="text">
                   <p>Эксперт</p>
-                  <span>Я готов платить более высокую ставку самым опытным фрилансерам</span>
+                  <span>Я готов платить более высокую ставку самым опытным исполнителям</span>
                 </div>
               </div>
               <div class="checkbox" @click="form.for_experts = !form.for_experts">
@@ -257,12 +345,13 @@
 </template>
 
 <script setup lang="ts">
-import type { OrderInput } from "~/shared/api/order-api";
+import type { OrderInput, WorkFormat } from "~/shared/api/order-api";
 import type { DateRange, Deadline, PriceType } from "~/shared/types";
 import { rules } from "~/shared/utils/rules";
 import { useCategory } from "~/store/categoryStore";
 import { useNotifications } from "~/store/notiStore";
 import { useOrderStore } from "~/store/orderStore";
+import { useUserStore } from "~/store/userStore";
 
 /**
  * Форма заказа — общая для создания и редактирования.
@@ -281,6 +370,7 @@ const router = useRouter();
 const categoryStore = useCategory();
 const orderStore = useOrderStore();
 const notifications = useNotifications();
+const userStore = useUserStore();
 
 const wrapperRef = ref<HTMLDivElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
@@ -301,6 +391,10 @@ const form = ref({
   deadline_date: { from: "", to: "" } as DateRange,
   skills: [] as string[],
   category: undefined as number | undefined,
+  work_format: "remote" as WorkFormat,
+  city: "",
+  address: "",
+  urgent: false,
 });
 
 // Цены хранятся отдельно по типам, чтобы переключение типа не теряло введённое.
@@ -308,6 +402,26 @@ const fixedPrice = shallowRef(0);
 const hourlyPrice = ref({ from: 0, to: 0 });
 
 const categoryTitle = computed(() => categoryStore.getCategoryTitleById(form.value.category));
+/** В списке — только категории, подходящие формату: ремонт квартиры удалённо не сделать. */
+const categoryTitles = computed(() =>
+  categoryStore.categoriesFor(form.value.work_format).map((c) => c.title),
+);
+
+/**
+ * Смена формата. Категория, которая ему не подходит, сбрасывается; город
+ * для работы на месте подставляется из профиля — чаще всего заказ там же.
+ */
+function setFormat(format: WorkFormat) {
+  form.value.work_format = format;
+  const current = categoryStore.getCategoryById(form.value.category);
+  if (current && current.format !== "any" && current.format !== format) {
+    form.value.category = undefined;
+    categoryStore.skills = [];
+  }
+  if (format === "onsite" && !form.value.city && userStore.user?.city) {
+    form.value.city = userStore.user.city;
+  }
+}
 const deadlineLabel = computed(() =>
   form.value.deadlines === "custom"
     ? `${useUserCreated(form.value.deadline_date.from)} – ${useUserCreated(form.value.deadline_date.to)}`
@@ -327,7 +441,9 @@ function validateStep(current: number): string | null {
     case 1:
       return f.title.trim() ? null : "Укажите название заказа";
     case 2:
-      return f.category ? null : "Выберите категорию заказа";
+      if (!f.category) return "Выберите категорию заказа";
+      if (f.work_format === "onsite" && !f.city) return "Укажите город, где нужно выполнить заказ";
+      return null;
     case 3:
       return f.deadlines !== "custom" || (f.deadline_date.from && f.deadline_date.to)
         ? null
@@ -364,6 +480,10 @@ function toPayload(draft: boolean): OrderInput {
     deadline_date: f.deadlines === "custom" ? { ...f.deadline_date } : undefined,
     skills: [...f.skills],
     category: f.category,
+    work_format: f.work_format,
+    city: f.work_format === "onsite" && f.city ? f.city : undefined,
+    address: f.work_format === "onsite" ? f.address.trim() : undefined,
+    urgent: f.urgent,
     draft,
   };
 }
@@ -467,7 +587,7 @@ function handleDeadlines(value: string | DateRange) {
 }
 
 onMounted(async () => {
-  await categoryStore.getAllCategories();
+  await Promise.all([categoryStore.getAllCategories(), categoryStore.loadCities()]);
   if (!props.orderId) {
     categoryStore.skills = [];
     return;
@@ -490,6 +610,10 @@ onMounted(async () => {
     deadline_date: order.deadline_date ?? { from: "", to: "" },
     skills: [...order.skills],
     category: order.category,
+    work_format: order.work_format ?? "remote",
+    city: order.city ?? "",
+    address: order.address ?? "",
+    urgent: !!order.urgent,
   };
   if (typeof order.price === "number") {
     fixedPrice.value = order.price;
@@ -504,6 +628,33 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+// Карточки «Удалённо / На месте» — те же, что выбор типа цены, плюс подпись.
+.format_block {
+  .format_icon {
+    width: 28px;
+    height: 28px;
+    fill: none;
+    stroke: $primary-hover;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .format_hint {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: $text-placeholder;
+  }
+}
+
+.urgent_icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  fill: #ffab85;
+}
+
 .wrapper {
   width: 100%;
   min-height: 100dvh;
@@ -718,7 +869,9 @@ onMounted(async () => {
         }
       }
 
-      &.fourth {
+      // Карточки выбора: тип цены (шаг 4) и формат работы (шаг 1).
+      &.fourth,
+      &.first {
         .price_block {
           display: flex;
           gap: 32px;
@@ -782,6 +935,11 @@ onMounted(async () => {
               border: 1px solid $primary;
             }
           }
+        }
+
+        // Карточки формата шире: в них ещё и подпись.
+        .format_block .price {
+          max-width: 300px;
         }
 
         .tip {
