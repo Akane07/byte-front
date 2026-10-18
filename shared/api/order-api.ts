@@ -1,7 +1,11 @@
 import { api, call } from ".";
 import type { DateRange, Deadline, Price, PriceType } from "../types";
 
-export type OrderStatus = "active" | "pending" | "completed" | "cancelled";
+/** active — ищет исполнителя, pending — в работе, review — работа на проверке у заказчика. */
+export type OrderStatus = "active" | "pending" | "review" | "completed" | "cancelled";
+
+/** Где выполняется работа. */
+export type WorkFormat = "remote" | "onsite";
 
 export interface Order {
   id: string;
@@ -23,6 +27,12 @@ export interface Order {
   performer?: string;
   status: OrderStatus;
   draft: boolean;
+  /** У старых заказов поля нет — они удалённые. */
+  work_format?: WorkFormat;
+  city?: string;
+  /** Только для заказчика и выбранного исполнителя. */
+  address?: string;
+  urgent?: boolean;
 }
 
 /** Данные формы заказа, которые принимает бэкенд. */
@@ -39,6 +49,10 @@ export type OrderInput = Pick<
   | "skills"
   | "category"
   | "draft"
+  | "work_format"
+  | "city"
+  | "address"
+  | "urgent"
 >;
 
 export interface OrderResponse {
@@ -64,10 +78,26 @@ export interface OrderPage {
   totalPages: number;
 }
 
-export function getOrders(page: number, categories: number[]) {
+/** Фильтры ленты. Пустые значения в запрос не попадают. */
+export interface OrderFilters {
+  categories?: number[];
+  format?: WorkFormat;
+  city?: string;
+  q?: string;
+  urgent?: boolean;
+}
+
+export function getOrders(page: number, filters: OrderFilters = {}) {
   return call(
     api.get<OrderPage>("/order", {
-      params: { page, categories },
+      params: {
+        page,
+        categories: filters.categories,
+        format: filters.format || undefined,
+        city: filters.city || undefined,
+        q: filters.q?.trim() || undefined,
+        urgent: filters.urgent || undefined,
+      },
       // ?categories=1&categories=2 — формат, который ждёт бэкенд
       paramsSerializer: { indexes: null },
     }),

@@ -86,6 +86,51 @@
               :selected="profile.country"
               @select="profile.country = $event"
             />
+            <UISelect
+              :list="cityOptions"
+              label="Город"
+              :selected="profile.city || NO_CITY"
+              @select="profile.city = $event === NO_CITY ? '' : $event"
+            />
+          </template>
+          <!-- Исполнитель: попадает в каталог «Найти исполнителя». -->
+          <template v-if="active === 'services'">
+            <div class="performer_toggle">
+              <UICheckbox v-model="profile.is_performer">Принимаю заказы</UICheckbox>
+              <span>
+                Профиль появится в каталоге исполнителей: заказчики смогут найти вас по категории
+                и городу и предложить заказ.
+              </span>
+            </div>
+            <div class="block">
+              <p>Где готовы работать</p>
+              <UISegmented v-model="profile.work_format" :options="PERFORMER_FORMATS" />
+            </div>
+            <div v-if="profile.work_format !== 'remote' && !profile.city" class="warning">
+              Укажите город во вкладке «Профиль» — по нему заказчики ищут исполнителей рядом.
+            </div>
+            <div class="block">
+              <p>Категории услуг (до {{ MAX_CATEGORIES }})</p>
+              <div class="category_chips">
+                <button
+                  v-for="category in categoryStore.categoriesFor(chipsFormat)"
+                  :key="category.id"
+                  type="button"
+                  class="category_chip"
+                  :class="{ active: profile.categories.includes(category.id) }"
+                  @click="toggleCategory(category.id)"
+                >
+                  {{ category.title }}
+                </button>
+              </div>
+            </div>
+            <UIInput
+              v-model="priceFrom"
+              label="Стоимость услуг от, руб."
+              type="text"
+              placeholder="Например, 1500 — можно оставить пустым"
+              maxlength="9"
+            />
           </template>
           <template v-if="active === 'socials'">
             <UIInput
@@ -129,36 +174,70 @@
 </template>
 
 <script setup lang="ts">
-import { getCountries, type UserUpdate } from "~/shared/api/user-api";
+import { getCountries, type PerformerFormat } from "~/shared/api/user-api";
 import { makeURL } from "~/shared/utils/helpers";
 import { rules } from "~/shared/utils/rules";
+import { useCategory } from "~/store/categoryStore";
 import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";
 
 const TABS = [
   { name: "Общие", value: "general" },
   { name: "Профиль", value: "profile" },
+  { name: "Услуги", value: "services" },
   { name: "Ссылки", value: "socials" },
 ];
 
+const NO_CITY = "Не указан";
+const MAX_CATEGORIES = 5;
+const PERFORMER_FORMATS: { value: PerformerFormat; label: string }[] = [
+  { value: "remote", label: "Удалённо" },
+  { value: "onsite", label: "На месте" },
+  { value: "both", label: "И так, и так" },
+];
+
 const userStore = useUserStore();
+const categoryStore = useCategory();
 const notifications = useNotifications();
 
 const active = ref("general");
 const countries = ref<string[]>([]);
 const saving = shallowRef(false);
 
-const profile = ref<Required<Omit<UserUpdate, "phone">>>({
+const profile = ref({
   nickname: "",
   name: "",
   speciality: "",
-  skills: [],
+  skills: [] as string[],
   description: "",
   country: "",
+  city: "",
   telegram: "",
   behance: "",
   git: "",
+  is_performer: false,
+  work_format: "remote" as PerformerFormat,
+  categories: [] as number[],
 });
+/** Цена «от» — строкой в поле ввода, числом при сохранении. */
+const priceFrom = shallowRef("");
+
+const cityOptions = computed(() => [NO_CITY, ...categoryStore.cities]);
+/** Работает «и так, и так» — показываем все категории. */
+const chipsFormat = computed(() =>
+  profile.value.work_format === "both" ? null : profile.value.work_format,
+);
+
+function toggleCategory(id: number) {
+  const list = profile.value.categories;
+  if (list.includes(id)) {
+    profile.value.categories = list.filter((c) => c !== id);
+  } else if (list.length < MAX_CATEGORIES) {
+    profile.value.categories = [...list, id];
+  } else {
+    notifications.setNotification(`Можно выбрать до ${MAX_CATEGORIES} категорий`);
+  }
+}
 
 /**
  * Раньше было два поля «Новый пароль», а бэкенд трактовал первое как
@@ -185,7 +264,18 @@ async function changePassword(): Promise<boolean> {
   return ok;
 }
 
-async function saveProfile(update: UserUpdate = profile.value) {
+function payload() {
+  const digits = priceFrom.value.replace(/\D/g, "");
+  // Категории, которые не подходят выбранному формату, не сохраняем.
+  const allowed = new Set(categoryStore.categoriesFor(chipsFormat.value).map((c) => c.id));
+  return {
+    ...profile.value,
+    categories: profile.value.categories.filter((id) => allowed.has(id)),
+    price_from: digits ? Number(digits) : null,
+  };
+}
+
+async function saveProfile(update: Parameters<typeof userStore.editMe>[0] = payload()) {
   const ok = await userStore.editMe(update);
   if (ok) fillForm();
   return ok;
@@ -244,15 +334,25 @@ function fillForm() {
     skills: [...(user.skills ?? [])],
     description: user.description ?? "",
     country: user.country ?? "",
+    city: user.city ?? "",
     telegram: user.telegram ?? "",
     behance: user.behance ?? "",
     git: user.git ?? "",
+    is_performer: !!user.is_performer,
+    work_format: user.work_format ?? "remote",
+    categories: [...(user.categories ?? [])],
   };
+  priceFrom.value = user.price_from ? String(user.price_from) : "";
 }
 
 onMounted(async () => {
   fillForm();
-  countries.value = (await getCountries()) ?? [];
+  const [list] = await Promise.all([
+    getCountries(),
+    categoryStore.getAllCategories(),
+    categoryStore.loadCities(),
+  ]);
+  countries.value = list ?? [];
 });
 </script>
 
@@ -291,6 +391,62 @@ onMounted(async () => {
           }
         }
       }
+    }
+  }
+}
+
+// Вкладка «Услуги».
+.performer_toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid rgba(131, 85, 250, 0.35);
+  border-radius: 12px;
+  background: rgba(131, 85, 250, 0.08);
+
+  span {
+    font-size: 13px;
+    line-height: 1.5;
+    color: $text-placeholder;
+  }
+}
+
+.warning {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(245, 180, 70, 0.12);
+  color: #f3c46b;
+  font-size: 13px;
+}
+
+.category_chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category_chip {
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: transparent;
+  color: $text-secondary;
+  font-size: 14px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+
+  &.active {
+    border-color: $primary;
+    background: rgba(131, 85, 250, 0.2);
+    color: $white;
+  }
+
+  @media (hover: hover) {
+    &:hover:not(.active) {
+      border-color: rgba(255, 255, 255, 0.3);
     }
   }
 }

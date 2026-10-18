@@ -18,8 +18,9 @@
         </div>
         <div class="order_actions">
             <p>{{ useOrderPrice(order.price_type, order.price) }}</p>
-            <UIButton type="success" style="min-width: 155px" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">Перейти в чат</UIButton>
-            <UIButton type="success" style="min-width: 155px" v-if="user_performer" @click="$emit('finishOrder', order)">Завершить заказ</UIButton>
+            <UIButton type="success" style="min-width: 155px" v-if="!user_performer" @click="navigateTo(`/chat/${order.performer}`)">{{ order.status === 'review' ? 'Проверить работу' : 'Перейти в чат' }}</UIButton>
+            <UIStatusBadge v-if="order.status === 'review'" tone="progress">На проверке</UIStatusBadge>
+            <UIButton type="success" style="min-width: 155px" v-else-if="user_performer" @click="$emit('finishOrder', order)">Сдать работу</UIButton>
         </div>
     </div>
 </template>

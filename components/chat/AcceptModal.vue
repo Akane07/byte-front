@@ -31,7 +31,7 @@
           ></IconsCalendar>
           <div class="text flex flex-col gap-1">
             <p>{{ useOrderDeadlines(order.deadlines, order.deadline_date) }}</p>
-            <span>Продолжительность проекта</span>
+            <span>{{ useDeadlineCaption(order.work_format) }}</span>
           </div>
         </div>
         <div class="flex items-center gap-3" v-if="order.for_experts">
@@ -39,7 +39,7 @@
           <div class="text flex flex-col gap-1">
             <p>Для экспертов</p>
             <span
-              >Я готов платить более высокую ставку опытным фрилансерам.</span
+              >Я готов платить более высокую ставку опытным исполнителям.</span
             >
           </div>
         </div>

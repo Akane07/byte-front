@@ -135,3 +135,58 @@ export function messageDayLabel(created: string | Date): string {
     year: date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined,
   });
 }
+
+/** «820 Б», «1,4 МБ». */
+export function formatFileSize(bytes: number | undefined): string {
+  if (!bytes && bytes !== 0) return "";
+  const units = ["Б", "КБ", "МБ", "ГБ"];
+  let value = bytes;
+  let unit = 0;
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024;
+    unit++;
+  }
+  const digits = unit === 0 || value >= 10 ? 0 : 1;
+  return `${value.toFixed(digits).replace(".", ",")} ${units[unit]}`;
+}
+
+export type TextPart = { text: string; href?: string };
+
+const LINK_RE = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/gi;
+
+/**
+ * Разбивает текст сообщения на куски и ссылки. Шаблон рисует ссылки
+ * тегом <a>, остальное — обычным текстом: v-html с пользовательским
+ * текстом открыл бы дорогу XSS.
+ */
+export function splitLinks(text: string): TextPart[] {
+  const parts: TextPart[] = [];
+  let last = 0;
+  for (const match of text.matchAll(LINK_RE)) {
+    let link = match[0];
+    // Знак препинания в конце — скорее часть предложения, чем ссылки.
+    const trailing = link.match(/[.,!?;:)»]+$/)?.[0] ?? "";
+    link = link.slice(0, link.length - trailing.length);
+    const start = match.index ?? 0;
+    if (start > last) parts.push({ text: text.slice(last, start) });
+    parts.push({ text: link, href: link.startsWith("http") ? link : `https://${link}` });
+    last = start + link.length;
+  }
+  if (last < text.length) parts.push({ text: text.slice(last) });
+  return parts;
+}
+
+/** «в сети», «был(а) в сети 5 минут назад» — без угадывания рода по имени. */
+export function presenceLabel(online: boolean, lastSeen?: string): string {
+  if (online) return "в сети";
+  if (!lastSeen) return "не в сети";
+  const date = new Date(lastSeen);
+  const minutes = Math.floor((Date.now() - date.getTime()) / 60_000);
+  if (minutes < 1) return "был(а) в сети только что";
+  if (minutes < 60) return `был(а) в сети ${minutes} ${plural(minutes, "минуту", "минуты", "минут")} назад`;
+  const day = messageDayLabel(date);
+  const time = parseMessageDate(date.toISOString());
+  return day === "Сегодня" || day === "Вчера"
+    ? `был(а) в сети ${day.toLowerCase()} в ${time}`
+    : `был(а) в сети ${day}`;
+}

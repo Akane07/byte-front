@@ -16,6 +16,12 @@
                     <div class="nav" :class="{ 'active': active === 'drafts' }" @click="active = 'drafts'">
                         <p>Черновики</p>
                     </div>
+                    <div class="nav" :class="{ 'active': active === 'reviews' }" @click="active = 'reviews'">
+                        <p>
+                            Оценить
+                            <span v-if="reviewStore.pending.length" class="badge">{{ reviewStore.pending.length }}</span>
+                        </p>
+                    </div>
                 </div>
             </div>
             <div v-if="active === 'orders'" class="orders">
@@ -78,18 +84,53 @@
                     <p>У вас нет черновиков</p>
                 </div>
             </div>
+            <!-- Завершённые заказы, по которым ещё можно оставить отзыв. -->
+            <div v-if="active === 'reviews'" class="orders">
+                <div class="orders_header">
+                    <div class="title">Оцените сотрудничество</div>
+                </div>
+                <div class="orders_list" v-if="reviewStore.pending.length">
+                    <div v-for="item in reviewStore.pending" :key="item.order.id" class="pending">
+                        <UIUserAvatar :src="makeURL(item.partner?.avatar)" :name="item.partner?.name" size="48px" />
+                        <div class="pending_info">
+                            <b>{{ item.order.title }}</b>
+                            <span>
+                                {{ item.role === 'performer' ? 'Исполнитель' : 'Заказчик' }}:
+                                {{ item.partner?.nickname || item.partner?.name }} ·
+                                отзыв можно оставить до {{ useUserCreated(item.deadline) }}
+                            </span>
+                        </div>
+                        <UIButton type="active" @click="reviewStore.open(item)">Оставить отзыв</UIButton>
+                    </div>
+                </div>
+                <div class="orders_list" v-else>
+                    <p>Все завершённые заказы оценены</p>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { makeURL } from '~/shared/utils/helpers';
 import { useOrderStore } from '~/store/orderStore';
+import { useReviewStore } from '~/store/reviewStore';
 import { useUserStore } from '~/store/userStore';
 
 const userStore = useUserStore();
 const orderStore = useOrderStore();
+const reviewStore = useReviewStore();
+const route = useRoute();
 
-const active = shallowRef<'orders' | 'responses' | 'drafts'>('orders');
+// ?tab=reviews — ссылка прямо на вкладку «Оценить».
+const active = shallowRef<'orders' | 'responses' | 'drafts' | 'reviews'>(
+    route.query.tab === 'reviews' ? 'reviews' : 'orders',
+);
+
+// Переход из меню на эту же страницу не пересоздаёт её — следим за адресом.
+watch(() => route.query.tab, (tab) => {
+    if (tab === 'reviews') active.value = 'reviews';
+});
 
 async function updateResponses() {
     await orderStore.getResponses();
@@ -102,11 +143,52 @@ async function updateOrders() {
 }
 
 onMounted(async () => {
-    await Promise.all([updateOrders(), updateResponses()]);
+    await Promise.all([updateOrders(), updateResponses(), reviewStore.loadPending()]);
 });
 </script>
 
 <style scoped lang="scss">
+.badge {
+    display: inline-block;
+    min-width: 20px;
+    margin-left: 6px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: #f5b942;
+    color: #1d1d22;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 20px;
+    text-align: center;
+}
+
+.pending {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    background: $bg-secondary;
+}
+
+.pending_info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+
+    b {
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    span {
+        font-size: 13px;
+        color: $text-placeholder;
+    }
+}
 
 
 .wrapper {

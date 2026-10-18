@@ -29,6 +29,9 @@
         class="flex items-center gap-2 sm:gap-3 relative select-none"
       >
         <!-- Гость смотрит заказы и профили без входа: в шапке — донаты и вход. -->
+        <NuxtLink to="/specialists" class="guest-link" aria-label="Исполнители">
+          <IconsPeople class="w-5" /><span>Исполнители</span>
+        </NuxtLink>
         <NuxtLink to="/donates" class="guest-link" aria-label="Донаты">
           <IconsBlocks class="w-5" /><span>Донаты</span>
         </NuxtLink>
@@ -47,8 +50,18 @@
         <NuxtLink to="/orders" aria-label="Заказы">
           <IconsHome class="cursor-pointer" />
         </NuxtLink>
-        <NuxtLink to="/chat" aria-label="Чаты">
+        <NuxtLink to="/specialists" aria-label="Найти исполнителя" title="Найти исполнителя">
+          <IconsPeople class="cursor-pointer" />
+        </NuxtLink>
+        <NuxtLink
+          to="/chat"
+          class="chat-link"
+          :aria-label="chatStore.totalUnread ? `Чаты, непрочитанных: ${chatStore.totalUnread}` : 'Чаты'"
+        >
           <IconsChat class="cursor-pointer" />
+          <span v-if="chatStore.totalUnread" class="unread">{{
+            chatStore.totalUnread > 99 ? "99+" : chatStore.totalUnread
+          }}</span>
         </NuxtLink>
         <div
           class="flex items-center gap-3 relative select-none cursor-pointer"
@@ -83,6 +96,10 @@
               <NuxtLink class="cursor-pointer link" to="/orders/my">
                 <IconsOrders class="w-5" />Мои заказы/отклики
               </NuxtLink>
+              <NuxtLink v-if="reviewStore.pending.length" class="cursor-pointer link" to="/orders/my?tab=reviews">
+                <span class="review-star" aria-hidden="true">★</span>Оценить сотрудничество
+                <span class="review-count">{{ reviewStore.pending.length }}</span>
+              </NuxtLink>
               <NuxtLink class="cursor-pointer link" to="/donates">
                 <IconsBlocks class="w-5" />Донаты
               </NuxtLink>
@@ -114,6 +131,8 @@
 
 <script setup lang="ts">
 import { makeURL } from "~/shared/utils/helpers";
+import { useChatStore } from "~/store/chatStore";
+import { useReviewStore } from "~/store/reviewStore";
 import { useUserStore } from "~/store/userStore";
 
 defineProps<{
@@ -123,6 +142,8 @@ defineProps<{
 }>();
 
 const userStore = useUserStore();
+const chatStore = useChatStore();
+const reviewStore = useReviewStore();
 
 const route = useRoute();
 
@@ -204,6 +225,50 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+.review-star {
+  display: inline-flex;
+  justify-content: center;
+  width: 20px;
+  color: #f5b942;
+}
+
+.review-count {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #f5b942;
+  color: #1d1d22;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+
+// Счётчик непрочитанных на иконке чата.
+.chat-link {
+  position: relative;
+  display: flex;
+
+  .unread {
+    position: absolute;
+    top: -6px;
+    right: -9px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border: 2px solid #1d1d22;
+    border-radius: 9px;
+    background: $primary;
+    color: $white;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 14px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+}
+
 // --- Шапка главной (макет) ---
 // Двойной класс — чтобы перекрыть общие стили .nav и .byte ниже.
 .nav.nav--landing {

@@ -13,6 +13,7 @@
 
       <div class="left_part" v-if="order">
         <div class="main_info">
+          <OrdersPlaceBadges :format="order.work_format" :city="order.city" :urgent="order.urgent" />
           <p>{{ order?.title }}</p>
           <div class="stats_info">
             <UIUserAvatar
@@ -42,7 +43,7 @@
               <p>
                 {{ useOrderDeadlines(order.deadlines, order.deadline_date) }}
               </p>
-              <span>Продолжительность проекта</span>
+              <span>{{ useDeadlineCaption(order.work_format) }}</span>
             </div>
           </div>
           <div class="block" v-if="order.for_experts">
@@ -52,7 +53,7 @@
             <div class="text">
               <p>Для экспертов</p>
               <span
-                >Я готов платить более высокую ставку опытным фрилансерам.</span
+                >Я готов платить более высокую ставку опытным исполнителям.</span
               >
             </div>
           </div>
@@ -83,8 +84,8 @@
             <span>{{ user.last_seen ? useOrderCreated(user.last_seen) : "давно" }}</span>
           </div>
           <div class="block">
-            <p>Страна</p>
-            <span>{{ user.country || "не указана" }}</span>
+            <p>{{ user.city ? "Город" : "Страна" }}</p>
+            <span>{{ user.city || user.country || "не указана" }}</span>
           </div>
           <div class="block">
             <span>Участник с {{ useUserCreated(user.created_at) }}</span>

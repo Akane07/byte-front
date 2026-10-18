@@ -2,6 +2,7 @@
   <div class="order_card">
     <div class="order_info">
       <div class="text_info">
+        <OrdersPlaceBadges :format="order.work_format" :city="order.city" :urgent="order.urgent" />
         <p>{{ order.title }}</p>
         <span>{{ useSliceDescription(order.description) }}</span>
       </div>
@@ -45,6 +46,7 @@
       >
       <UIStatusBadge v-else-if="!order.is_active">В архиве</UIStatusBadge>
       <UIStatusBadge v-else-if="order.status === 'completed'" tone="success">Выполнен</UIStatusBadge>
+      <UIStatusBadge v-else-if="order.status === 'review'" tone="progress">На проверке</UIStatusBadge>
       <UIStatusBadge v-else-if="order.performer" tone="progress">Есть исполнитель</UIStatusBadge>
       <UIStatusBadge v-else tone="active">Активен</UIStatusBadge>
     </div>

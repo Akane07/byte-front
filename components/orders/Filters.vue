@@ -6,9 +6,14 @@
       <IconsArrow class="toggle" :class="{ active: open }" />
     </p>
     <div class="list flex flex-col gap-5 h-full">
-      <UICheckbox v-for="filter in filters" :key="filter.id" v-model="filter.checked">
-        {{ filter.title }}
-      </UICheckbox>
+      <!-- Категории сгруппированы по тому, где выполняется работа; во вкладке
+           «Удалённо» или «На месте» видны только подходящие ей. -->
+      <div v-for="group in groups" :key="group.title" class="group flex flex-col gap-4">
+        <span class="group-title">{{ group.title }}</span>
+        <UICheckbox v-for="filter in group.items" :key="filter.id" v-model="filter.checked">
+          {{ filter.title }}
+        </UICheckbox>
+      </div>
     </div>
     <div class="actions flex flex-col items-center gap-3 justify-self-end mt-3">
       <UIButton class="w-full max-w-[250px]" type="success" @click="saveFilters">Сохранить</UIButton>
@@ -21,10 +26,23 @@
 </template>
 
 <script setup lang="ts">
+import type { CategoryFormat } from "~/shared/api/category-api";
+import type { WorkFormat } from "~/shared/api/order-api";
 import type { Filter } from "~/shared/types";
 import { useCategory } from "~/store/categoryStore";
 
+const GROUPS: { format: CategoryFormat; title: string }[] = [
+  { format: "remote", title: "Работа в интернете" },
+  { format: "any", title: "Онлайн или вживую" },
+  { format: "onsite", title: "Услуги на месте" },
+];
+
 const STORAGE_KEY = "byte-filters";
+
+const props = defineProps<{
+  /** Вкладка ленты: показываем только подходящие ей категории. */
+  format?: WorkFormat;
+}>();
 
 const emit = defineEmits<{
   (e: "change"): void;
@@ -38,6 +56,16 @@ const filters = defineModel<Filter[]>("filters", { default: () => [] });
 /** На планшетах и телефонах список категорий сворачивается над лентой. */
 const open = shallowRef(false);
 const checkedCount = computed(() => filters.value.filter((f) => f.checked).length);
+
+const groups = computed(() => {
+  const visible = new Set(category.categoriesFor(props.format ?? null).map((c) => c.id));
+  return GROUPS.map((group) => ({
+    title: group.title,
+    items: filters.value.filter(
+      (f) => visible.has(f.id) && category.getCategoryById(f.id)?.format === group.format,
+    ),
+  })).filter((group) => group.items.length);
+});
 /** В хранилище есть сохранённый фильтр — лента сейчас отфильтрована. */
 const hasSaved = shallowRef(false);
 
@@ -88,6 +116,18 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+.group-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.group + .group {
+  padding-top: 4px;
+}
+
 .reset {
   padding: 4px 8px;
   border: none;
@@ -159,10 +199,14 @@ onMounted(async () => {
       display: block;
     }
 
-    .list {
+    .group {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 16px;
+    }
+
+    .group-title {
+      grid-column: 1 / -1;
     }
 
     &.collapsed {

@@ -7,6 +7,7 @@ const PUBLIC_PAGES: RegExp[] = [
   /^\/$/,
   /^\/donates$/,
   /^\/orders$/,
+  /^\/specialists$/,
   // /orders/<id>, но не /orders/create, /orders/my, /orders/suggest
   /^\/orders\/(?!create$|my$|suggest$)[^/]+$/,
   // /profile/<id>, но не /profile/my и /profile/new-project
