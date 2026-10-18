@@ -96,6 +96,10 @@
               <NuxtLink class="cursor-pointer link" to="/orders/my">
                 <IconsOrders class="w-5" />Мои заказы/отклики
               </NuxtLink>
+              <NuxtLink v-if="reviewStore.pending.length" class="cursor-pointer link" to="/orders/my?tab=reviews">
+                <span class="review-star" aria-hidden="true">★</span>Оценить сотрудничество
+                <span class="review-count">{{ reviewStore.pending.length }}</span>
+              </NuxtLink>
               <NuxtLink class="cursor-pointer link" to="/donates">
                 <IconsBlocks class="w-5" />Донаты
               </NuxtLink>
@@ -128,6 +132,7 @@
 <script setup lang="ts">
 import { makeURL } from "~/shared/utils/helpers";
 import { useChatStore } from "~/store/chatStore";
+import { useReviewStore } from "~/store/reviewStore";
 import { useUserStore } from "~/store/userStore";
 
 defineProps<{
@@ -138,6 +143,7 @@ defineProps<{
 
 const userStore = useUserStore();
 const chatStore = useChatStore();
+const reviewStore = useReviewStore();
 
 const route = useRoute();
 
@@ -219,6 +225,26 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+.review-star {
+  display: inline-flex;
+  justify-content: center;
+  width: 20px;
+  color: #f5b942;
+}
+
+.review-count {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #f5b942;
+  color: #1d1d22;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+
 // Счётчик непрочитанных на иконке чата.
 .chat-link {
   position: relative;

@@ -13,9 +13,13 @@ export interface User {
   country: string;
   last_seen?: string;
   created_at: string;
+  /** Средняя оценка как исполнителя, 0 — отзывов нет. */
   rating: number;
   orders_count: number;
+  /** Отзывов как об исполнителе. */
   reviews_count: number;
+  customer_rating?: number;
+  customer_reviews_count?: number;
   speciality: string;
   skills: string[];
   telegram: string;

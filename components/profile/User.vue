@@ -70,29 +70,31 @@
             </UIButton>
           </template>
           <div class="flex flex-col gap-4">
-            <div
-              v-if="!isOwnProfile"
-              class="flex flex-col gap-3 text-sm"
-            >
-              <div class="flex items-center gap-2 font-medium font-sm">
-                <img
-                  src="~/assets/images/star.png"
-                  alt="star"
-                  width="20px"
-                  height="20px"
-                />
-                {{ user.rating }}
+            <!-- Рейтинги из отзывов: отдельно как исполнителя и как заказчика. -->
+            <div class="ratings">
+              <div class="rating">
+                <span>Исполнитель</span>
+                <div v-if="user.reviews_count">
+                  <ReviewsStars :value="user.rating" />
+                  <b>{{ formatRating(user.rating) }}</b>
+                  <em>· {{ user.reviews_count }}</em>
+                </div>
+                <em v-else>нет отзывов</em>
               </div>
-              <p>Оценка исполнителя</p>
+              <div class="rating">
+                <span>Заказчик</span>
+                <div v-if="user.customer_reviews_count">
+                  <ReviewsStars :value="user.customer_rating ?? 0" />
+                  <b>{{ formatRating(user.customer_rating ?? 0) }}</b>
+                  <em>· {{ user.customer_reviews_count }}</em>
+                </div>
+                <em v-else>нет отзывов</em>
+              </div>
             </div>
             <div class="flex flex-col gap-2">
               <div class="flex items-center justify-between gap-2">
                 <span class="stat">{{ user.orders_count }}</span>
                 <p>Опубликовано заказов</p>
-              </div>
-              <div class="flex items-center justify-between gap-2">
-                <span class="stat">{{ user.reviews_count }}</span>
-                <p>Получено отзывов</p>
               </div>
             </div>
             <div class="flex flex-col gap-3">
@@ -144,11 +146,7 @@
           ></ProfilePortfolioBlock>
         </div>
       </div>
-      <div class="feedbacks" v-if="feedbacks.length">
-        <div class="flex justify-between items-center">
-          <p>Отзывы</p>
-        </div>
-      </div>
+      <ReviewsSection :user-id="user.id" :is-own="isOwnProfile" />
     </DevCard>
   </div>
 </template>
@@ -174,7 +172,9 @@ const chatStore = useChatStore();
 
 const user = ref<User | null>(null);
 const otherPortfolios = ref<Portfolio[]>([]);
-const feedbacks = ref([]);
+
+/** 4.7 → «4,7». */
+const formatRating = (value: number) => value.toFixed(1).replace(".", ",");
 
 const serviceCategories = computed(() =>
   (user.value?.categories ?? []).map((id) => categoryStore.getCategoryTitleById(id)).filter(Boolean),
@@ -225,6 +225,40 @@ onMounted(async () => {
       gap: 32px;
       margin-top: 16px;
     }
+  }
+}
+
+.ratings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.rating {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  > span {
+    font-size: 12px;
+    color: $text-placeholder;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  b {
+    font-weight: 700;
+    color: $text-main;
+  }
+
+  em {
+    font-style: normal;
+    color: $text-placeholder;
   }
 }
 

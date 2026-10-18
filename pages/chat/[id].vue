@@ -38,6 +38,7 @@
     </div>
 
     <ChatDealBar :orders="ordersBetweenUsers" :me-id="me" @submit-work="openSubmitWork" />
+    <ReviewsReviewPrompt :items="reviewStore.pendingWith(otherId)" />
 
     <div class="messages-area">
       <div ref="messagesRef" class="messages" @scroll.passive="onScroll" @click="selectedId = null">
@@ -164,6 +165,7 @@ import { copyText, makeURL, messageDayLabel, presenceLabel, scrollToBottom } fro
 import { useChatStore } from "~/store/chatStore";
 import { useNotifications } from "~/store/notiStore";
 import { useOrderStore } from "~/store/orderStore";
+import { useReviewStore } from "~/store/reviewStore";
 import { useUserStore } from "~/store/userStore";
 
 /** Сообщения одного автора ближе этого интервала идут плотной группой. */
@@ -177,6 +179,7 @@ const route = useRoute();
 const userStore = useUserStore();
 const orderStore = useOrderStore();
 const chatStore = useChatStore();
+const reviewStore = useReviewStore();
 const notifications = useNotifications();
 const chat = useChatSocket();
 
@@ -672,6 +675,8 @@ chat.on("orderUpdated", (order) => {
   if (known !== -1) ordersInChat.value.splice(known, 1, order);
   const mine = orderStore.myOrders.find((o) => o.id === order.id);
   if (mine) Object.assign(mine, order);
+  // Заказ завершён — у обоих появляется напоминание оставить отзыв.
+  if (order.status === "completed") reviewStore.loadPending();
   refreshOrdersBetweenUsers();
 });
 

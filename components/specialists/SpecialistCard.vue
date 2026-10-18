@@ -9,7 +9,9 @@
         <span class="speciality">{{ user.speciality || "Исполнитель" }}</span>
         <span class="meta">
           <template v-if="user.reviews_count">
-            ★ {{ user.rating }} · {{ user.reviews_count }} {{ plural(user.reviews_count, "отзыв", "отзыва", "отзывов") }}
+            <ReviewsStars :value="user.rating" :size="13" />
+            <b>{{ user.rating.toFixed(1).replace(".", ",") }}</b>
+            · {{ user.reviews_count }} {{ plural(user.reviews_count, "отзыв", "отзыва", "отзывов") }}
           </template>
           <template v-else>Пока без отзывов</template>
         </span>
@@ -132,8 +134,15 @@ function write() {
   }
 
   .meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     font-size: 12px;
     color: rgba(255, 255, 255, 0.45);
+
+    b {
+      color: $text-main;
+    }
   }
 }
 
