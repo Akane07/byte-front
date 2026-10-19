@@ -1,5 +1,6 @@
 import { api, call } from ".";
 import type { DateRange, Deadline, Price, PriceType } from "../types";
+import type { User } from "./user-api";
 
 /** active — ищет исполнителя, pending — в работе, review — работа на проверке у заказчика. */
 export type OrderStatus = "active" | "pending" | "review" | "completed" | "cancelled";
@@ -173,4 +174,36 @@ export function deleteResponse(responseId: string, orderId: string) {
 
 export function getOrdersBetweenUsers(userId: string, otherId: string) {
   return call(api.get<Order[]>(`/chat/between/${userId}/and/${otherId}`));
+}
+
+type Factor = "Q" | "R" | "E" | "A" | "L";
+
+/** Разбор места в подборке (docs/ranking.md в byte-back). */
+export interface RecommendationRanking {
+  score: number;
+  position: number;
+  /** Место выдано по квоте для новичков. */
+  quotaSlot: boolean;
+  factors: Record<Factor, number> & { Eadv: number };
+  /** Вклад каждого фактора в score; у L со знаком минус. */
+  contributions: Record<Factor, number>;
+  completed: number;
+  inProgress: number;
+}
+
+export interface Recommendation extends User {
+  isNewcomer: boolean;
+  /** Уже откликался на этот заказ. */
+  alreadyResponded: boolean;
+  ranking: RecommendationRanking;
+}
+
+/** Подходящие исполнители для своего активного заказа. */
+export function getRecommendations(orderId: string) {
+  return call(
+    api.get<Recommendation[]>(`/order/${orderId}/recommendations`, {
+      params: { explain: 1 },
+      silent: true,
+    }),
+  );
 }

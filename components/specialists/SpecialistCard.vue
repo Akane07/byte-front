@@ -22,6 +22,7 @@
     <div class="place">
       <span class="format" :class="user.work_format">{{ usePerformerFormat(user.work_format) }}</span>
       <span v-if="user.city">{{ user.city }}</span>
+      <slot name="badges" />
     </div>
 
     <p v-if="user.description" class="description">{{ useSliceDescription(user.description, 140) }}</p>
@@ -31,7 +32,7 @@
     </div>
 
     <div class="actions" @click.stop>
-      <button type="button" class="primary" @click="suggest">Предложить заказ</button>
+      <button type="button" class="primary" :disabled="suggesting" @click="suggest">Предложить заказ</button>
       <button type="button" @click="write">Написать</button>
     </div>
   </article>
@@ -46,10 +47,13 @@ import { useGuestStore } from "~/store/guestStore";
 const props = defineProps<{
   user: User;
   online?: boolean;
+  /** Заказ, который предлагаем, — тогда без выбора заказа на /orders/suggest. */
+  orderId?: string;
 }>();
 
 const categoryStore = useCategory();
 const guest = useGuestStore();
+const chat = useChatSocket();
 
 /** Сначала категории услуг, потом навыки — не больше пяти меток. */
 const tags = computed(() =>
@@ -61,8 +65,17 @@ const tags = computed(() =>
     .slice(0, 5),
 );
 
-function suggest() {
-  if (guest.requireAuth("предложить заказ")) navigateTo(`/orders/suggest?id=${props.user.id}`);
+// Пока идёт переход в чат, кнопка заблокирована: двойной клик отправил бы две карточки заказа.
+const suggesting = shallowRef(false);
+
+async function suggest() {
+  if (!guest.requireAuth("предложить заказ")) return;
+  if (!props.orderId) return navigateTo(`/orders/suggest?id=${props.user.id}`);
+  if (suggesting.value) return;
+  suggesting.value = true;
+  chat.suggestOrder(props.user.id, props.orderId);
+  await navigateTo(`/chat/${props.user.id}`);
+  suggesting.value = false;
 }
 
 function write() {
@@ -230,9 +243,14 @@ function write() {
         background: rgba(255, 255, 255, 0.05);
       }
 
-      &.primary:hover {
+      &.primary:hover:not(:disabled) {
         background: $primary-hover;
       }
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: default;
     }
   }
 }
