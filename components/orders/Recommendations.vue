@@ -170,6 +170,17 @@ onMounted(load);
   summary {
     cursor: pointer;
     width: fit-content;
+    border-radius: 4px;
+
+    // рамка фокуса — только для клавиатуры, не после клика мышью
+    &:focus:not(:focus-visible) {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $primary;
+      outline-offset: 2px;
+    }
   }
 
   ul {
