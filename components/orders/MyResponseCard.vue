@@ -136,7 +136,8 @@ async function handleDelete() {
 
             span {
                 cursor: pointer;
-                height: 100%;
+                // не height: 100% — при переносе ряда вторая строка вылезала за карточку
+                align-self: stretch;
                 display: flex;
                 align-items: center;
 

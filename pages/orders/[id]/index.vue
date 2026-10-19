@@ -113,6 +113,7 @@
                 </template>
             </div>
         </div>
+        <OrdersRecommendations v-if="showRecommendations && order" :order="order" />
     </div>
 
     <UIModal v-if="modal" title="Подтверждение" @close="modal = false">
@@ -161,6 +162,10 @@ const modal = shallowRef(false);
 const busy = shallowRef(false);
 
 const isOwner = computed(() => !!order.value && order.value.user_id === userStore.user?.id);
+// Подбор — только автору опубликованного заказа, который ещё ищет исполнителя.
+const showRecommendations = computed(
+    () => isOwner.value && order.value?.status === 'active' && order.value.is_active && !order.value.draft,
+);
 
 async function handlePostResponse() {
     if (!order.value) return;
@@ -258,6 +263,7 @@ onMounted(async () => {
 
 .wrapper {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 0 30px;

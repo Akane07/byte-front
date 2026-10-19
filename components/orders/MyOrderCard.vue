@@ -3,7 +3,9 @@
     <div class="order_info">
       <div class="text_info">
         <OrdersPlaceBadges :format="order.work_format" :city="order.city" :urgent="order.urgent" />
-        <p>{{ order.title }}</p>
+        <!-- На странице заказа автор видит подборку исполнителей. -->
+        <p v-if="plain">{{ order.title }}</p>
+        <NuxtLink v-else :to="`/orders/${order.id}`" class="title">{{ order.title }}</NuxtLink>
         <span>{{ useSliceDescription(order.description) }}</span>
       </div>
       <div class="tags">
@@ -147,7 +149,8 @@ async function handleDelete() {
       border-bottom: 1px solid $border-color;
       cursor: pointer;
 
-      p {
+      p,
+      .title {
         color: $select-enabled;
         font-weight: 600;
         font-size: 18px;
@@ -174,7 +177,9 @@ async function handleDelete() {
       span {
         cursor: pointer;
         padding-right: 12px;
-        height: 100%;
+        // не height: 100% — при переносе ряда процент считался от высоты всего
+        // ряда, и вторая строка («Удалить заказ») вылезала за карточку
+        align-self: stretch;
         display: flex;
         align-items: center;
 
@@ -224,8 +229,13 @@ async function handleDelete() {
   &:hover {
     .order_info {
       .text_info {
-        p {
+        p,
+        .title {
           color: $white;
+        }
+
+        .title:hover {
+          text-decoration: underline;
         }
       }
     }
