@@ -147,6 +147,23 @@ onMounted(async () => {
   width: 25%;
   position: sticky;
   top: 80px;
+  // Панель не выше экрана: при всех категориях прокручивается только список,
+  // а «Сохранить» остаётся видна — раньше до неё листали всю страницу.
+  max-height: calc(100vh - 96px);
+
+  .list {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+
+  .actions {
+    flex-shrink: 0;
+  }
 
   p {
     font-weight: 500;
@@ -186,6 +203,11 @@ onMounted(async () => {
   @include tablet {
     width: 100%;
     position: static;
+    max-height: none;
+
+    .list {
+      overflow: visible;
+    }
     padding: 16px;
     gap: 16px;
 
