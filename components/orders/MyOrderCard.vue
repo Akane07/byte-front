@@ -31,8 +31,16 @@
         </button>
         <button
           class="bordered delete"
+          @click.stop="cancelModal = true"
+          v-if="!plain && canCancel"
+        >
+          Отменить заказ
+        </button>
+        <!-- Заказ, у которого был исполнитель, остаётся в истории второй стороны. -->
+        <button
+          class="bordered delete"
           @click.stop="modal = true"
-          v-if="!plain"
+          v-if="!plain && !order.performer"
         >
           Удалить заказ
         </button>
@@ -46,6 +54,7 @@
         @click="$emit('suggest', order.id)"
         >Предложить</UIButton
       >
+      <UIStatusBadge v-else-if="order.status === 'cancelled'">Отменён</UIStatusBadge>
       <UIStatusBadge v-else-if="!order.is_active">В архиве</UIStatusBadge>
       <UIStatusBadge v-else-if="order.status === 'completed'" tone="success">Выполнен</UIStatusBadge>
       <UIStatusBadge v-else-if="order.status === 'review'" tone="progress">На проверке</UIStatusBadge>
@@ -70,10 +79,23 @@
       >
     </template>
   </UIModal>
+
+  <UIModal v-if="cancelModal" title="Отменить заказ?" @close="cancelModal = false">
+    <template #body>
+      <p class="confirm">
+        Заказ уйдёт из ленты, откликнуться на него будет нельзя. Вернуть
+        отменённый заказ нельзя — только создать новый.
+      </p>
+    </template>
+    <template #buttons>
+      <UIButton @click.stop="cancelModal = false">Назад</UIButton>
+      <UIButton type="active" @click.stop="handleCancel">Отменить заказ</UIButton>
+    </template>
+  </UIModal>
 </template>
 
 <script setup lang="ts">
-import { deleteOrder, type Order } from "~/shared/api/order-api";
+import { cancelOrder, deleteOrder, type Order } from "~/shared/api/order-api";
 import { makeURL } from "~/shared/utils/helpers";
 import { useNotifications } from "~/store/notiStore";
 import { useUserStore } from "~/store/userStore";
@@ -92,6 +114,10 @@ const userStore = useUserStore();
 const notifications = useNotifications();
 
 const modal = shallowRef(false);
+const cancelModal = shallowRef(false);
+
+/** Сам автор отменяет заказ без исполнителя; с исполнителем — через чат. */
+const canCancel = computed(() => props.order.status === "active" && !props.order.draft);
 
 async function handleDelete() {
   const res = await deleteOrder(props.order.id);
@@ -100,6 +126,16 @@ async function handleDelete() {
   if (res) {
     emit("updateOrders");
     notifications.setNotification("Заказ успешно удален");
+  }
+}
+
+async function handleCancel() {
+  const res = await cancelOrder(props.order.id);
+  cancelModal.value = false;
+
+  if (res) {
+    emit("updateOrders");
+    notifications.setNotification("Заказ отменён");
   }
 }
 </script>

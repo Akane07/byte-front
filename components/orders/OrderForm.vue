@@ -323,7 +323,7 @@
       <div class="actions">
         <UIButton class="next" @click="prevStep">Назад</UIButton>
         <div class="right">
-          <button class="draft" :disabled="saving" @click="saveAsDraft">
+          <button v-if="canDraft" class="draft" :disabled="saving" @click="saveAsDraft">
             Сохранить как черновик
           </button>
           <UIButton class="next" type="active" :disabled="saving" @click="nextStep">
@@ -380,6 +380,8 @@ const dateModal = shallowRef(false);
 const saving = shallowRef(false);
 /** Редактируемый заказ уже опубликован (а не черновик). */
 const isPublished = shallowRef(false);
+/** В черновик возвращается только заказ, который ищет исполнителя. */
+const canDraft = shallowRef(true);
 
 const form = ref({
   title: "",
@@ -600,6 +602,7 @@ onMounted(async () => {
   }
 
   isPublished.value = !order.draft;
+  canDraft.value = order.status === "active";
   form.value = {
     title: order.title,
     description: order.description ?? "",

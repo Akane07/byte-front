@@ -17,6 +17,14 @@
       >
         Сдать работу
       </button>
+      <button
+        v-if="!cancelRequested.includes(order.id)"
+        type="button"
+        class="deal-cancel"
+        @click="$emit('cancelDeal', order)"
+      >
+        Отменить
+      </button>
     </div>
     <button v-if="orders.length > LIMIT" type="button" class="more" @click="expanded = !expanded">
       {{ expanded ? "Свернуть" : `Ещё ${orders.length - LIMIT}` }}
@@ -32,10 +40,13 @@ const LIMIT = 2;
 const props = defineProps<{
   orders: Order[];
   meId?: string;
+  /** Заказы, по которым уже висит предложение отмены. */
+  cancelRequested: string[];
 }>();
 
 defineEmits<{
   (e: "submitWork", order: Order): void;
+  (e: "cancelDeal", order: Order): void;
 }>();
 
 const expanded = shallowRef(false);
@@ -46,6 +57,7 @@ function roleLabel(order: Order) {
 }
 
 function statusLabel(order: Order) {
+  if (props.cancelRequested.includes(order.id)) return "предложена отмена";
   const mineToCheck = order.status === "review" && order.user_id === props.meId;
   if (mineToCheck) return "ждёт вашей проверки";
   return order.status === "review" ? "на проверке" : "в работе";
@@ -139,6 +151,26 @@ function statusLabel(order: Order) {
   @media (hover: hover) {
     &:hover {
       filter: brightness(1.1);
+    }
+  }
+}
+
+// Отмена — второстепенное действие: без заливки, чтобы не спорить с «Сдать работу».
+.deal-cancel {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 105, 105, 0.35);
+  border-radius: 8px;
+  background: transparent;
+  color: #ff8a8a;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  @media (hover: hover) {
+    &:hover {
+      background: rgba(255, 105, 105, 0.1);
     }
   }
 }
