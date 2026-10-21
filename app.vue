@@ -2,10 +2,12 @@
   <div>
     <NuxtPage />
   </div>
-  <Notifications />
   <GuestPrompt />
+  <EmailVerifyPrompt />
   <!-- Окно отзыва открывается из чата, «Моих заказов» и профиля. -->
   <ReviewsReviewModal />
+  <!-- Последним: ошибки запросов из окон (неверный код, 429) — поверх окна. -->
+  <Notifications />
 </template>
 
 <script setup lang="ts">

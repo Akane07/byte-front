@@ -45,6 +45,9 @@ api.interceptors.request.use((config) => {
 
 const NOT_API_CODE = "ERR_NOT_API";
 
+/** Код в ответе бэкенда (403): почта не подтверждена — открыть окно подтверждения. */
+export const EMAIL_NOT_VERIFIED = "EMAIL_NOT_VERIFIED";
+
 /**
  * API всегда отвечает JSON. HTML с кодом 200 значит, что по адресу бэкенда
  * отвечает что-то другое — например, сам Nuxt, если он занял порт API.
