@@ -1,8 +1,9 @@
 import { io, type Socket } from "socket.io-client";
-import { getToken } from "~/shared/api";
+import { EMAIL_NOT_VERIFIED, getToken } from "~/shared/api";
 import type { Order } from "~/shared/api/order-api";
 import type { Message } from "~/shared/types";
 import { useNotifications } from "~/store/notiStore";
+import { useVerifyStore } from "~/store/verifyStore";
 
 interface ServerEvents {
   receiveMessage: (message: Message) => void;
@@ -15,7 +16,7 @@ interface ServerEvents {
   typing: (payload: { userId: string }) => void;
   presence: (payload: { userId: string; online: boolean; lastSeen?: string }) => void;
   orderUpdated: (order: Order) => void;
-  exception: (payload: { message: string | string[]; clientId?: string }) => void;
+  exception: (payload: { message: string | string[]; code?: string; clientId?: string }) => void;
 }
 
 /** Данные нового сообщения. Отправителя сервер берёт из токена. */
@@ -70,8 +71,12 @@ function getSocket(origin: string): ChatSocket {
       // Функция, а не значение: токен читается заново при каждом переподключении.
       auth: (cb) => cb({ token: getToken() }),
     });
-    socket.on("exception", ({ message }) => {
-      useNotifications().setNotification(Array.isArray(message) ? message.join(". ") : message);
+    socket.on("exception", ({ message, code }) => {
+      const text = Array.isArray(message) ? message.join(". ") : message;
+      // Принять предложение в чате — событие сокета, а не запрос к API:
+      // окно подтверждения почты открываем и отсюда, как в plugins/api.ts.
+      if (code === EMAIL_NOT_VERIFIED) useVerifyStore().open(text);
+      else useNotifications().setNotification(text);
     });
   }
   if (socket.disconnected && getToken()) {

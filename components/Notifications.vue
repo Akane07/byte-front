@@ -18,7 +18,9 @@ const notiStore = useNotifications();
   position: fixed;
   top: 40px;
   right: -100%;
-  z-index: 10000;
+  // Как у окон (GuestPrompt, EmailVerifyPrompt): уведомление идёт в app.vue
+  // после них и при равном z-index оказывается сверху.
+  z-index: 2147483647;
   padding: 2px;
   border-radius: 6px;
   background: $bg-gradient;
