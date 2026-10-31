@@ -11,6 +11,7 @@ const NOTIFY_KEY = "byte-chat-notify";
 /** Текст последнего сообщения для списка диалогов — как его формирует бэкенд. */
 function previewText(msg: Message): string {
   if (msg.is_delivery) return "Работа сдана";
+  if (msg.is_cancel) return "Предложение отменить заказ";
   if (msg.is_suggest) return "Предложение заказа";
   if (msg.responseId) return "Отклик на заказ";
   if (msg.mediaType === "video") return "Видео";

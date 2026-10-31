@@ -17,6 +17,9 @@ export interface ChatActions {
   jumpTo(messageId: string): void;
   acceptDelivery(msg: Message): void;
   rejectDelivery(msg: Message): void;
+  acceptCancel(msg: Message): void;
+  rejectCancel(msg: Message): void;
+  forceCancel(msg: Message): void;
 }
 
 export const CHAT_ACTIONS: InjectionKey<ChatActions> = Symbol("chat-actions");

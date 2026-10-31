@@ -37,7 +37,13 @@
       </div>
     </div>
 
-    <ChatDealBar :orders="ordersBetweenUsers" :me-id="me" @submit-work="openSubmitWork" />
+    <ChatDealBar
+      :orders="ordersBetweenUsers"
+      :me-id="me"
+      :cancel-requested="cancelRequested"
+      @submit-work="openSubmitWork"
+      @cancel-deal="openCancelDeal"
+    />
     <ReviewsReviewPrompt :items="reviewStore.pendingWith(otherId)" />
 
     <div class="messages-area">
@@ -145,6 +151,22 @@
     <template #buttons>
       <UIButton @click.stop="submitOrder = null">Отмена</UIButton>
       <UIButton type="active" @click.stop="submitWork">Отправить на проверку</UIButton>
+    </template>
+  </UIModal>
+
+  <UIModal v-if="cancelOrder" title="Отменить заказ" @close="cancelOrder = null">
+    <template #body>
+      <div class="submit-work">
+        <p>
+          {{ partnerName }} получит предложение отменить заказ «{{ cancelOrder.title }}». Заказ отменится, когда
+          {{ partnerName }} согласится.
+        </p>
+        <UITextarea v-model="cancelText" placeholder="Причина — необязательно" maxlength="4000" />
+      </div>
+    </template>
+    <template #buttons>
+      <UIButton @click.stop="cancelOrder = null">Назад</UIButton>
+      <UIButton type="active" @click.stop="proposeCancel">Предложить отмену</UIButton>
     </template>
   </UIModal>
 </template>
@@ -553,6 +575,25 @@ provide(CHAT_ACTIONS, {
     notifications.setNotification("Работа возвращена. Напишите исполнителю, что нужно доработать");
     composerRef.value?.focus();
   },
+  acceptCancel(msg) {
+    confirm.value = {
+      title: "Отменить заказ?",
+      text: "Заказ будет отменён для обеих сторон. Вернуть его в работу будет нельзя.",
+      action: "Отменить заказ",
+      run: () => chat.acceptMessage(msg.id),
+    };
+  },
+  rejectCancel(msg) {
+    chat.rejectMessage(msg.id);
+  },
+  forceCancel(msg) {
+    confirm.value = {
+      title: "Отменить без согласия?",
+      text: "Вторая сторона не ответила на предложение. Заказ будет отменён, обоим придёт сообщение с причиной.",
+      action: "Отменить заказ",
+      run: () => chat.forceCancel(msg.id),
+    };
+  },
 });
 
 // --- Сдача работы ---
@@ -568,6 +609,28 @@ function openSubmitWork(order: Order) {
 function submitWork() {
   if (submitOrder.value) chat.finishOrder(submitOrder.value.id, submitText.value.trim() || undefined);
   submitOrder.value = null;
+}
+
+// --- Отмена заказа в работе: предложение второй стороне ---
+
+const cancelOrder = ref<Order | null>(null);
+const cancelText = shallowRef("");
+
+/** Заказы с предложением отмены без ответа — второе не отправить. */
+const cancelRequested = computed(() =>
+  messages.value
+    .filter((m) => m.is_cancel && m.orderId && m.status !== "accepted" && m.status !== "rejected")
+    .map((m) => m.orderId!),
+);
+
+function openCancelDeal(order: Order) {
+  cancelText.value = "";
+  cancelOrder.value = order;
+}
+
+function proposeCancel() {
+  if (cancelOrder.value) chat.proposeCancel(cancelOrder.value.id, cancelText.value.trim() || undefined);
+  cancelOrder.value = null;
 }
 
 // --- Принятие предложений и откликов ---

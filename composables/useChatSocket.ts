@@ -47,6 +47,8 @@ interface ClientEvents {
   ) => void;
   postResponse: (payload: { orderId: string; responseId: string }) => void;
   finishOrder: (payload: { orderId: string; text?: string }) => void;
+  proposeCancel: (payload: { orderId: string; text?: string }) => void;
+  forceCancel: (payload: { messageId: string }) => void;
 }
 
 type ChatSocket = Socket<ServerEvents, ClientEvents>;
@@ -143,5 +145,7 @@ export function useChatSocket() {
     postResponse: (orderId: string, responseId: string) =>
       s.emit("postResponse", { orderId, responseId }),
     finishOrder: (orderId: string, text?: string) => s.emit("finishOrder", { orderId, text }),
+    proposeCancel: (orderId: string, text?: string) => s.emit("proposeCancel", { orderId, text }),
+    forceCancel: (messageId: string) => s.emit("forceCancel", { messageId }),
   };
 }

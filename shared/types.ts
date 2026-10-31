@@ -47,6 +47,11 @@ export interface Message {
   is_suggest: boolean;
   /** Исполнитель сдал работу по заказу. */
   is_delivery?: boolean;
+  /**
+   * Предложение отменить заказ в работе. accepted — заказ отменён
+   * (по согласию или без ответа), rejected — отмена не состоялась.
+   */
+  is_cancel?: boolean;
   isRead: boolean;
   status?: MessageStatus;
   orderId?: string;

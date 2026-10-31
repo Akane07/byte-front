@@ -129,6 +129,11 @@ export function deleteOrder(id: string) {
   return call(api.delete<{ deleted: boolean }>(`/order/${id}`));
 }
 
+/** Отменить свой заказ без исполнителя. С исполнителем — через чат. */
+export function cancelOrder(id: string) {
+  return call(api.patch<Order>(`/order/${id}/cancel`));
+}
+
 export function markOrderViewed(orderId: string) {
   return call(api.post<Order>(`/order/${orderId}/viewed`, undefined, { silent: true }));
 }

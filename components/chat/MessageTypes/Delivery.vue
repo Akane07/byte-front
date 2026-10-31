@@ -45,9 +45,12 @@ const mine = computed(() => msg.senderId === userStore.user?.id);
 const pending = computed(() => msg.status !== "accepted" && msg.status !== "rejected");
 const partnerName = computed(() => partner.value?.nickname || partner.value?.name || "Исполнитель");
 
-const statusLabel = computed(() =>
-  msg.status === "accepted" ? "Принята" : msg.status === "rejected" ? "На доработке" : "На проверке",
-);
+// Карточку закрывает и отмена заказа — тогда это не «на доработке».
+const statusLabel = computed(() => {
+  if (msg.status === "accepted") return "Принята";
+  if (msg.status === "rejected") return order.value?.status === "cancelled" ? "Заказ отменён" : "На доработке";
+  return "На проверке";
+});
 </script>
 
 <style scoped lang="scss">

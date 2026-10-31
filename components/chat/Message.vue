@@ -2,10 +2,11 @@
   <!-- Типы сообщений подключены обычным образом, не Lazy: ленивые догружались
        после прокрутки вниз, и диалог открывался не на последних сообщениях. -->
   <ChatMessageTypesPlain
-    v-if="!msg.is_suggest && !msg.responseId && !msg.is_delivery"
+    v-if="!msg.is_suggest && !msg.responseId && !msg.is_delivery && !msg.is_cancel"
     :msg="msg"
     :selected="selected"
   ></ChatMessageTypesPlain>
+  <ChatMessageTypesCancel v-else-if="msg.is_cancel" :msg="msg" />
   <ChatMessageTypesDelivery v-else-if="msg.is_delivery" :msg="msg">
     <div class="facts">
       <div class="fact">
